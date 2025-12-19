@@ -3,6 +3,7 @@
 namespace app\Domain\User;
 
 use app\Domain\Tenant\TenantId;
+use DateTime;
 
 readonly class User
 {
@@ -11,7 +12,7 @@ readonly class User
         private TenantId $tenantId,
         private string $name,
         private string $email,
-        private string $emailVerifiedAt,
+        private ?DateTime $emailVerifiedAt,
         private string $password,
         private string $role,
         private bool $isActive,
@@ -22,7 +23,7 @@ readonly class User
         TenantId $tenantId,
         string $name,
         string $email,
-        string $emailVerifiedAt,
+        ?DateTime $emailVerifiedAt,
         string $password,
         string $role,
         bool $isActive,
@@ -60,7 +61,7 @@ readonly class User
         return $this->email;
     }
 
-    public function emailVerifiedAt(): string
+    public function emailVerifiedAt(): ?DateTime
     {
         return $this->emailVerifiedAt;
     }
