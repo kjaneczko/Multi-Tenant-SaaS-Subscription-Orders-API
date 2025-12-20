@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('tenant_id')->constrained('tenants')->restrictOnDelete();
             $table->enum('plan', ['basic', 'pro', 'enterprise'])->index();
             $table->enum('interval', ['monthly', 'yearly'])->index();
-            $table->enum('status', ['active', 'past_due', 'cancelled'])->index();
+            $table->string('status'); // ['active', 'past_due', 'cancelled']
             $table->dateTime('current_period_start');
             $table->dateTime('current_period_end');
             $table->dateTime('cancelled_at');

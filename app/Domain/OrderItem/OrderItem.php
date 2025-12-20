@@ -2,23 +2,28 @@
 
 namespace app\Domain\OrderItem;
 
+use app\Domain\Exception\ValidationException;
 use app\Domain\Order\OrderId;
 use app\Domain\Product\ProductId;
 use app\Domain\Tenant\TenantId;
 
-readonly class OrderItem
+class OrderItem
 {
     private function __construct(
-        private OrderItemId $id,
-        private TenantId $tenantId,
-        private OrderId $orderId,
-        private ProductId $productId,
-        private string $productNameSnapshot,
-        private string $skuSnapshot,
+        private readonly OrderItemId $id,
+        private readonly TenantId $tenantId,
+        private readonly OrderId $orderId,
+        private readonly ProductId $productId,
+        private readonly string $productNameSnapshot,
+        private readonly string $skuSnapshot,
         private int  $quantity,
         private int $unitPriceCents,
         private int $lineTotalCents,
-    ) {}
+    ) {
+        $this->assertValidQuantity($quantity);
+        $this->assertValidUnitPriceCents($unitPriceCents);
+        $this->assertValidLineTotalCents($lineTotalCents);
+    }
 
     public static function create(
         OrderItemId $id,
@@ -88,5 +93,50 @@ readonly class OrderItem
     public function lineTotalCents(): int
     {
         return $this->lineTotalCents;
+    }
+
+    public function changeQuantity(int $quantity): void
+    {
+        $this->assertValidQuantity($quantity);
+        $this->quantity = $quantity;
+    }
+
+    public function changeUnitPriceCents(int $unitPriceCents): void
+    {
+        $this->assertValidUnitPriceCents($unitPriceCents);
+        $this->unitPriceCents = $unitPriceCents;
+    }
+
+    public function changeLineTotalCents(int $lineTotalCents): void
+    {
+        $this->assertValidLineTotalCents($lineTotalCents);
+        $this->lineTotalCents = $lineTotalCents;
+    }
+
+    private function assertValidQuantity(int $quantity): void
+    {
+        if ($quantity < 0) {
+            throw new ValidationException(
+                ['quantity' => ['Quantity must be greater than 0.']],
+            );
+        }
+    }
+
+    private function assertValidUnitPriceCents(int $unitPriceCents): void
+    {
+        if ($unitPriceCents < 0) {
+            throw new ValidationException(
+                ['unit_price_cents' => ['Unit price must be greater than 0.']],
+            );
+        }
+    }
+
+    private function assertValidLineTotalCents(int $lineTotalCents): void
+    {
+        if ($lineTotalCents < 0) {
+            throw new ValidationException(
+                ['line_total_cents' => ['Line total must be greater than 0.']],
+            );
+        }
     }
 }

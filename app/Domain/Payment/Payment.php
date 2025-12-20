@@ -12,6 +12,7 @@ readonly class Payment
         private PaymentId $id,
         private TenantId $tenantId,
         private OrderId $orderId,
+        private PaymentStatus $status,
         private string $provider,
         private ?string $reference,
         private int $amountCents,
@@ -23,6 +24,7 @@ readonly class Payment
         PaymentId $id,
         TenantId $tenantId,
         OrderId $orderId,
+        PaymentStatus $status,
         string $provider,
         ?string $reference,
         int $amountCents,
@@ -34,6 +36,7 @@ readonly class Payment
             id: $id,
             tenantId: $tenantId,
             orderId: $orderId,
+            status: $status,
             provider: $provider,
             reference: $reference,
             amountCents: $amountCents,
@@ -55,6 +58,11 @@ readonly class Payment
     public function orderId(): OrderId
     {
         return $this->orderId;
+    }
+
+    public function status(): PaymentStatus
+    {
+        return $this->status;
     }
 
     public function provider(): string

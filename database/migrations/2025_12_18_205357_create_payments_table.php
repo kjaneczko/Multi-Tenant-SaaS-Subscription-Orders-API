@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignId('tenant_id')->constrained('tenants')->restrictOnDelete();
             $table->foreignId('order_id')->constrained('orders')->restrictOnDelete();
+            $table->string('status'); // ['new', 'pending', 'paid', 'cancelled']
             $table->string('provider', 50);
             $table->string('reference', 100)->nullable();
             $table->unsignedInteger('amount_cents');

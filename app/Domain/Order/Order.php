@@ -2,19 +2,21 @@
 
 namespace app\Domain\Order;
 
+use App\Domain\Currency;
+use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
 use app\Domain\User\UserId;
 use DateTime;
 
-readonly class Order
+class Order
 {
     private function __construct(
-        private OrderId $id,
-        private TenantId $tenantId,
-        private UserId $createdByUserId,
+        private readonly OrderId $id,
+        private readonly TenantId $tenantId,
+        private readonly UserId $createdByUserId,
         private string $customerEmail,
-        private string $status,
-        private string $currency,
+        private OrderStatus $status,
+        private Currency $currency,
         private int $subtotalCents,
         private int $discountCents,
         private int $taxCents,
@@ -23,15 +25,21 @@ readonly class Order
         private ?DateTime $paidAt,
         private ?DateTime $cancelledAt,
         private ?DateTime $deletedAt,
-    ) {}
+    ) {
+        $this->assertValidEmail($customerEmail);
+        $this->assertValidSubtotalCents($subtotalCents);
+        $this->assertValidDiscountCents($discountCents);
+        $this->assertValidTaxCents($taxCents);
+        $this->assertValidTotalCents($totalCents);
+    }
 
     public static function create(
         OrderId $id,
         TenantId $tenantId,
         UserId $createdByUserId,
         string $customerEmail,
-        string $status,
-        string $currency,
+        OrderStatus $status,
+        Currency $currency,
         int $subtotalCents,
         int $discountCents,
         int $taxCents,
@@ -80,12 +88,12 @@ readonly class Order
         return $this->customerEmail;
     }
 
-    public function status(): string
+    public function status(): OrderStatus
     {
         return $this->status;
     }
 
-    public function currency(): string
+    public function currency(): Currency
     {
         return $this->currency;
     }
@@ -128,5 +136,102 @@ readonly class Order
     public function deletedAt(): ?DateTime
     {
         return $this->deletedAt;
+    }
+
+    public function changeStatus(OrderStatus $status): void
+    {
+        $this->status = $status;
+    }
+
+    public function changeCustomerEmail(string $customerEmail): void
+    {
+        $this->assertValidEmail($customerEmail);
+        $this->customerEmail = $customerEmail;
+    }
+
+    public function changeCurrency(Currency $currency): void
+    {
+        $this->currency = $currency;
+    }
+
+    public function changeSubtotalCents(float $subtotalCents): void
+    {
+        $this->assertValidSubtotalCents($subtotalCents);
+        $this->subtotalCents = $subtotalCents;
+    }
+
+    public function changeDiscountCents(float $discountCents): void
+    {
+        $this->assertValidDiscountCents($discountCents);
+        $this->discountCents = $discountCents;
+    }
+
+    public function changeTaxCents(float $taxCents): void
+    {
+        $this->assertValidTaxCents($taxCents);
+        $this->taxCents = $taxCents;
+    }
+
+    public function changeTotalCents(float $totalCents): void
+    {
+        $this->assertValidTotalCents($totalCents);
+        $this->totalCents = $totalCents;
+    }
+
+    public function changeNotes(string $notes): void
+    {
+        $this->notes = $notes;
+    }
+
+    public function changePaidAt(DateTime $paidAt): void
+    {
+        $this->paidAt = $paidAt;
+    }
+
+    public function changeCancelledAt(DateTime $cancelledAt): void
+    {
+        $this->cancelledAt = $cancelledAt;
+    }
+
+    public function changeDeletedAt(DateTime $deletedAt): void
+    {
+        $this->deletedAt = $deletedAt;
+    }
+
+    private function assertValidEmail(string $customerEmail): void
+    {
+        if (!filter_var($customerEmail, FILTER_VALIDATE_EMAIL)) {
+            throw new ValidationException(
+                ['customer_email' => ['Customer email is not a valid email address.']],
+            );
+        }
+    }
+
+    private function assertValidSubtotalCents(int $subtotalCents): void
+    {
+        if ($subtotalCents < 0) {
+            throw new ValidationException(['subtotal_cents' => ['Subtotal must be greater than 0 or equal to 0.']]);
+        }
+    }
+
+    private function assertValidDiscountCents(int $discountCents): void
+    {
+        if ($discountCents < 0) {
+            throw new ValidationException(['discount_cents' => ['Discount must be greater than 0 or equal to 0.']]);
+        }
+    }
+
+    private function assertValidTaxCents(int $taxCents): void
+    {
+        if ($taxCents < 0) {
+            throw new ValidationException(['tax_cents' => ['Tax must be greater than 0 or equal to 0.']]);
+        }
+    }
+
+    private function assertValidTotalCents(int $totalCents): void
+    {
+        if ($totalCents < 0) {
+            throw new ValidationException(['total_cents' => ['Total amount must be greater than 0 or equal to 0.']]);
+        }
     }
 }

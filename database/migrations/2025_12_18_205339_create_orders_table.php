@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('tenant_id')->constrained()->restrictOnDelete();
             $table->foreignId('created_by_user_id')->constrained('users')->nullOnDelete();
             $table->string('customer_email');
-            $table->enum('status', ['new', 'pending', 'paid', 'cancelled'])->index();
+            $table->string('status')->index(); // ['new', 'pending', 'paid', 'cancelled']
             $table->string('currency')->default('USD');
             $table->unsignedInteger('subtotal_cents')->default(0);
             $table->unsignedInteger('discount_cents')->default(0);
