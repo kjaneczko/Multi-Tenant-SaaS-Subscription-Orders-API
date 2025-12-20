@@ -2,8 +2,6 @@
 
 namespace app\Domain\Exception;
 
-use Throwable;
-
 class ValidationException extends \DomainException
 {
     private array $errors;

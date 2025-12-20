@@ -25,8 +25,7 @@ readonly class AuditLog
         string $entityType,
         string $entityId,
         string $meta,
-    ): self
-    {
+    ): self {
         return new self(
             id: $id,
             tenantId: $tenantId,

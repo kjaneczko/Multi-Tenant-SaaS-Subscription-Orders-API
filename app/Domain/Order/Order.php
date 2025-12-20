@@ -6,7 +6,6 @@ use App\Domain\Currency;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
 use app\Domain\User\UserId;
-use DateTime;
 
 class Order
 {
@@ -22,9 +21,9 @@ class Order
         private int $taxCents,
         private int $totalCents,
         private ?string $notes,
-        private ?DateTime $paidAt,
-        private ?DateTime $cancelledAt,
-        private ?DateTime $deletedAt,
+        private ?\DateTime $paidAt,
+        private ?\DateTime $cancelledAt,
+        private ?\DateTime $deletedAt,
     ) {
         $this->assertValidEmail($customerEmail);
         $this->assertValidSubtotalCents($subtotalCents);
@@ -45,11 +44,10 @@ class Order
         int $taxCents,
         int $totalCents,
         ?string $notes,
-        ?DateTime $paidAt,
-        ?DateTime $cancelledAt,
-        ?DateTime $deletedAt,
-    ): self
-    {
+        ?\DateTime $paidAt,
+        ?\DateTime $cancelledAt,
+        ?\DateTime $deletedAt,
+    ): self {
         return new self(
             id: $id,
             tenantId: $tenantId,
@@ -123,17 +121,17 @@ class Order
         return $this->notes;
     }
 
-    public function paidAt(): ?DateTime
+    public function paidAt(): ?\DateTime
     {
         return $this->paidAt;
     }
 
-    public function cancelledAt(): ?DateTime
+    public function cancelledAt(): ?\DateTime
     {
         return $this->cancelledAt;
     }
 
-    public function deletedAt(): ?DateTime
+    public function deletedAt(): ?\DateTime
     {
         return $this->deletedAt;
     }
@@ -183,17 +181,17 @@ class Order
         $this->notes = $notes;
     }
 
-    public function changePaidAt(DateTime $paidAt): void
+    public function changePaidAt(\DateTime $paidAt): void
     {
         $this->paidAt = $paidAt;
     }
 
-    public function changeCancelledAt(DateTime $cancelledAt): void
+    public function changeCancelledAt(\DateTime $cancelledAt): void
     {
         $this->cancelledAt = $cancelledAt;
     }
 
-    public function changeDeletedAt(DateTime $deletedAt): void
+    public function changeDeletedAt(\DateTime $deletedAt): void
     {
         $this->deletedAt = $deletedAt;
     }

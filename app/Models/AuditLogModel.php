@@ -11,5 +11,4 @@ class AuditLogModel extends Model
     use HasFactory;
 
     protected $table = 'audit_logs';
-
 }

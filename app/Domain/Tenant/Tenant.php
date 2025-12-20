@@ -16,8 +16,7 @@ readonly class Tenant
         string $name,
         string $slug,
         string $status,
-    ): self
-    {
+    ): self {
         return new self(
             id: $id,
             name: $name,

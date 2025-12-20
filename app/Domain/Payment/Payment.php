@@ -4,7 +4,6 @@ namespace app\Domain\Payment;
 
 use app\Domain\Order\OrderId;
 use app\Domain\Tenant\TenantId;
-use DateTime;
 
 readonly class Payment
 {
@@ -17,7 +16,7 @@ readonly class Payment
         private ?string $reference,
         private int $amountCents,
         private string $currency,
-        private DateTime $paidAd,
+        private \DateTime $paidAd,
     ) {}
 
     public static function create(
@@ -29,9 +28,8 @@ readonly class Payment
         ?string $reference,
         int $amountCents,
         string $sku,
-        DateTime $paidAd,
-    ): self
-    {
+        \DateTime $paidAd,
+    ): self {
         return new self(
             id: $id,
             tenantId: $tenantId,
@@ -85,7 +83,7 @@ readonly class Payment
         return $this->currency;
     }
 
-    public function paidAd(): DateTime
+    public function paidAd(): \DateTime
     {
         return $this->paidAd;
     }

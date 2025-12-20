@@ -16,7 +16,7 @@ class OrderItem
         private readonly ProductId $productId,
         private readonly string $productNameSnapshot,
         private readonly string $skuSnapshot,
-        private int  $quantity,
+        private int $quantity,
         private int $unitPriceCents,
         private int $lineTotalCents,
     ) {
@@ -35,8 +35,7 @@ class OrderItem
         int $quantity,
         int $unitPriceCents,
         int $lineTotalCents,
-    ): self
-    {
+    ): self {
         return new self(
             id: $id,
             tenantId: $tenantId,

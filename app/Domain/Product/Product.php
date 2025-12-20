@@ -5,7 +5,6 @@ namespace app\Domain\Product;
 use App\Domain\Currency;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
-use DateTime;
 
 class Product
 {
@@ -19,7 +18,7 @@ class Product
         private int $priceCents,
         private Currency $currency,
         private ProductStatus $status,
-        private ?DateTime $deletedAt,
+        private ?\DateTime $deletedAt,
     ) {}
 
     public static function create(
@@ -32,9 +31,8 @@ class Product
         int $priceCents,
         Currency $currency,
         ProductStatus $status,
-        ?DateTime $deletedAt,
-    ): self
-    {
+        ?\DateTime $deletedAt,
+    ): self {
         return new self(
             id: $id,
             tenantId: $tenantId,
@@ -94,7 +92,7 @@ class Product
         return $this->status;
     }
 
-    public function deletedAt(): ?DateTime
+    public function deletedAt(): ?\DateTime
     {
         return $this->deletedAt;
     }
@@ -139,7 +137,7 @@ class Product
         $this->status = $status;
     }
 
-    public function changeDeletedAt(?DateTime $deletedAt): void
+    public function changeDeletedAt(?\DateTime $deletedAt): void
     {
         $this->deletedAt = $deletedAt;
     }
@@ -165,7 +163,7 @@ class Product
     {
         $ERR = ['name' => []];
 
-        if ($name === '') {
+        if ('' === $name) {
             $ERR['name'][] = 'Name is required.';
         }
 
@@ -197,7 +195,7 @@ class Product
 
     private function assertValidDescription(string $description): void
     {
-        if ($description === '') {
+        if ('' === $description) {
             throw new ValidationException(['description' => ['Description is required.']]);
         }
     }
