@@ -3,29 +3,30 @@
 namespace app\Domain\Subscription;
 
 use app\Domain\Tenant\TenantId;
+use DateTime;
 
 readonly class Subscription
 {
     private function __construct(
         private SubscriptionId $id,
-        private TenantId $tenantId,
-        private string $plan,
-        private string $interval,
-        private string $status,
-        private \DateTime $currentPeriodStart,
-        private \DateTime $currentPeriodEnd,
-        private ?\DateTime $cancelledAt,
+        private TenantId       $tenantId,
+        private SubscriptionPlan         $plan,
+        private SubscriptionInterval         $interval,
+        private SubscriptionStatus         $status,
+        private DateTime       $currentPeriodStart,
+        private DateTime       $currentPeriodEnd,
+        private ?DateTime      $cancelledAt,
     ) {}
 
     public static function create(
         SubscriptionId $id,
-        TenantId $tenantId,
-        string $plan,
-        string $interval,
-        string $status,
-        \DateTime $currentPeriodStart,
-        \DateTime $currentPeriodEnd,
-        ?\DateTime $cancelledAt,
+        TenantId       $tenantId,
+        SubscriptionPlan         $plan,
+        SubscriptionInterval         $interval,
+        SubscriptionStatus         $status,
+        DateTime       $currentPeriodStart,
+        DateTime       $currentPeriodEnd,
+        ?DateTime      $cancelledAt,
     ): self {
         return new self(
             id: $id,
@@ -49,32 +50,32 @@ readonly class Subscription
         return $this->tenantId;
     }
 
-    public function plan(): string
+    public function plan(): SubscriptionPlan
     {
         return $this->plan;
     }
 
-    public function interval(): string
+    public function interval(): SubscriptionInterval
     {
         return $this->interval;
     }
 
-    public function status(): string
+    public function status(): SubscriptionStatus
     {
         return $this->status;
     }
 
-    public function currentPeriodStart(): \DateTime
+    public function currentPeriodStart(): DateTime
     {
         return $this->currentPeriodStart;
     }
 
-    public function currentPeriodEnd(): \DateTime
+    public function currentPeriodEnd(): DateTime
     {
         return $this->currentPeriodEnd;
     }
 
-    public function cancelledAt(): ?\DateTime
+    public function cancelledAt(): ?DateTime
     {
         return $this->cancelledAt;
     }

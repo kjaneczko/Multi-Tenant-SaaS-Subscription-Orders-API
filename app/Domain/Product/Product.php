@@ -5,33 +5,34 @@ namespace app\Domain\Product;
 use App\Domain\Currency;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
+use DateTime;
 
 class Product
 {
     private function __construct(
         private readonly ProductId $id,
-        private readonly TenantId $tenantId,
-        private string $sku,
-        private string $name,
-        private string $slug,
-        private string $description,
-        private int $priceCents,
-        private Currency $currency,
-        private ProductStatus $status,
-        private ?\DateTime $deletedAt,
+        private readonly TenantId  $tenantId,
+        private string             $sku,
+        private string             $name,
+        private string             $slug,
+        private string             $description,
+        private int                $priceCents,
+        private Currency           $currency,
+        private ProductStatus      $status,
+        private ?DateTime          $deletedAt,
     ) {}
 
     public static function create(
-        ProductId $id,
-        TenantId $tenantId,
-        string $sku,
-        string $name,
-        string $slug,
-        string $description,
-        int $priceCents,
-        Currency $currency,
+        ProductId     $id,
+        TenantId      $tenantId,
+        string        $sku,
+        string        $name,
+        string        $slug,
+        string        $description,
+        int           $priceCents,
+        Currency      $currency,
         ProductStatus $status,
-        ?\DateTime $deletedAt,
+        ?DateTime     $deletedAt,
     ): self {
         return new self(
             id: $id,
@@ -92,7 +93,7 @@ class Product
         return $this->status;
     }
 
-    public function deletedAt(): ?\DateTime
+    public function deletedAt(): ?DateTime
     {
         return $this->deletedAt;
     }
@@ -137,59 +138,41 @@ class Product
         $this->status = $status;
     }
 
-    public function changeDeletedAt(?\DateTime $deletedAt): void
+    public function changeDeletedAt(?DateTime $deletedAt): void
     {
         $this->deletedAt = $deletedAt;
     }
 
     private function assertValidSku(string $sku): void
     {
-        $ERR = ['sku' => []];
-
-        if (strlen($sku) < 3) {
-            $ERR['sku'][] = 'Sku is too short. Must be at least 3 characters.';
+        if (mb_strlen($sku) < 3) {
+            throw new ValidationException(['sku' => ['Sku is too short. Must be at least 3 characters.']]);
         }
 
-        if (strlen($sku) > 255) {
-            $ERR['sku'][] = 'Sku is too long. Must be less than 255 characters.';
-        }
-
-        if (!empty($ERR)) {
-            throw new ValidationException($ERR);
+        if (mb_strlen($sku) > 255) {
+            throw new ValidationException(['sku' => ['Sku is too long. Must be less than 256 characters.']]);
         }
     }
 
     private function assertValidName(string $name): void
     {
-        $ERR = ['name' => []];
-
         if ('' === $name) {
-            $ERR['name'][] = 'Name is required.';
+            throw new ValidationException(['name' => ['Name is required.']]);
         }
 
-        if (strlen($name) > 255) {
-            $ERR['name'][] = 'Name is too long. Must be less than 255 characters.';
-        }
-
-        if (!empty($ERR)) {
-            throw new ValidationException($ERR);
+        if (mb_strlen($name) > 255) {
+            throw new ValidationException(['name' => ['Name is too long. Must be less than 256 characters.']]);
         }
     }
 
     private function assertValidSlug(string $slug): void
     {
-        $ERR = ['slug' => []];
-
-        if (strlen($slug) < 3) {
-            $ERR['slug'][] = 'Slug is too short. Must be at least 3 characters.';
+        if (mb_strlen($slug) < 3) {
+            throw new ValidationException(['slug' => ['Slug is too short. Must be at least 3 characters.']]);
         }
 
-        if (strlen($slug) > 255) {
-            $ERR['slug'][] = 'Slug is too long. Must be less than 255 characters.';
-        }
-
-        if (!empty($ERR)) {
-            throw new ValidationException($ERR);
+        if (mb_strlen($slug) > 255) {
+            throw new ValidationException(['slug' => ['Slug is too long. Must be less than 256 characters.']]);
         }
     }
 

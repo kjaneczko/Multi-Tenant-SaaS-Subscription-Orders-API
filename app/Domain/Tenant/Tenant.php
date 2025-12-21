@@ -2,20 +2,25 @@
 
 namespace app\Domain\Tenant;
 
-readonly class Tenant
+use app\Domain\Exception\ValidationException;
+
+class Tenant
 {
     private function __construct(
-        private TenantId $id,
-        private string $name,
-        private string $slug,
-        private string $status,
-    ) {}
+        private readonly TenantId $id,
+        private string            $name,
+        private string            $slug,
+        private TenantStatus      $status,
+    ) {
+        $this->assertValidName($name);
+        $this->assertValidSlug($slug);
+    }
 
     public static function create(
         TenantId $id,
         string $name,
         string $slug,
-        string $status,
+        TenantStatus $status,
     ): self {
         return new self(
             id: $id,
@@ -40,8 +45,47 @@ readonly class Tenant
         return $this->slug;
     }
 
-    public function status(): string
+    public function status(): TenantStatus
     {
         return $this->status;
+    }
+
+    public function changeName(string $name): void
+    {
+        $this->assertValidName($name);
+        $this->name = $name;
+    }
+
+    public function changeSlug(string $slug): void
+    {
+        $this->assertValidSlug($slug);
+        $this->slug = $slug;
+    }
+
+    public function changeStatus(TenantStatus $status): void
+    {
+        $this->status = $status;
+    }
+
+    private function assertValidName(string $name): void
+    {
+        if (trim($name) === '') {
+            throw new ValidationException(['name' => ['Name is required.']]);
+        }
+
+        if (mb_strlen($name) > 255) {
+            throw new ValidationException(['name' => ['Name is too long. Must be less than 256 characters.']]);
+        }
+    }
+
+    private function assertValidSlug(string $slug): void
+    {
+        if (trim($slug) === '') {
+            throw new ValidationException(['slug' => ['Slug is required.']]);
+        }
+
+        if (mb_strlen($slug) > 255) {
+            throw new ValidationException(['slug' => ['Slug is too long. Must be less than 256 characters.']]);
+        }
     }
 }

@@ -6,24 +6,25 @@ use App\Domain\Currency;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
 use app\Domain\User\UserId;
+use DateTime;
 
 class Order
 {
     private function __construct(
-        private readonly OrderId $id,
+        private readonly OrderId  $id,
         private readonly TenantId $tenantId,
-        private readonly UserId $createdByUserId,
-        private string $customerEmail,
-        private OrderStatus $status,
-        private Currency $currency,
-        private int $subtotalCents,
-        private int $discountCents,
-        private int $taxCents,
-        private int $totalCents,
-        private ?string $notes,
-        private ?\DateTime $paidAt,
-        private ?\DateTime $cancelledAt,
-        private ?\DateTime $deletedAt,
+        private readonly UserId   $createdByUserId,
+        private string            $customerEmail,
+        private OrderStatus       $status,
+        private Currency          $currency,
+        private int               $subtotalCents,
+        private int               $discountCents,
+        private int               $taxCents,
+        private int               $totalCents,
+        private ?string           $notes,
+        private ?DateTime         $paidAt,
+        private ?DateTime         $cancelledAt,
+        private ?DateTime         $deletedAt,
     ) {
         $this->assertValidEmail($customerEmail);
         $this->assertValidSubtotalCents($subtotalCents);
@@ -34,19 +35,19 @@ class Order
 
     public static function create(
         OrderId $id,
-        TenantId $tenantId,
-        UserId $createdByUserId,
-        string $customerEmail,
+        TenantId    $tenantId,
+        UserId      $createdByUserId,
+        string      $customerEmail,
         OrderStatus $status,
-        Currency $currency,
-        int $subtotalCents,
-        int $discountCents,
-        int $taxCents,
-        int $totalCents,
-        ?string $notes,
-        ?\DateTime $paidAt,
-        ?\DateTime $cancelledAt,
-        ?\DateTime $deletedAt,
+        Currency    $currency,
+        int         $subtotalCents,
+        int         $discountCents,
+        int         $taxCents,
+        int         $totalCents,
+        ?string     $notes,
+        ?DateTime   $paidAt,
+        ?DateTime   $cancelledAt,
+        ?DateTime   $deletedAt,
     ): self {
         return new self(
             id: $id,
@@ -121,17 +122,17 @@ class Order
         return $this->notes;
     }
 
-    public function paidAt(): ?\DateTime
+    public function paidAt(): ?DateTime
     {
         return $this->paidAt;
     }
 
-    public function cancelledAt(): ?\DateTime
+    public function cancelledAt(): ?DateTime
     {
         return $this->cancelledAt;
     }
 
-    public function deletedAt(): ?\DateTime
+    public function deletedAt(): ?DateTime
     {
         return $this->deletedAt;
     }
@@ -181,17 +182,17 @@ class Order
         $this->notes = $notes;
     }
 
-    public function changePaidAt(\DateTime $paidAt): void
+    public function changePaidAt(DateTime $paidAt): void
     {
         $this->paidAt = $paidAt;
     }
 
-    public function changeCancelledAt(\DateTime $cancelledAt): void
+    public function changeCancelledAt(DateTime $cancelledAt): void
     {
         $this->cancelledAt = $cancelledAt;
     }
 
-    public function changeDeletedAt(\DateTime $deletedAt): void
+    public function changeDeletedAt(DateTime $deletedAt): void
     {
         $this->deletedAt = $deletedAt;
     }

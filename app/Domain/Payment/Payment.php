@@ -2,8 +2,11 @@
 
 namespace app\Domain\Payment;
 
+use App\Domain\Currency;
+use app\Domain\Exception\ValidationException;
 use app\Domain\Order\OrderId;
 use app\Domain\Tenant\TenantId;
+use DateTime;
 
 readonly class Payment
 {
@@ -15,9 +18,13 @@ readonly class Payment
         private string $provider,
         private ?string $reference,
         private int $amountCents,
-        private string $currency,
-        private \DateTime $paidAd,
-    ) {}
+        private Currency $currency,
+        private DateTime $paidAd,
+    ) {
+        $this->assertValidProvider($provider);
+        $this->assertValidReference($reference);
+        $this->assertValidAmountCents($amountCents);
+    }
 
     public static function create(
         PaymentId $id,
@@ -27,8 +34,8 @@ readonly class Payment
         string $provider,
         ?string $reference,
         int $amountCents,
-        string $sku,
-        \DateTime $paidAd,
+        Currency $currency,
+        DateTime $paidAd,
     ): self {
         return new self(
             id: $id,
@@ -38,7 +45,7 @@ readonly class Payment
             provider: $provider,
             reference: $reference,
             amountCents: $amountCents,
-            currency: $sku,
+            currency: $currency,
             paidAd: $paidAd,
         );
     }
@@ -78,13 +85,34 @@ readonly class Payment
         return $this->amountCents;
     }
 
-    public function currency(): string
+    public function currency(): Currency
     {
         return $this->currency;
     }
 
-    public function paidAd(): \DateTime
+    public function paidAd(): DateTime
     {
         return $this->paidAd;
+    }
+
+    public function assertValidProvider(string $provider): void
+    {
+        if ($provider === '') {
+            throw new ValidationException(['provider' => ['Provider is required.']]);
+        }
+    }
+
+    private function assertValidReference(?string $reference): void
+    {
+        if (mb_strlen($reference) > 255) {
+            throw new ValidationException(['reference' => ['Reference is too long. Must be less than 256 characters.']]);
+        }
+    }
+
+    private function assertValidAmountCents(int $amountCents): void
+    {
+        if ($amountCents <= 0) {
+            throw new ValidationException(['amount_cents' => ['Amount cannot be less than or equal zero.']]);
+        }
     }
 }

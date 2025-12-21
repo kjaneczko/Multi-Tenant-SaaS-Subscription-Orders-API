@@ -2,30 +2,35 @@
 
 namespace app\Domain\User;
 
+use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
+use DateTime;
 
 readonly class User
 {
     private function __construct(
-        private UserId $id,
-        private TenantId $tenantId,
-        private string $name,
-        private string $email,
-        private ?\DateTime $emailVerifiedAt,
-        private string $password,
-        private string $role,
-        private bool $isActive,
-    ) {}
+        private UserId    $id,
+        private TenantId  $tenantId,
+        private string    $name,
+        private string    $email,
+        private ?DateTime $emailVerifiedAt,
+        private string    $password,
+        private UserRole    $role,
+        private bool      $isActive,
+    ) {
+        $this->assertValidName($name);
+        $this->assertValidEmail($email);
+    }
 
     public static function create(
-        UserId $id,
-        TenantId $tenantId,
-        string $name,
-        string $email,
-        ?\DateTime $emailVerifiedAt,
-        string $password,
-        string $role,
-        bool $isActive,
+        UserId    $id,
+        TenantId  $tenantId,
+        string    $name,
+        string    $email,
+        ?DateTime $emailVerifiedAt,
+        string    $password,
+        UserRole    $role,
+        bool      $isActive,
     ): self {
         return new self(
             id: $id,
@@ -59,7 +64,7 @@ readonly class User
         return $this->email;
     }
 
-    public function emailVerifiedAt(): ?\DateTime
+    public function emailVerifiedAt(): ?DateTime
     {
         return $this->emailVerifiedAt;
     }
@@ -69,7 +74,7 @@ readonly class User
         return $this->password;
     }
 
-    public function role(): string
+    public function role(): UserRole
     {
         return $this->role;
     }
@@ -77,5 +82,27 @@ readonly class User
     public function isActive(): bool
     {
         return $this->isActive;
+    }
+
+    private function assertValidName(string $name): void
+    {
+        if ('' === $name) {
+            throw new ValidationException(['name' => ['Name is required.']]);
+        }
+
+        if (mb_strlen($name) > 255) {
+            throw new ValidationException(['name' => ['Name is too long. Must be less than 256 characters.']]);
+        }
+    }
+
+    private function assertValidEmail(string $email): void
+    {
+        if ('' === $email) {
+            throw new ValidationException(['email' => ['Email is required.']]);
+        }
+
+        if (mb_strlen($email) > 255) {
+            throw new ValidationException(['email' => ['Email is too long. Must be less than 256 characters.']]);
+        }
     }
 }
