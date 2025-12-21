@@ -11,17 +11,16 @@ use DateTimeImmutable;
 class OrderItem
 {
     private function __construct(
-        private readonly OrderItemId $id,
-        private readonly TenantId $tenantId,
-        private readonly OrderId $orderId,
-        private readonly ProductId $productId,
-        private readonly string $productNameSnapshot,
-        private readonly string $skuSnapshot,
-        private int $quantity,
-        private int $unitPriceCents,
-        private int $lineTotalCents,
-        private ?DateTimeImmutable $createdAt,
-        private ?DateTimeImmutable $updatedAt,
+        private readonly OrderItemId        $id,
+        private readonly OrderId            $orderId,
+        private readonly ProductId          $productId,
+        private readonly string             $productNameSnapshot,
+        private readonly string             $skuSnapshot,
+        private int                         $quantity,
+        private int                         $unitPriceCents,
+        private int                         $lineTotalCents,
+        private readonly ?DateTimeImmutable $createdAt,
+        private readonly ?DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidQuantity($quantity);
         $this->assertValidUnitPriceCents($unitPriceCents);
@@ -30,7 +29,6 @@ class OrderItem
 
     public static function create(
         OrderItemId $id,
-        TenantId $tenantId,
         OrderId $orderId,
         ProductId $productId,
         string $productNameSnapshot,
@@ -43,7 +41,6 @@ class OrderItem
     ): self {
         return new self(
             id: $id,
-            tenantId: $tenantId,
             orderId: $orderId,
             productId: $productId,
             productNameSnapshot: $productNameSnapshot,
@@ -59,11 +56,6 @@ class OrderItem
     public function id(): OrderItemId
     {
         return $this->id;
-    }
-
-    public function tenantId(): TenantId
-    {
-        return $this->tenantId;
     }
 
     public function orderId(): OrderId

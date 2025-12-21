@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->restrictOnDelete();
+            $table->foreignUuid('tenant_id')->constrained('tenants')->restrictOnDelete();
             $table->string('name');
             $table->string('email');
             $table->timestamp('email_verified_at')->nullable();

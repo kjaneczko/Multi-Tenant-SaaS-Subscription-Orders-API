@@ -12,9 +12,8 @@ return new class extends Migration {
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->restrictOnDelete();
-            $table->foreignId('order_id')->constrained('orders')->restrictOnDelete();
-            $table->foreignId('product_id')->constrained('products')->restrictOnDelete();
+            $table->foreignUuid('order_id')->constrained('orders')->restrictOnDelete();
+            $table->foreignUuid('product_id')->constrained('products')->restrictOnDelete();
             $table->string('product_name_snapshot');
             $table->string('sku_snapshot');
             $table->unsignedInteger('quantity');

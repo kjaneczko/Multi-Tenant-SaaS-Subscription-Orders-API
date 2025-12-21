@@ -12,15 +12,14 @@ return new class extends Migration {
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->restrictOnDelete();
-            $table->foreignId('order_id')->constrained('orders')->restrictOnDelete();
+            $table->foreignUuid('order_id')->constrained('orders')->restrictOnDelete();
             $table->string('external_id')->unique();
             $table->string('status'); // ['new', 'pending', 'paid', 'cancelled']
             $table->string('provider', 50);
             $table->string('reference', 100)->nullable();
             $table->unsignedInteger('amount_cents');
             $table->char('currency', 3);
-            $table->dateTime('paid_at');
+            $table->dateTime('paid_at')->nullable();
             $table->timestamps();
             $table->index(['tenant_id', 'status']);
             $table->index(['tenant_id', 'created_at']);

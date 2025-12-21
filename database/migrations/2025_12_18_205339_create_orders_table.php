@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained()->restrictOnDelete();
-            $table->foreignId('created_by_user_id')->constrained('users')->nullOnDelete();
+            $table->foreignUuid('tenant_id')->constrained()->restrictOnDelete();
+            $table->foreignUuid('created_by_user_id')->constrained('users')->nullOnDelete();
             $table->string('customer_email');
             $table->string('status'); // ['new', 'pending', 'paid', 'cancelled']
             $table->string('currency');

@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->restrictOnDelete();
-            $table->foreignId('actor_user_id')->constrained('users')->nullOnDelete();
+            $table->foreignUuid('tenant_id')->constrained('tenants')->restrictOnDelete();
+            $table->foreignUuid('actor_user_id')->constrained('users')->nullOnDelete();
             $table->string('action');
             $table->string('entity_type');
             $table->uuid('entity_id');

@@ -12,17 +12,18 @@ return new class extends Migration {
     {
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->restrictOnDelete();
-            $table->string('sku')->unique();
+            $table->foreignUuid('tenant_id')->constrained('tenants')->restrictOnDelete();
+            $table->string('sku');
             $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description');
+            $table->string('slug');
+            $table->text('description')->nullable();
             $table->unsignedInteger('price_cents')->default(0);
-            $table->char('currency', 3)->default('USD');
+            $table->char('currency', 3);
             $table->string('status'); // ['active', 'inactive']
             $table->timestamps();
             $table->softDeletes()->index();
-            $table->unique(['tenant_id', 'sku']);
+            $table->unique(['tenant_id', 'sku', 'deleted_at']);
+            $table->unique(['tenant_id', 'slug', 'deleted_at']);
         });
     }
 

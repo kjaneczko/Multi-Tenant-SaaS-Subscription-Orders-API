@@ -12,13 +12,13 @@ return new class extends Migration {
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('tenant_id')->constrained('tenants')->restrictOnDelete();
+            $table->foreignUuid('tenant_id')->constrained('tenants')->restrictOnDelete();
             $table->string('plan')->index(); // ['basic', 'pro', 'enterprise']
             $table->string('interval')->index(); // ['monthly', 'yearly']
             $table->string('status')->index(); // ['active', 'past_due', 'cancelled']
             $table->dateTime('current_period_start');
             $table->dateTime('current_period_end');
-            $table->dateTime('cancelled_at');
+            $table->dateTime('cancelled_at')->nullable();
             $table->timestamps();
             $table->index(['tenant_id', 'status']);
             $table->index(['tenant_id', 'current_period_end']);

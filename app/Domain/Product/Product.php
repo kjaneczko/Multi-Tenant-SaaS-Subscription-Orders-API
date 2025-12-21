@@ -11,18 +11,18 @@ use DateTimeImmutable;
 class Product
 {
     private function __construct(
-        private readonly ProductId $id,
-        private readonly TenantId  $tenantId,
-        private string             $sku,
-        private string             $name,
-        private string             $slug,
-        private string             $description,
-        private int                $priceCents,
-        private Currency           $currency,
-        private ProductStatus      $status,
-        private ?DateTime          $deletedAt,
-        private ?DateTimeImmutable $createdAt,
-        private ?DateTimeImmutable $updatedAt,
+        private readonly ProductId          $id,
+        private readonly TenantId           $tenantId,
+        private string                      $sku,
+        private string                      $name,
+        private string                      $slug,
+        private ?string                      $description,
+        private int                         $priceCents,
+        private Currency                    $currency,
+        private ProductStatus               $status,
+        private ?DateTime                   $deletedAt,
+        private readonly ?DateTimeImmutable $createdAt,
+        private readonly ?DateTimeImmutable $updatedAt,
     ) {}
 
     public static function create(
@@ -31,7 +31,7 @@ class Product
         string        $sku,
         string        $name,
         string        $slug,
-        string        $description,
+        ?string        $description,
         int           $priceCents,
         Currency      $currency,
         ProductStatus $status,
@@ -80,7 +80,7 @@ class Product
         return $this->slug;
     }
 
-    public function description(): string
+    public function description(): ?string
     {
         return $this->description;
     }

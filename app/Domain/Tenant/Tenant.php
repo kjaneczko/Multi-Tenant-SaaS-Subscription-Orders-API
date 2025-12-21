@@ -8,12 +8,12 @@ use DateTimeImmutable;
 class Tenant
 {
     private function __construct(
-        private readonly TenantId $id,
-        private string            $name,
-        private string            $slug,
-        private TenantStatus      $status,
-        private ?DateTimeImmutable $createdAt,
-        private ?DateTimeImmutable $updatedAt,
+        private readonly TenantId           $id,
+        private string                      $name,
+        private string                      $slug,
+        private TenantStatus                $status,
+        private readonly ?DateTimeImmutable $createdAt,
+        private readonly ?DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidName($name);
         $this->assertValidSlug($slug);

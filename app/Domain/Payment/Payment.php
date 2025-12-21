@@ -5,7 +5,6 @@ namespace app\Domain\Payment;
 use App\Domain\Currency;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Order\OrderId;
-use app\Domain\Tenant\TenantId;
 use DateTime;
 use DateTimeImmutable;
 
@@ -13,7 +12,6 @@ readonly class Payment
 {
     private function __construct(
         private PaymentId $id,
-        private TenantId $tenantId,
         private OrderId $orderId,
         private PaymentStatus $status,
         private string $provider,
@@ -31,7 +29,6 @@ readonly class Payment
 
     public static function create(
         PaymentId $id,
-        TenantId $tenantId,
         OrderId $orderId,
         PaymentStatus $status,
         string $provider,
@@ -44,7 +41,6 @@ readonly class Payment
     ): self {
         return new self(
             id: $id,
-            tenantId: $tenantId,
             orderId: $orderId,
             status: $status,
             provider: $provider,
@@ -60,11 +56,6 @@ readonly class Payment
     public function id(): PaymentId
     {
         return $this->id;
-    }
-
-    public function tenantId(): TenantId
-    {
-        return $this->tenantId;
     }
 
     public function orderId(): OrderId
