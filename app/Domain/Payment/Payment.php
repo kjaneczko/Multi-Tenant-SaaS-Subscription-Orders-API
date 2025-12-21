@@ -5,8 +5,6 @@ namespace app\Domain\Payment;
 use App\Domain\Currency;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Order\OrderId;
-use DateTime;
-use DateTimeImmutable;
 
 readonly class Payment
 {
@@ -18,9 +16,9 @@ readonly class Payment
         private ?string $reference,
         private int $amountCents,
         private Currency $currency,
-        private DateTime $paidAd,
-        private ?DateTimeImmutable $createdAt,
-        private ?DateTimeImmutable $updatedAt,
+        private \DateTime $paidAd,
+        private ?\DateTimeImmutable $createdAt,
+        private ?\DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidProvider($provider);
         $this->assertValidReference($reference);
@@ -35,9 +33,9 @@ readonly class Payment
         ?string $reference,
         int $amountCents,
         Currency $currency,
-        DateTime $paidAd,
-        ?DateTimeImmutable $createdAt,
-        ?DateTimeImmutable $updatedAt
+        \DateTime $paidAd,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt
     ): self {
         return new self(
             id: $id,
@@ -88,24 +86,24 @@ readonly class Payment
         return $this->currency;
     }
 
-    public function paidAd(): DateTime
+    public function paidAd(): \DateTime
     {
         return $this->paidAd;
     }
 
-    public function createdAt(): ?DateTimeImmutable
+    public function createdAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): ?DateTimeImmutable
+    public function updatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
     public function assertValidProvider(string $provider): void
     {
-        if ($provider === '') {
+        if ('' === $provider) {
             throw new ValidationException(['provider' => ['Provider is required.']]);
         }
     }

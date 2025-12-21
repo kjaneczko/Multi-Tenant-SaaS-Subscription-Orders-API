@@ -4,38 +4,36 @@ namespace app\Domain\User;
 
 use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
-use DateTime;
-use DateTimeImmutable;
 
 readonly class User
 {
     private function __construct(
-        private UserId    $id,
-        private TenantId  $tenantId,
-        private string    $name,
-        private string    $email,
-        private ?DateTime $emailVerifiedAt,
-        private string    $password,
-        private UserRole    $role,
-        private bool      $isActive,
-        private ?DateTimeImmutable $createdAt,
-        private ?DateTimeImmutable $updatedAt,
+        private UserId $id,
+        private TenantId $tenantId,
+        private string $name,
+        private string $email,
+        private ?\DateTime $emailVerifiedAt,
+        private string $password,
+        private UserRole $role,
+        private bool $isActive,
+        private ?\DateTimeImmutable $createdAt,
+        private ?\DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidName($name);
         $this->assertValidEmail($email);
     }
 
     public static function create(
-        UserId    $id,
-        TenantId  $tenantId,
-        string    $name,
-        string    $email,
-        ?DateTime $emailVerifiedAt,
-        string    $password,
-        UserRole    $role,
-        bool      $isActive,
-        ?DateTimeImmutable $createdAt,
-        ?DateTimeImmutable $updatedAt,
+        UserId $id,
+        TenantId $tenantId,
+        string $name,
+        string $email,
+        ?\DateTime $emailVerifiedAt,
+        string $password,
+        UserRole $role,
+        bool $isActive,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,
@@ -71,7 +69,7 @@ readonly class User
         return $this->email;
     }
 
-    public function emailVerifiedAt(): ?DateTime
+    public function emailVerifiedAt(): ?\DateTime
     {
         return $this->emailVerifiedAt;
     }
@@ -91,12 +89,12 @@ readonly class User
         return $this->isActive;
     }
 
-    public function createdAt(): ?DateTimeImmutable
+    public function createdAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): ?DateTimeImmutable
+    public function updatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }

@@ -5,22 +5,20 @@ namespace app\Domain\OrderItem;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Order\OrderId;
 use app\Domain\Product\ProductId;
-use app\Domain\Tenant\TenantId;
-use DateTimeImmutable;
 
 class OrderItem
 {
     private function __construct(
-        private readonly OrderItemId        $id,
-        private readonly OrderId            $orderId,
-        private readonly ProductId          $productId,
-        private readonly string             $productNameSnapshot,
-        private readonly string             $skuSnapshot,
-        private int                         $quantity,
-        private int                         $unitPriceCents,
-        private int                         $lineTotalCents,
-        private readonly ?DateTimeImmutable $createdAt,
-        private readonly ?DateTimeImmutable $updatedAt,
+        private readonly OrderItemId $id,
+        private readonly OrderId $orderId,
+        private readonly ProductId $productId,
+        private readonly string $productNameSnapshot,
+        private readonly string $skuSnapshot,
+        private int $quantity,
+        private int $unitPriceCents,
+        private int $lineTotalCents,
+        private readonly ?\DateTimeImmutable $createdAt,
+        private readonly ?\DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidQuantity($quantity);
         $this->assertValidUnitPriceCents($unitPriceCents);
@@ -36,8 +34,8 @@ class OrderItem
         int $quantity,
         int $unitPriceCents,
         int $lineTotalCents,
-        ?DateTimeImmutable $createdAt,
-        ?DateTimeImmutable $updatedAt
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt
     ): self {
         return new self(
             id: $id,
@@ -93,12 +91,12 @@ class OrderItem
         return $this->lineTotalCents;
     }
 
-    public function createdAt(): ?DateTimeImmutable
+    public function createdAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): ?DateTimeImmutable
+    public function updatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }

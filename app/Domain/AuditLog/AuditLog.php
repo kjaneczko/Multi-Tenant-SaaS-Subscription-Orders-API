@@ -5,19 +5,18 @@ namespace app\Domain\AuditLog;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
 use app\Domain\User\UserId;
-use DateTimeImmutable;
 
 class AuditLog
 {
     private function __construct(
         private readonly AuditLogId $id,
-        private readonly TenantId   $tenantId,
-        private readonly UserId     $actorUserId,
-        private string              $action,
-        private string              $entityType,
-        private string              $entityId,
-        private string              $meta,
-        private ?DateTimeImmutable $createdAt,
+        private readonly TenantId $tenantId,
+        private readonly UserId $actorUserId,
+        private string $action,
+        private string $entityType,
+        private string $entityId,
+        private string $meta,
+        private readonly ?\DateTimeImmutable $createdAt,
     ) {
         $this->assertValidAction($action);
         $this->assertValidEntityType($entityType);
@@ -33,7 +32,7 @@ class AuditLog
         string $entityType,
         string $entityId,
         string $meta,
-        ?DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $createdAt,
     ): self {
         return new self(
             id: $id,
@@ -82,7 +81,7 @@ class AuditLog
         return $this->meta;
     }
 
-    public function createdAt(): ?DateTimeImmutable
+    public function createdAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }

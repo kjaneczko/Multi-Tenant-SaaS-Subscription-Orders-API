@@ -3,17 +3,16 @@
 namespace app\Domain\Tenant;
 
 use app\Domain\Exception\ValidationException;
-use DateTimeImmutable;
 
 class Tenant
 {
     private function __construct(
-        private readonly TenantId           $id,
-        private string                      $name,
-        private string                      $slug,
-        private TenantStatus                $status,
-        private readonly ?DateTimeImmutable $createdAt,
-        private readonly ?DateTimeImmutable $updatedAt,
+        private readonly TenantId $id,
+        private string $name,
+        private string $slug,
+        private TenantStatus $status,
+        private readonly ?\DateTimeImmutable $createdAt,
+        private readonly ?\DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidName($name);
         $this->assertValidSlug($slug);
@@ -24,8 +23,8 @@ class Tenant
         string $name,
         string $slug,
         TenantStatus $status,
-        ?DateTimeImmutable $createdAt,
-        ?DateTimeImmutable $updatedAt,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,
@@ -57,12 +56,12 @@ class Tenant
         return $this->status;
     }
 
-    public function createdAt(): ?DateTimeImmutable
+    public function createdAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): ?DateTimeImmutable
+    public function updatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }
@@ -86,7 +85,7 @@ class Tenant
 
     private function assertValidName(string $name): void
     {
-        if (trim($name) === '') {
+        if ('' === trim($name)) {
             throw new ValidationException(['name' => ['Name is required.']]);
         }
 
@@ -97,7 +96,7 @@ class Tenant
 
     private function assertValidSlug(string $slug): void
     {
-        if (trim($slug) === '') {
+        if ('' === trim($slug)) {
             throw new ValidationException(['slug' => ['Slug is required.']]);
         }
 

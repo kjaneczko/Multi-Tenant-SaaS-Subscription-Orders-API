@@ -5,39 +5,37 @@ namespace app\Domain\Product;
 use App\Domain\Currency;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
-use DateTime;
-use DateTimeImmutable;
 
 class Product
 {
     private function __construct(
-        private readonly ProductId          $id,
-        private readonly TenantId           $tenantId,
-        private string                      $sku,
-        private string                      $name,
-        private string                      $slug,
-        private ?string                      $description,
-        private int                         $priceCents,
-        private Currency                    $currency,
-        private ProductStatus               $status,
-        private ?DateTime                   $deletedAt,
-        private readonly ?DateTimeImmutable $createdAt,
-        private readonly ?DateTimeImmutable $updatedAt,
+        private readonly ProductId $id,
+        private readonly TenantId $tenantId,
+        private string $sku,
+        private string $name,
+        private string $slug,
+        private ?string $description,
+        private int $priceCents,
+        private Currency $currency,
+        private ProductStatus $status,
+        private ?\DateTime $deletedAt,
+        private readonly ?\DateTimeImmutable $createdAt,
+        private readonly ?\DateTimeImmutable $updatedAt,
     ) {}
 
     public static function create(
-        ProductId     $id,
-        TenantId      $tenantId,
-        string        $sku,
-        string        $name,
-        string        $slug,
-        ?string        $description,
-        int           $priceCents,
-        Currency      $currency,
+        ProductId $id,
+        TenantId $tenantId,
+        string $sku,
+        string $name,
+        string $slug,
+        ?string $description,
+        int $priceCents,
+        Currency $currency,
         ProductStatus $status,
-        ?DateTime     $deletedAt,
-        ?DateTimeImmutable $createdAt,
-        ?DateTimeImmutable $updatedAt,
+        ?\DateTime $deletedAt,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,
@@ -100,17 +98,17 @@ class Product
         return $this->status;
     }
 
-    public function deletedAt(): ?DateTime
+    public function deletedAt(): ?\DateTime
     {
         return $this->deletedAt;
     }
 
-    public function createdAt(): ?DateTimeImmutable
+    public function createdAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function updatedAt(): ?DateTimeImmutable
+    public function updatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }
@@ -155,7 +153,7 @@ class Product
         $this->status = $status;
     }
 
-    public function changeDeletedAt(?DateTime $deletedAt): void
+    public function changeDeletedAt(?\DateTime $deletedAt): void
     {
         $this->deletedAt = $deletedAt;
     }
