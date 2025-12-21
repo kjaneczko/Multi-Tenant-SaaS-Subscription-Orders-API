@@ -5,6 +5,7 @@ namespace app\Domain\AuditLog;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
 use app\Domain\User\UserId;
+use DateTimeImmutable;
 
 class AuditLog
 {
@@ -16,6 +17,7 @@ class AuditLog
         private string              $entityType,
         private string              $entityId,
         private string              $meta,
+        private ?DateTimeImmutable $createdAt,
     ) {
         $this->assertValidAction($action);
         $this->assertValidEntityType($entityType);
@@ -31,6 +33,7 @@ class AuditLog
         string $entityType,
         string $entityId,
         string $meta,
+        ?DateTimeImmutable $createdAt,
     ): self {
         return new self(
             id: $id,
@@ -40,6 +43,7 @@ class AuditLog
             entityType: $entityType,
             entityId: $entityId,
             meta: $meta,
+            createdAt: $createdAt,
         );
     }
 
@@ -76,6 +80,11 @@ class AuditLog
     public function meta(): string
     {
         return $this->meta;
+    }
+
+    public function createdAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
     }
 
     public function changeAction(string $action): void

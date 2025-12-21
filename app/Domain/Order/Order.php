@@ -7,6 +7,7 @@ use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
 use app\Domain\User\UserId;
 use DateTime;
+use DateTimeImmutable;
 
 class Order
 {
@@ -25,6 +26,8 @@ class Order
         private ?DateTime         $paidAt,
         private ?DateTime         $cancelledAt,
         private ?DateTime         $deletedAt,
+        private ?DateTimeImmutable $createdAt,
+        private ?DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidEmail($customerEmail);
         $this->assertValidSubtotalCents($subtotalCents);
@@ -38,16 +41,18 @@ class Order
         TenantId    $tenantId,
         UserId      $createdByUserId,
         string      $customerEmail,
-        OrderStatus $status,
-        Currency    $currency,
-        int         $subtotalCents,
-        int         $discountCents,
-        int         $taxCents,
-        int         $totalCents,
-        ?string     $notes,
-        ?DateTime   $paidAt,
-        ?DateTime   $cancelledAt,
-        ?DateTime   $deletedAt,
+        OrderStatus        $status,
+        Currency           $currency,
+        int                $subtotalCents,
+        int                $discountCents,
+        int                $taxCents,
+        int                $totalCents,
+        ?string            $notes,
+        ?DateTime          $paidAt,
+        ?DateTime          $cancelledAt,
+        ?DateTime          $deletedAt,
+        ?DateTimeImmutable $createdAt,
+        ?DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,
@@ -64,6 +69,8 @@ class Order
             paidAt: $paidAt,
             cancelledAt: $cancelledAt,
             deletedAt: $deletedAt,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
         );
     }
 
@@ -135,6 +142,16 @@ class Order
     public function deletedAt(): ?DateTime
     {
         return $this->deletedAt;
+    }
+
+    public function createdAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
     }
 
     public function changeStatus(OrderStatus $status): void

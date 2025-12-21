@@ -7,6 +7,7 @@ use app\Domain\Exception\ValidationException;
 use app\Domain\Order\OrderId;
 use app\Domain\Tenant\TenantId;
 use DateTime;
+use DateTimeImmutable;
 
 readonly class Payment
 {
@@ -20,6 +21,8 @@ readonly class Payment
         private int $amountCents,
         private Currency $currency,
         private DateTime $paidAd,
+        private ?DateTimeImmutable $createdAt,
+        private ?DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidProvider($provider);
         $this->assertValidReference($reference);
@@ -36,6 +39,8 @@ readonly class Payment
         int $amountCents,
         Currency $currency,
         DateTime $paidAd,
+        ?DateTimeImmutable $createdAt,
+        ?DateTimeImmutable $updatedAt
     ): self {
         return new self(
             id: $id,
@@ -47,6 +52,8 @@ readonly class Payment
             amountCents: $amountCents,
             currency: $currency,
             paidAd: $paidAd,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt
         );
     }
 
@@ -93,6 +100,16 @@ readonly class Payment
     public function paidAd(): DateTime
     {
         return $this->paidAd;
+    }
+
+    public function createdAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
     }
 
     public function assertValidProvider(string $provider): void

@@ -4,6 +4,7 @@ namespace app\Domain\Subscription;
 
 use app\Domain\Tenant\TenantId;
 use DateTime;
+use DateTimeImmutable;
 
 readonly class Subscription
 {
@@ -16,6 +17,8 @@ readonly class Subscription
         private DateTime       $currentPeriodStart,
         private DateTime       $currentPeriodEnd,
         private ?DateTime      $cancelledAt,
+        private ?DateTimeImmutable $createdAt,
+        private ?DateTimeImmutable $updatedAt,
     ) {}
 
     public static function create(
@@ -27,6 +30,8 @@ readonly class Subscription
         DateTime       $currentPeriodStart,
         DateTime       $currentPeriodEnd,
         ?DateTime      $cancelledAt,
+        ?DateTimeImmutable $createdAt,
+        ?DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,
@@ -37,6 +42,8 @@ readonly class Subscription
             currentPeriodStart: $currentPeriodStart,
             currentPeriodEnd: $currentPeriodEnd,
             cancelledAt: $cancelledAt,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
         );
     }
 
@@ -78,5 +85,15 @@ readonly class Subscription
     public function cancelledAt(): ?DateTime
     {
         return $this->cancelledAt;
+    }
+
+    public function createdAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
     }
 }

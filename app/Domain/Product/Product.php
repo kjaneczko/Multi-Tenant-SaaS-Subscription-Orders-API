@@ -6,6 +6,7 @@ use App\Domain\Currency;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
 use DateTime;
+use DateTimeImmutable;
 
 class Product
 {
@@ -20,6 +21,8 @@ class Product
         private Currency           $currency,
         private ProductStatus      $status,
         private ?DateTime          $deletedAt,
+        private ?DateTimeImmutable $createdAt,
+        private ?DateTimeImmutable $updatedAt,
     ) {}
 
     public static function create(
@@ -33,6 +36,8 @@ class Product
         Currency      $currency,
         ProductStatus $status,
         ?DateTime     $deletedAt,
+        ?DateTimeImmutable $createdAt,
+        ?DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,
@@ -45,6 +50,8 @@ class Product
             currency: $currency,
             status: $status,
             deletedAt: $deletedAt,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
         );
     }
 
@@ -96,6 +103,16 @@ class Product
     public function deletedAt(): ?DateTime
     {
         return $this->deletedAt;
+    }
+
+    public function createdAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
     }
 
     public function changeSku(string $sku): void

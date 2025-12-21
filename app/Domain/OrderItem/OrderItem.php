@@ -6,6 +6,7 @@ use app\Domain\Exception\ValidationException;
 use app\Domain\Order\OrderId;
 use app\Domain\Product\ProductId;
 use app\Domain\Tenant\TenantId;
+use DateTimeImmutable;
 
 class OrderItem
 {
@@ -19,6 +20,8 @@ class OrderItem
         private int $quantity,
         private int $unitPriceCents,
         private int $lineTotalCents,
+        private ?DateTimeImmutable $createdAt,
+        private ?DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidQuantity($quantity);
         $this->assertValidUnitPriceCents($unitPriceCents);
@@ -35,6 +38,8 @@ class OrderItem
         int $quantity,
         int $unitPriceCents,
         int $lineTotalCents,
+        ?DateTimeImmutable $createdAt,
+        ?DateTimeImmutable $updatedAt
     ): self {
         return new self(
             id: $id,
@@ -46,6 +51,8 @@ class OrderItem
             quantity: $quantity,
             unitPriceCents: $unitPriceCents,
             lineTotalCents: $lineTotalCents,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
         );
     }
 
@@ -92,6 +99,16 @@ class OrderItem
     public function lineTotalCents(): int
     {
         return $this->lineTotalCents;
+    }
+
+    public function createdAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
     }
 
     public function changeQuantity(int $quantity): void

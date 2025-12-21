@@ -3,6 +3,7 @@
 namespace app\Domain\Tenant;
 
 use app\Domain\Exception\ValidationException;
+use DateTimeImmutable;
 
 class Tenant
 {
@@ -11,6 +12,8 @@ class Tenant
         private string            $name,
         private string            $slug,
         private TenantStatus      $status,
+        private ?DateTimeImmutable $createdAt,
+        private ?DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidName($name);
         $this->assertValidSlug($slug);
@@ -21,12 +24,16 @@ class Tenant
         string $name,
         string $slug,
         TenantStatus $status,
+        ?DateTimeImmutable $createdAt,
+        ?DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,
             name: $name,
             slug: $slug,
             status: $status,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
         );
     }
 
@@ -48,6 +55,16 @@ class Tenant
     public function status(): TenantStatus
     {
         return $this->status;
+    }
+
+    public function createdAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
     }
 
     public function changeName(string $name): void

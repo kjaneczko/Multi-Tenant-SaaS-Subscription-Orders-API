@@ -5,6 +5,7 @@ namespace app\Domain\User;
 use app\Domain\Exception\ValidationException;
 use app\Domain\Tenant\TenantId;
 use DateTime;
+use DateTimeImmutable;
 
 readonly class User
 {
@@ -17,6 +18,8 @@ readonly class User
         private string    $password,
         private UserRole    $role,
         private bool      $isActive,
+        private ?DateTimeImmutable $createdAt,
+        private ?DateTimeImmutable $updatedAt,
     ) {
         $this->assertValidName($name);
         $this->assertValidEmail($email);
@@ -31,6 +34,8 @@ readonly class User
         string    $password,
         UserRole    $role,
         bool      $isActive,
+        ?DateTimeImmutable $createdAt,
+        ?DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,
@@ -41,6 +46,8 @@ readonly class User
             password: $password,
             role: $role,
             isActive: $isActive,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
         );
     }
 
@@ -82,6 +89,16 @@ readonly class User
     public function isActive(): bool
     {
         return $this->isActive;
+    }
+
+    public function createdAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function updatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
     }
 
     private function assertValidName(string $name): void
