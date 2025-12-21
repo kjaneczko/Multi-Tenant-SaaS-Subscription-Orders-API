@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->unsignedInteger('unit_price_cents');
             $table->unsignedInteger('line_total_cents');
             $table->timestamps();
+            $table->index(['tenant_id','product_id']);
         });
     }
 

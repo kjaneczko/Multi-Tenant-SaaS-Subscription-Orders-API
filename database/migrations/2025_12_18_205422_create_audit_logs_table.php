@@ -19,6 +19,9 @@ return new class extends Migration {
             $table->uuid('entity_id');
             $table->json('meta');
             $table->timestamp('created_at')->useCurrent();
+            $table->index(['tenant_id', 'actor_user_id']);
+            $table->index(['tenant_id', 'created_at']);
+            $table->index(['tenant_id', 'entity_type', 'entity_id']);
         });
     }
 

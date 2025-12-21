@@ -15,8 +15,8 @@ return new class extends Migration {
             $table->foreignId('tenant_id')->constrained()->restrictOnDelete();
             $table->foreignId('created_by_user_id')->constrained('users')->nullOnDelete();
             $table->string('customer_email');
-            $table->string('status')->index(); // ['new', 'pending', 'paid', 'cancelled']
-            $table->string('currency')->default('USD');
+            $table->string('status'); // ['new', 'pending', 'paid', 'cancelled']
+            $table->string('currency');
             $table->unsignedInteger('subtotal_cents')->default(0);
             $table->unsignedInteger('discount_cents')->default(0);
             $table->unsignedInteger('tax_cents')->default(0);
@@ -26,6 +26,8 @@ return new class extends Migration {
             $table->dateTime('cancelled_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->index(['tenant_id', 'created_at']);
+            $table->index(['tenant_id', 'status']);
         });
     }
 

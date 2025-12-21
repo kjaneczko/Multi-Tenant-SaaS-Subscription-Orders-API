@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->char('currency', 3)->default('USD');
             $table->string('status'); // ['active', 'inactive']
             $table->timestamps();
-            $table->softDeletes();
+            $table->softDeletes()->index();
             $table->unique(['tenant_id', 'sku']);
         });
     }

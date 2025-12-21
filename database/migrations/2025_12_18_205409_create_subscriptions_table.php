@@ -13,13 +13,15 @@ return new class extends Migration {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignId('tenant_id')->constrained('tenants')->restrictOnDelete();
-            $table->enum('plan', ['basic', 'pro', 'enterprise'])->index();
-            $table->enum('interval', ['monthly', 'yearly'])->index();
-            $table->string('status'); // ['active', 'past_due', 'cancelled']
+            $table->string('plan')->index(); // ['basic', 'pro', 'enterprise']
+            $table->string('interval')->index(); // ['monthly', 'yearly']
+            $table->string('status')->index(); // ['active', 'past_due', 'cancelled']
             $table->dateTime('current_period_start');
             $table->dateTime('current_period_end');
             $table->dateTime('cancelled_at');
             $table->timestamps();
+            $table->index(['tenant_id', 'status']);
+            $table->index(['tenant_id', 'current_period_end']);
         });
     }
 
