@@ -20,9 +20,9 @@ readonly class Payment
         private ?\DateTimeImmutable $createdAt,
         private ?\DateTimeImmutable $updatedAt,
     ) {
-        $this->assertValidProvider($provider);
-        $this->assertValidReference($reference);
-        $this->assertValidAmountCents($amountCents);
+        self::assertValidProvider($provider);
+        self::assertValidReference($reference);
+        self::assertValidAmountCents($amountCents);
     }
 
     public static function create(
@@ -37,6 +37,36 @@ readonly class Payment
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt
     ): self {
+        return new self(
+            id: $id,
+            orderId: $orderId,
+            status: $status,
+            provider: trim($provider),
+            reference: trim($reference),
+            amountCents: $amountCents,
+            currency: $currency,
+            paidAd: $paidAd,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt
+        );
+    }
+
+    public static function reconstitute(
+        PaymentId $id,
+        OrderId $orderId,
+        PaymentStatus $status,
+        string $provider,
+        ?string $reference,
+        int $amountCents,
+        Currency $currency,
+        \DateTime $paidAd,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt
+    ): self {
+        self::assertValidProvider($provider);
+        self::assertValidReference($reference);
+        self::assertValidAmountCents($amountCents);
+
         return new self(
             id: $id,
             orderId: $orderId,
@@ -101,21 +131,21 @@ readonly class Payment
         return $this->updatedAt;
     }
 
-    public function assertValidProvider(string $provider): void
+    private static function assertValidProvider(string $provider): void
     {
         if ('' === $provider) {
             throw new ValidationException(['provider' => ['Provider is required.']]);
         }
     }
 
-    private function assertValidReference(?string $reference): void
+    private static function assertValidReference(?string $reference): void
     {
         if (mb_strlen($reference) > 255) {
             throw new ValidationException(['reference' => ['Reference is too long. Must be less than 256 characters.']]);
         }
     }
 
-    private function assertValidAmountCents(int $amountCents): void
+    private static function assertValidAmountCents(int $amountCents): void
     {
         if ($amountCents <= 0) {
             throw new ValidationException(['amount_cents' => ['Amount cannot be less than or equal zero.']]);

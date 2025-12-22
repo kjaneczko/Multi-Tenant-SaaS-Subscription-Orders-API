@@ -19,8 +19,8 @@ readonly class User
         private ?\DateTimeImmutable $createdAt,
         private ?\DateTimeImmutable $updatedAt,
     ) {
-        $this->assertValidName($name);
-        $this->assertValidEmail($email);
+        self::assertValidName($name);
+        self::assertValidEmail($email);
     }
 
     public static function create(
@@ -35,6 +35,35 @@ readonly class User
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
     ): self {
+        return new self(
+            id: $id,
+            tenantId: $tenantId,
+            name: trim($name),
+            email: trim($email),
+            emailVerifiedAt: $emailVerifiedAt,
+            password: $password,
+            role: $role,
+            isActive: $isActive,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
+        );
+    }
+
+    public static function reconstitute(
+        UserId $id,
+        TenantId $tenantId,
+        string $name,
+        string $email,
+        ?\DateTime $emailVerifiedAt,
+        string $password,
+        UserRole $role,
+        bool $isActive,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt,
+    ): self {
+        self::assertValidName($name);
+        self::assertValidEmail($email);
+
         return new self(
             id: $id,
             tenantId: $tenantId,
@@ -99,7 +128,7 @@ readonly class User
         return $this->updatedAt;
     }
 
-    private function assertValidName(string $name): void
+    private static function assertValidName(string $name): void
     {
         if ('' === $name) {
             throw new ValidationException(['name' => ['Name is required.']]);
@@ -110,7 +139,7 @@ readonly class User
         }
     }
 
-    private function assertValidEmail(string $email): void
+    private static function assertValidEmail(string $email): void
     {
         if ('' === $email) {
             throw new ValidationException(['email' => ['Email is required.']]);

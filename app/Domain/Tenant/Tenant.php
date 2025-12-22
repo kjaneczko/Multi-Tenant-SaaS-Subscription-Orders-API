@@ -14,8 +14,8 @@ class Tenant
         private readonly ?\DateTimeImmutable $createdAt,
         private readonly ?\DateTimeImmutable $updatedAt,
     ) {
-        $this->assertValidName($name);
-        $this->assertValidSlug($slug);
+        self::assertValidName($name);
+        self::assertValidSlug($slug);
     }
 
     public static function create(
@@ -25,7 +25,29 @@ class Tenant
         TenantStatus $status,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
+    ): self
+    {
+        return new self(
+            id: $id,
+            name: trim($name),
+            slug: trim($slug),
+            status: $status,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
+        );
+    }
+
+    public static function reconstitute(
+        TenantId $id,
+        string $name,
+        string $slug,
+        TenantStatus $status,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt,
     ): self {
+        self::assertValidName($name);
+        self::assertValidSlug($slug);
+
         return new self(
             id: $id,
             name: $name,
@@ -68,13 +90,13 @@ class Tenant
 
     public function changeName(string $name): void
     {
-        $this->assertValidName($name);
+        self::assertValidName($name);
         $this->name = $name;
     }
 
     public function changeSlug(string $slug): void
     {
-        $this->assertValidSlug($slug);
+        self::assertValidSlug($slug);
         $this->slug = $slug;
     }
 
@@ -83,7 +105,7 @@ class Tenant
         $this->status = $status;
     }
 
-    private function assertValidName(string $name): void
+    private static function assertValidName(string $name): void
     {
         if ('' === trim($name)) {
             throw new ValidationException(['name' => ['Name is required.']]);
@@ -94,7 +116,7 @@ class Tenant
         }
     }
 
-    private function assertValidSlug(string $slug): void
+    private static function assertValidSlug(string $slug): void
     {
         if ('' === trim($slug)) {
             throw new ValidationException(['slug' => ['Slug is required.']]);

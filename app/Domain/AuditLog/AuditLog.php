@@ -18,10 +18,10 @@ class AuditLog
         private string $meta,
         private readonly ?\DateTimeImmutable $createdAt,
     ) {
-        $this->assertValidAction($action);
-        $this->assertValidEntityType($entityType);
-        $this->assertValidEntityId($entityId);
-        $this->assertValidMeta($meta);
+        self::assertValidAction($action);
+        self::assertValidEntityType($entityType);
+        self::assertValidEntityId($entityId);
+        self::assertValidMeta($meta);
     }
 
     public static function create(
@@ -34,6 +34,34 @@ class AuditLog
         string $meta,
         ?\DateTimeImmutable $createdAt,
     ): self {
+        return new self(
+            id: $id,
+            tenantId: $tenantId,
+            actorUserId: $actorUserId,
+            action: trim($action),
+            entityType: trim($entityType),
+            entityId: trim($entityId),
+            meta: $meta,
+            createdAt: $createdAt,
+        );
+    }
+
+    public static function reconstitute(
+        AuditLogId $id,
+        TenantId $tenantId,
+        UserId $actorUserId,
+        string $action,
+        string $entityType,
+        string $entityId,
+        string $meta,
+        ?\DateTimeImmutable $createdAt,
+    ): self
+    {
+        self::assertValidAction($action);
+        self::assertValidEntityType($entityType);
+        self::assertValidEntityId($entityId);
+        self::assertValidMeta($meta);
+
         return new self(
             id: $id,
             tenantId: $tenantId,
@@ -88,50 +116,50 @@ class AuditLog
 
     public function changeAction(string $action): void
     {
-        $this->assertValidAction($action);
+        self::assertValidAction($action);
         $this->action = $action;
     }
 
     public function changeEntityType(string $entityType): void
     {
-        $this->assertValidEntityType($entityType);
+        self::assertValidEntityType($entityType);
         $this->entityType = $entityType;
     }
 
     public function changeEntityId(string $entityId): void
     {
-        $this->assertValidEntityId($entityId);
+        self::assertValidEntityId($entityId);
         $this->entityId = $entityId;
     }
 
     public function changeMeta(string $meta): void
     {
-        $this->assertValidMeta($meta);
+        self::assertValidMeta($meta);
         $this->meta = $meta;
     }
 
-    private function assertValidAction(string $action): void
+    private static function assertValidAction(string $action): void
     {
         if ('' === $action) {
             throw new ValidationException(['action' => ['Action is required.']]);
         }
     }
 
-    private function assertValidEntityType(string $entityType): void
+    private static function assertValidEntityType(string $entityType): void
     {
         if ('' === $entityType) {
             throw new ValidationException(['entity_type' => ['Entity type is required.']]);
         }
     }
 
-    private function assertValidEntityId(string $entityId): void
+    private static function assertValidEntityId(string $entityId): void
     {
         if ('' === $entityId) {
             throw new ValidationException(['entity_id' => ['Entity ID is required.']]);
         }
     }
 
-    private function assertValidMeta(string $meta): void
+    private static function assertValidMeta(string $meta): void
     {
         if ('' === $meta) {
             throw new ValidationException(['meta' => ['Meta is required.']]);

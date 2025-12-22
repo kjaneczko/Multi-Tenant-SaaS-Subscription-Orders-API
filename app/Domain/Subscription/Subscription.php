@@ -45,6 +45,32 @@ readonly class Subscription
         );
     }
 
+    public static function reconstitute(
+        SubscriptionId $id,
+        TenantId $tenantId,
+        SubscriptionPlan $plan,
+        SubscriptionInterval $interval,
+        SubscriptionStatus $status,
+        \DateTime $currentPeriodStart,
+        \DateTime $currentPeriodEnd,
+        ?\DateTime $cancelledAt,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt,
+    ): self {
+        return new self(
+            id: $id,
+            tenantId: $tenantId,
+            plan: $plan,
+            interval: $interval,
+            status: $status,
+            currentPeriodStart: $currentPeriodStart,
+            currentPeriodEnd: $currentPeriodEnd,
+            cancelledAt: $cancelledAt,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
+        );
+    }
+
     public function id(): SubscriptionId
     {
         return $this->id;

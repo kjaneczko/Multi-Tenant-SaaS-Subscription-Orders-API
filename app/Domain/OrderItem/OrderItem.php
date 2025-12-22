@@ -20,9 +20,9 @@ class OrderItem
         private readonly ?\DateTimeImmutable $createdAt,
         private readonly ?\DateTimeImmutable $updatedAt,
     ) {
-        $this->assertValidQuantity($quantity);
-        $this->assertValidUnitPriceCents($unitPriceCents);
-        $this->assertValidLineTotalCents($lineTotalCents);
+        self::assertValidQuantity($quantity);
+        self::assertValidUnitPriceCents($unitPriceCents);
+        self::assertValidLineTotalCents($lineTotalCents);
     }
 
     public static function create(
@@ -37,6 +37,36 @@ class OrderItem
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt
     ): self {
+        return new self(
+            id: $id,
+            orderId: $orderId,
+            productId: $productId,
+            productNameSnapshot: $productNameSnapshot,
+            skuSnapshot: $skuSnapshot,
+            quantity: $quantity,
+            unitPriceCents: $unitPriceCents,
+            lineTotalCents: $lineTotalCents,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
+        );
+    }
+
+    public static function reconstitute(
+        OrderItemId $id,
+        OrderId $orderId,
+        ProductId $productId,
+        string $productNameSnapshot,
+        string $skuSnapshot,
+        int $quantity,
+        int $unitPriceCents,
+        int $lineTotalCents,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt
+    ): self {
+        self::assertValidQuantity($quantity);
+        self::assertValidUnitPriceCents($unitPriceCents);
+        self::assertValidLineTotalCents($lineTotalCents);
+
         return new self(
             id: $id,
             orderId: $orderId,
@@ -103,23 +133,23 @@ class OrderItem
 
     public function changeQuantity(int $quantity): void
     {
-        $this->assertValidQuantity($quantity);
+        self::assertValidQuantity($quantity);
         $this->quantity = $quantity;
     }
 
     public function changeUnitPriceCents(int $unitPriceCents): void
     {
-        $this->assertValidUnitPriceCents($unitPriceCents);
+        self::assertValidUnitPriceCents($unitPriceCents);
         $this->unitPriceCents = $unitPriceCents;
     }
 
     public function changeLineTotalCents(int $lineTotalCents): void
     {
-        $this->assertValidLineTotalCents($lineTotalCents);
+        self::assertValidLineTotalCents($lineTotalCents);
         $this->lineTotalCents = $lineTotalCents;
     }
 
-    private function assertValidQuantity(int $quantity): void
+    private static function assertValidQuantity(int $quantity): void
     {
         if ($quantity < 0) {
             throw new ValidationException(
@@ -128,7 +158,7 @@ class OrderItem
         }
     }
 
-    private function assertValidUnitPriceCents(int $unitPriceCents): void
+    private static function assertValidUnitPriceCents(int $unitPriceCents): void
     {
         if ($unitPriceCents < 0) {
             throw new ValidationException(
@@ -137,7 +167,7 @@ class OrderItem
         }
     }
 
-    private function assertValidLineTotalCents(int $lineTotalCents): void
+    private static function assertValidLineTotalCents(int $lineTotalCents): void
     {
         if ($lineTotalCents < 0) {
             throw new ValidationException(

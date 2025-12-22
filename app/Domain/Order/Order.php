@@ -27,11 +27,11 @@ class Order
         private readonly ?\DateTimeImmutable $createdAt,
         private readonly ?\DateTimeImmutable $updatedAt,
     ) {
-        $this->assertValidEmail($customerEmail);
-        $this->assertValidSubtotalCents($subtotalCents);
-        $this->assertValidDiscountCents($discountCents);
-        $this->assertValidTaxCents($taxCents);
-        $this->assertValidTotalCents($totalCents);
+        self::assertValidEmail($customerEmail);
+        self::assertValidSubtotalCents($subtotalCents);
+        self::assertValidDiscountCents($discountCents);
+        self::assertValidTaxCents($taxCents);
+        self::assertValidTotalCents($totalCents);
     }
 
     public static function create(
@@ -52,6 +52,50 @@ class Order
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
     ): self {
+        return new self(
+            id: $id,
+            tenantId: $tenantId,
+            createdByUserId: $createdByUserId,
+            customerEmail: trim($customerEmail),
+            status: $status,
+            currency: $currency,
+            subtotalCents: $subtotalCents,
+            discountCents: $discountCents,
+            taxCents: $taxCents,
+            totalCents: $totalCents,
+            notes: $notes,
+            paidAt: $paidAt,
+            cancelledAt: $cancelledAt,
+            deletedAt: $deletedAt,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
+        );
+    }
+
+    public static function reconstitute(
+        OrderId $id,
+        TenantId $tenantId,
+        UserId $createdByUserId,
+        string $customerEmail,
+        OrderStatus $status,
+        Currency $currency,
+        int $subtotalCents,
+        int $discountCents,
+        int $taxCents,
+        int $totalCents,
+        ?string $notes,
+        ?\DateTime $paidAt,
+        ?\DateTime $cancelledAt,
+        ?\DateTime $deletedAt,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt,
+    ): self {
+        self::assertValidEmail($customerEmail);
+        self::assertValidSubtotalCents($subtotalCents);
+        self::assertValidDiscountCents($discountCents);
+        self::assertValidTaxCents($taxCents);
+        self::assertValidTotalCents($totalCents);
+
         return new self(
             id: $id,
             tenantId: $tenantId,
@@ -159,7 +203,7 @@ class Order
 
     public function changeCustomerEmail(string $customerEmail): void
     {
-        $this->assertValidEmail($customerEmail);
+        self::assertValidEmail($customerEmail);
         $this->customerEmail = $customerEmail;
     }
 
@@ -170,25 +214,25 @@ class Order
 
     public function changeSubtotalCents(float $subtotalCents): void
     {
-        $this->assertValidSubtotalCents($subtotalCents);
+        self::assertValidSubtotalCents($subtotalCents);
         $this->subtotalCents = $subtotalCents;
     }
 
     public function changeDiscountCents(float $discountCents): void
     {
-        $this->assertValidDiscountCents($discountCents);
+        self::assertValidDiscountCents($discountCents);
         $this->discountCents = $discountCents;
     }
 
     public function changeTaxCents(float $taxCents): void
     {
-        $this->assertValidTaxCents($taxCents);
+        self::assertValidTaxCents($taxCents);
         $this->taxCents = $taxCents;
     }
 
     public function changeTotalCents(float $totalCents): void
     {
-        $this->assertValidTotalCents($totalCents);
+        self::assertValidTotalCents($totalCents);
         $this->totalCents = $totalCents;
     }
 
@@ -212,7 +256,7 @@ class Order
         $this->deletedAt = $deletedAt;
     }
 
-    private function assertValidEmail(string $customerEmail): void
+    private static function assertValidEmail(string $customerEmail): void
     {
         if (!filter_var($customerEmail, FILTER_VALIDATE_EMAIL)) {
             throw new ValidationException(
@@ -221,28 +265,28 @@ class Order
         }
     }
 
-    private function assertValidSubtotalCents(int $subtotalCents): void
+    private static function assertValidSubtotalCents(int $subtotalCents): void
     {
         if ($subtotalCents < 0) {
             throw new ValidationException(['subtotal_cents' => ['Subtotal must be greater than 0 or equal to 0.']]);
         }
     }
 
-    private function assertValidDiscountCents(int $discountCents): void
+    private static function assertValidDiscountCents(int $discountCents): void
     {
         if ($discountCents < 0) {
             throw new ValidationException(['discount_cents' => ['Discount must be greater than 0 or equal to 0.']]);
         }
     }
 
-    private function assertValidTaxCents(int $taxCents): void
+    private static function assertValidTaxCents(int $taxCents): void
     {
         if ($taxCents < 0) {
             throw new ValidationException(['tax_cents' => ['Tax must be greater than 0 or equal to 0.']]);
         }
     }
 
-    private function assertValidTotalCents(int $totalCents): void
+    private static function assertValidTotalCents(int $totalCents): void
     {
         if ($totalCents < 0) {
             throw new ValidationException(['total_cents' => ['Total amount must be greater than 0 or equal to 0.']]);
