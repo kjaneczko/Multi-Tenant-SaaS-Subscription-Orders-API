@@ -1,8 +1,8 @@
 <?php
 
-namespace app\Domain\Tenant;
+namespace App\Domain\Tenant;
 
-use app\Domain\Exception\ValidationException;
+use App\Domain\Exception\ValidationException;
 
 class Tenant
 {

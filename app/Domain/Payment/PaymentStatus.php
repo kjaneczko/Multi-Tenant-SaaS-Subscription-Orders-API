@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Domain\Payment;
+namespace App\Domain\Payment;
 
 enum PaymentStatus: string
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Controllers\Payment;
+namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -1,10 +1,10 @@
 <?php
 
-namespace app\Domain\OrderItem;
+namespace App\Domain\OrderItem;
 
-use app\Domain\Exception\ValidationException;
-use app\Domain\Order\OrderId;
-use app\Domain\Product\ProductId;
+use App\Domain\Exception\ValidationException;
+use App\Domain\Order\OrderId;
+use App\Domain\Product\ProductId;
 
 class OrderItem
 {
@@ -143,15 +143,17 @@ class OrderItem
         $this->unitPriceCents = $unitPriceCents;
     }
 
-    public function changeLineTotalCents(int $lineTotalCents): void
+    public function changeLineTotalCents(): void
     {
+        $lineTotalCents = $this->quantity * $this->unitPriceCents;
         self::assertValidLineTotalCents($lineTotalCents);
+
         $this->lineTotalCents = $lineTotalCents;
     }
 
     private static function assertValidQuantity(int $quantity): void
     {
-        if ($quantity < 0) {
+        if ($quantity <= 0) {
             throw new ValidationException(
                 ['quantity' => ['Quantity must be greater than 0.']],
             );
@@ -162,7 +164,7 @@ class OrderItem
     {
         if ($unitPriceCents < 0) {
             throw new ValidationException(
-                ['unit_price_cents' => ['Unit price must be greater than 0.']],
+                ['unit_price_cents' => ['Unit price cannot be negative.']],
             );
         }
     }
@@ -171,7 +173,7 @@ class OrderItem
     {
         if ($lineTotalCents < 0) {
             throw new ValidationException(
-                ['line_total_cents' => ['Line total must be greater than 0.']],
+                ['line_total_cents' => ['Line total cannot be negative.']],
             );
         }
     }

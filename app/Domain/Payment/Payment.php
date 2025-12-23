@@ -1,22 +1,22 @@
 <?php
 
-namespace app\Domain\Payment;
+namespace App\Domain\Payment;
 
 use App\Domain\Currency;
-use app\Domain\Exception\ValidationException;
-use app\Domain\Order\OrderId;
+use App\Domain\Exception\ValidationException;
+use App\Domain\Order\OrderId;
 
 readonly class Payment
 {
     private function __construct(
-        private PaymentId $id,
-        private OrderId $orderId,
-        private PaymentStatus $status,
-        private string $provider,
-        private ?string $reference,
-        private int $amountCents,
-        private Currency $currency,
-        private \DateTime $paidAd,
+        private PaymentId           $id,
+        private OrderId             $orderId,
+        private PaymentStatus       $status,
+        private string              $provider,
+        private ?string             $reference,
+        private int                 $amountCents,
+        private Currency            $currency,
+        private \DateTime           $paidAt,
         private ?\DateTimeImmutable $createdAt,
         private ?\DateTimeImmutable $updatedAt,
     ) {
@@ -26,14 +26,14 @@ readonly class Payment
     }
 
     public static function create(
-        PaymentId $id,
-        OrderId $orderId,
-        PaymentStatus $status,
-        string $provider,
-        ?string $reference,
-        int $amountCents,
-        Currency $currency,
-        \DateTime $paidAd,
+        PaymentId           $id,
+        OrderId             $orderId,
+        PaymentStatus       $status,
+        string              $provider,
+        ?string             $reference,
+        int                 $amountCents,
+        Currency            $currency,
+        \DateTime           $paidAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt
     ): self {
@@ -42,24 +42,24 @@ readonly class Payment
             orderId: $orderId,
             status: $status,
             provider: trim($provider),
-            reference: trim($reference),
+            reference: $reference !== null ? trim($reference) : null,
             amountCents: $amountCents,
             currency: $currency,
-            paidAd: $paidAd,
+            paidAt: $paidAt,
             createdAt: $createdAt,
             updatedAt: $updatedAt
         );
     }
 
     public static function reconstitute(
-        PaymentId $id,
-        OrderId $orderId,
-        PaymentStatus $status,
-        string $provider,
-        ?string $reference,
-        int $amountCents,
-        Currency $currency,
-        \DateTime $paidAd,
+        PaymentId           $id,
+        OrderId             $orderId,
+        PaymentStatus       $status,
+        string              $provider,
+        ?string             $reference,
+        int                 $amountCents,
+        Currency            $currency,
+        \DateTime           $paidAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt
     ): self {
@@ -75,7 +75,7 @@ readonly class Payment
             reference: $reference,
             amountCents: $amountCents,
             currency: $currency,
-            paidAd: $paidAd,
+            paidAt: $paidAt,
             createdAt: $createdAt,
             updatedAt: $updatedAt
         );
@@ -116,9 +116,9 @@ readonly class Payment
         return $this->currency;
     }
 
-    public function paidAd(): \DateTime
+    public function paidAt(): \DateTime
     {
-        return $this->paidAd;
+        return $this->paidAt;
     }
 
     public function createdAt(): ?\DateTimeImmutable
@@ -140,7 +140,7 @@ readonly class Payment
 
     private static function assertValidReference(?string $reference): void
     {
-        if (mb_strlen($reference) > 255) {
+        if ($reference !== null && mb_strlen($reference) > 255) {
             throw new ValidationException(['reference' => ['Reference is too long. Must be less than 256 characters.']]);
         }
     }

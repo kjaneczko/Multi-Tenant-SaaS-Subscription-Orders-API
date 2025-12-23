@@ -1,10 +1,10 @@
 <?php
 
-namespace app\Domain\AuditLog;
+namespace App\Domain\AuditLog;
 
-use app\Domain\Exception\ValidationException;
-use app\Domain\Tenant\TenantId;
-use app\Domain\User\UserId;
+use App\Domain\Exception\ValidationException;
+use App\Domain\Tenant\TenantId;
+use App\Domain\User\UserId;
 
 class AuditLog
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace app\Domain\User;
+namespace App\Domain\User;
 
-use app\Domain\Exception\ValidationException;
-use app\Domain\Tenant\TenantId;
+use App\Domain\Exception\ValidationException;
+use App\Domain\Tenant\TenantId;
 
 readonly class User
 {
@@ -141,12 +141,10 @@ readonly class User
 
     private static function assertValidEmail(string $email): void
     {
-        if ('' === $email) {
-            throw new ValidationException(['email' => ['Email is required.']]);
-        }
-
-        if (mb_strlen($email) > 255) {
-            throw new ValidationException(['email' => ['Email is too long. Must be less than 256 characters.']]);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new ValidationException(
+                ['email' => ['Email is not a valid email address.']],
+            );
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Domain\OrderItem;
+namespace App\Domain\OrderItem;
 
 readonly class OrderItemId
 {

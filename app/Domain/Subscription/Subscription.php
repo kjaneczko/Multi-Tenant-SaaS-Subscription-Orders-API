@@ -1,8 +1,8 @@
 <?php
 
-namespace app\Domain\Subscription;
+namespace App\Domain\Subscription;
 
-use app\Domain\Tenant\TenantId;
+use App\Domain\Tenant\TenantId;
 
 readonly class Subscription
 {

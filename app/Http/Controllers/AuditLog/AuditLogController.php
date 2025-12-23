@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Controllers\AuditLog;
+namespace App\Http\Controllers\AuditLog;
 
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;

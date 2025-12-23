@@ -1,10 +1,10 @@
 <?php
 
-namespace app\Domain\Product;
+namespace App\Domain\Product;
 
 use App\Domain\Currency;
-use app\Domain\Exception\ValidationException;
-use app\Domain\Tenant\TenantId;
+use App\Domain\Exception\ValidationException;
+use App\Domain\Tenant\TenantId;
 
 class Product
 {
@@ -23,6 +23,7 @@ class Product
         private readonly ?\DateTimeImmutable $updatedAt,
     ) {
         self::assertValidName($name);
+        self::assertValidSku($sku);
         self::assertValidSlug($slug);
         self::assertValidPriceCents($priceCents);
     }
@@ -227,7 +228,7 @@ class Product
     private static function assertValidPriceCents(float $priceCents): void
     {
         if ($priceCents < 0) {
-            throw new ValidationException(['priceCents' => ['Price must be greater than 0 or equal to 0.']]);
+            throw new ValidationException(['priceCents' => ['Price cannot be negative.']]);
         }
     }
 }

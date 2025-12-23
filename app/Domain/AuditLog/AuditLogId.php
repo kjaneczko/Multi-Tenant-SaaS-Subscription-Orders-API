@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Domain\AuditLog;
+namespace App\Domain\AuditLog;
 
 readonly class AuditLogId
 {

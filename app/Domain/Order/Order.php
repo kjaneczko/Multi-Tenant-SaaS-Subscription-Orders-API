@@ -1,11 +1,11 @@
 <?php
 
-namespace app\Domain\Order;
+namespace App\Domain\Order;
 
 use App\Domain\Currency;
-use app\Domain\Exception\ValidationException;
-use app\Domain\Tenant\TenantId;
-use app\Domain\User\UserId;
+use App\Domain\Exception\ValidationException;
+use App\Domain\Tenant\TenantId;
+use App\Domain\User\UserId;
 
 class Order
 {
@@ -166,7 +166,7 @@ class Order
         return $this->totalCents;
     }
 
-    public function notes(): string
+    public function notes(): ?string
     {
         return $this->notes;
     }
@@ -212,27 +212,29 @@ class Order
         $this->currency = $currency;
     }
 
-    public function changeSubtotalCents(float $subtotalCents): void
+    public function changeSubtotalCents(int $subtotalCents): void
     {
         self::assertValidSubtotalCents($subtotalCents);
         $this->subtotalCents = $subtotalCents;
     }
 
-    public function changeDiscountCents(float $discountCents): void
+    public function changeDiscountCents(int $discountCents): void
     {
         self::assertValidDiscountCents($discountCents);
         $this->discountCents = $discountCents;
     }
 
-    public function changeTaxCents(float $taxCents): void
+    public function changeTaxCents(int $taxCents): void
     {
         self::assertValidTaxCents($taxCents);
         $this->taxCents = $taxCents;
     }
 
-    public function changeTotalCents(float $totalCents): void
+    public function changeTotalCents(): void
     {
+        $totalCents = $this->subtotalCents - $this->discountCents + $this->taxCents;
         self::assertValidTotalCents($totalCents);
+
         $this->totalCents = $totalCents;
     }
 
@@ -268,28 +270,28 @@ class Order
     private static function assertValidSubtotalCents(int $subtotalCents): void
     {
         if ($subtotalCents < 0) {
-            throw new ValidationException(['subtotal_cents' => ['Subtotal must be greater than 0 or equal to 0.']]);
+            throw new ValidationException(['subtotal_cents' => ['Subtotal cannot be negative.']]);
         }
     }
 
     private static function assertValidDiscountCents(int $discountCents): void
     {
         if ($discountCents < 0) {
-            throw new ValidationException(['discount_cents' => ['Discount must be greater than 0 or equal to 0.']]);
+            throw new ValidationException(['discount_cents' => ['Discount cannot be negative.']]);
         }
     }
 
     private static function assertValidTaxCents(int $taxCents): void
     {
         if ($taxCents < 0) {
-            throw new ValidationException(['tax_cents' => ['Tax must be greater than 0 or equal to 0.']]);
+            throw new ValidationException(['tax_cents' => ['Tax cannot be negative.']]);
         }
     }
 
     private static function assertValidTotalCents(int $totalCents): void
     {
         if ($totalCents < 0) {
-            throw new ValidationException(['total_cents' => ['Total amount must be greater than 0 or equal to 0.']]);
+            throw new ValidationException(['total_cents' => ['Total amount cannot be negative.']]);
         }
     }
 }

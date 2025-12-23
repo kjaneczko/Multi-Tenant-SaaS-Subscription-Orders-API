@@ -1,6 +1,6 @@
 <?php
 
-use app\Domain\Exception\ValidationException;
+use App\Domain\Exception\ValidationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;

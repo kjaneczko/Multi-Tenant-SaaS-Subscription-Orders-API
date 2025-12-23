@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Domain\Subscription;
+namespace App\Domain\Subscription;
 
 enum SubscriptionStatus: string
 {

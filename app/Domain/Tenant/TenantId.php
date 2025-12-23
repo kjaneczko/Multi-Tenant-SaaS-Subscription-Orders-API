@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Domain\Tenant;
+namespace App\Domain\Tenant;
 
 readonly class TenantId
 {

@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('tenant_id')->constrained('tenants')->restrictOnDelete();
-            $table->string('sku');
+            $table->string('sku', 64);
             $table->string('name');
             $table->string('slug');
             $table->text('description')->nullable();

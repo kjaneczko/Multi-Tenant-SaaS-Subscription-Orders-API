@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Domain\Product;
+namespace App\Domain\Product;
 
 readonly class ProductId
 {
