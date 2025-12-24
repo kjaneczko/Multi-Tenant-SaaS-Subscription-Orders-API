@@ -2,10 +2,14 @@
 
 namespace App\Domain\Order;
 
+use App\Domain\AmountCents;
 use App\Domain\Currency;
+use App\Domain\Email;
 use App\Domain\Exception\ValidationException;
+use App\Domain\OrderItem\OrderItemId;
 use App\Domain\Tenant\TenantId;
 use App\Domain\User\UserId;
+use DomainException;
 
 class Order
 {
@@ -13,88 +17,46 @@ class Order
         private readonly OrderId $id,
         private readonly TenantId $tenantId,
         private readonly UserId $createdByUserId,
-        private string $customerEmail,
-        private OrderStatus $status,
-        private Currency $currency,
-        private int $subtotalCents,
-        private int $discountCents,
-        private int $taxCents,
-        private int $totalCents,
-        private ?string $notes,
-        private ?\DateTime $paidAt,
-        private ?\DateTime $cancelledAt,
-        private ?\DateTime $deletedAt,
+        private Email $customerEmail,
+        private OrderStatus                  $status,
+        private Currency                     $currency,
+        private AmountCents                  $subtotalCents,
+        private AmountCents                  $discountCents,
+        private AmountCents                  $taxCents,
+        private AmountCents                  $totalCents,
+        private ?string                      $notes,
+        private ?\DateTimeImmutable          $paidAt,
+        private ?\DateTimeImmutable          $refundedAt,
+        private ?\DateTimeImmutable          $cancelledAt,
+        private ?\DateTimeImmutable          $deliveredAt,
         private readonly ?\DateTimeImmutable $createdAt,
         private readonly ?\DateTimeImmutable $updatedAt,
     ) {
-        self::assertValidEmail($customerEmail);
-        self::assertValidSubtotalCents($subtotalCents);
-        self::assertValidDiscountCents($discountCents);
-        self::assertValidTaxCents($taxCents);
-        self::assertValidTotalCents($totalCents);
+        $this->assertValidSubtotalCents($subtotalCents);
+        $this->assertValidDiscountCents($discountCents);
+        $this->assertValidTaxCents($taxCents);
+        $this->assertValidTotalCents($totalCents);
     }
 
     public static function create(
         OrderId $id,
         TenantId $tenantId,
         UserId $createdByUserId,
-        string $customerEmail,
+        Email $customerEmail,
         OrderStatus $status,
         Currency $currency,
-        int $subtotalCents,
-        int $discountCents,
-        int $taxCents,
-        int $totalCents,
+        AmountCents $subtotalCents,
+        AmountCents $discountCents,
+        AmountCents $taxCents,
         ?string $notes,
-        ?\DateTime $paidAt,
-        ?\DateTime $cancelledAt,
-        ?\DateTime $deletedAt,
+        ?\DateTimeImmutable $paidAt,
+        ?\DateTimeImmutable $refundedAt,
+        ?\DateTimeImmutable $cancelledAt,
+        ?\DateTimeImmutable $deliveredAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
     ): self {
-        return new self(
-            id: $id,
-            tenantId: $tenantId,
-            createdByUserId: $createdByUserId,
-            customerEmail: trim($customerEmail),
-            status: $status,
-            currency: $currency,
-            subtotalCents: $subtotalCents,
-            discountCents: $discountCents,
-            taxCents: $taxCents,
-            totalCents: $totalCents,
-            notes: $notes,
-            paidAt: $paidAt,
-            cancelledAt: $cancelledAt,
-            deletedAt: $deletedAt,
-            createdAt: $createdAt,
-            updatedAt: $updatedAt,
-        );
-    }
-
-    public static function reconstitute(
-        OrderId $id,
-        TenantId $tenantId,
-        UserId $createdByUserId,
-        string $customerEmail,
-        OrderStatus $status,
-        Currency $currency,
-        int $subtotalCents,
-        int $discountCents,
-        int $taxCents,
-        int $totalCents,
-        ?string $notes,
-        ?\DateTime $paidAt,
-        ?\DateTime $cancelledAt,
-        ?\DateTime $deletedAt,
-        ?\DateTimeImmutable $createdAt,
-        ?\DateTimeImmutable $updatedAt,
-    ): self {
-        self::assertValidEmail($customerEmail);
-        self::assertValidSubtotalCents($subtotalCents);
-        self::assertValidDiscountCents($discountCents);
-        self::assertValidTaxCents($taxCents);
-        self::assertValidTotalCents($totalCents);
+        $totalCents = $subtotalCents->sub($discountCents)->add($taxCents);
 
         return new self(
             id: $id,
@@ -109,8 +71,50 @@ class Order
             totalCents: $totalCents,
             notes: $notes,
             paidAt: $paidAt,
+            refundedAt: $refundedAt,
             cancelledAt: $cancelledAt,
-            deletedAt: $deletedAt,
+            deliveredAt: $deliveredAt,
+            createdAt: $createdAt,
+            updatedAt: $updatedAt,
+        );
+    }
+
+    public static function reconstitute(
+        OrderId $id,
+        TenantId $tenantId,
+        UserId $createdByUserId,
+        Email $customerEmail,
+        OrderStatus $status,
+        Currency $currency,
+        AmountCents $subtotalCents,
+        AmountCents $discountCents,
+        AmountCents $taxCents,
+        AmountCents $totalCents,
+        ?string $notes,
+        ?\DateTimeImmutable $paidAt,
+        ?\DateTimeImmutable $refundedAt,
+        ?\DateTimeImmutable $cancelledAt,
+        ?\DateTimeImmutable $deliveredAt,
+        ?\DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $updatedAt,
+    ): self {
+        // totalCents is a book value/snapshot and is not recalculated when read.
+        return new self(
+            id: $id,
+            tenantId: $tenantId,
+            createdByUserId: $createdByUserId,
+            customerEmail: $customerEmail,
+            status: $status,
+            currency: $currency,
+            subtotalCents: $subtotalCents,
+            discountCents: $discountCents,
+            taxCents: $taxCents,
+            totalCents: $totalCents,
+            notes: $notes,
+            paidAt: $paidAt,
+            refundedAt: $refundedAt,
+            cancelledAt: $cancelledAt,
+            deliveredAt: $deliveredAt,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
         );
@@ -131,7 +135,7 @@ class Order
         return $this->createdByUserId;
     }
 
-    public function customerEmail(): string
+    public function customerEmail(): Email
     {
         return $this->customerEmail;
     }
@@ -146,22 +150,22 @@ class Order
         return $this->currency;
     }
 
-    public function subtotalCents(): int
+    public function subtotalCents(): AmountCents
     {
         return $this->subtotalCents;
     }
 
-    public function discountCents(): int
+    public function discountCents(): AmountCents
     {
         return $this->discountCents;
     }
 
-    public function taxCents(): int
+    public function taxCents(): AmountCents
     {
         return $this->taxCents;
     }
 
-    public function totalCents(): int
+    public function totalCents(): AmountCents
     {
         return $this->totalCents;
     }
@@ -171,19 +175,24 @@ class Order
         return $this->notes;
     }
 
-    public function paidAt(): ?\DateTime
+    public function paidAt(): ?\DateTimeImmutable
     {
         return $this->paidAt;
     }
 
-    public function cancelledAt(): ?\DateTime
+    public function refundedAt(): ?\DateTimeImmutable
+    {
+        return $this->refundedAt;
+    }
+
+    public function cancelledAt(): ?\DateTimeImmutable
     {
         return $this->cancelledAt;
     }
 
-    public function deletedAt(): ?\DateTime
+    public function deliveredAt(): ?\DateTimeImmutable
     {
-        return $this->deletedAt;
+        return $this->deliveredAt;
     }
 
     public function createdAt(): ?\DateTimeImmutable
@@ -196,44 +205,117 @@ class Order
         return $this->updatedAt;
     }
 
-    public function changeStatus(OrderStatus $status): void
+    public function changeStatus(OrderStatus $status, \DateTimeImmutable $now): void
     {
+        if ($status === $this->status) {
+            return;
+        }
+
+        $allowedTransitions = match ($this->status) {
+            OrderStatus::NEW => [
+                OrderStatus::WAITING_PAYMENT,
+                OrderStatus::CANCELLED,
+            ],
+
+            OrderStatus::WAITING_PAYMENT => [
+                OrderStatus::PAID,
+                OrderStatus::CANCELLED,
+            ],
+
+            OrderStatus::PAID => [
+                OrderStatus::PENDING,
+            ],
+
+            OrderStatus::PENDING => [
+                OrderStatus::SENT,
+            ],
+
+            OrderStatus::SENT => [
+                OrderStatus::DELIVERED,
+            ],
+
+            OrderStatus::DELIVERED => [
+                OrderStatus::REFUNDED,
+            ],
+
+            default => [], // CANCELLED, REFUNDED
+        };
+
+        if (!in_array($status, $allowedTransitions, true)) {
+            throw new DomainException(
+                sprintf(
+                    'Cannot change status from %s to %s.',
+                    $this->status->value,
+                    $status->value
+                )
+            );
+        }
+
+        // Ustaw daty tylko przy wejściu w dany status
+        if ($status === OrderStatus::PAID && $this->paidAt === null) {
+            $this->paidAt = $now;
+        }
+
+        if ($status === OrderStatus::CANCELLED && $this->cancelledAt === null) {
+            $this->cancelledAt = $now;
+        }
+
+        if ($status === OrderStatus::REFUNDED && $this->refundedAt === null) {
+            $this->refundedAt = $now;
+        }
+
+        if ($status === OrderStatus::DELIVERED && $this->deliveredAt === null) {
+            $this->deliveredAt = $now;
+        }
+
         $this->status = $status;
     }
 
-    public function changeCustomerEmail(string $customerEmail): void
+    public function changeCustomerEmail(Email $customerEmail): void
     {
-        self::assertValidEmail($customerEmail);
+        $this->checkIfIsEditable();
         $this->customerEmail = $customerEmail;
     }
 
     public function changeCurrency(Currency $currency): void
     {
+        $this->checkIfIsEditable();
         $this->currency = $currency;
     }
 
-    public function changeSubtotalCents(int $subtotalCents): void
+    public function changeSubtotalCents(AmountCents $subtotalCents): void
     {
-        self::assertValidSubtotalCents($subtotalCents);
+        $this->checkIfIsEditable();
+        $this->assertValidSubtotalCents($subtotalCents);
         $this->subtotalCents = $subtotalCents;
+        $this->recalculateTotalCents();
     }
 
-    public function changeDiscountCents(int $discountCents): void
+    public function changeDiscountCents(AmountCents $discountCents): void
     {
-        self::assertValidDiscountCents($discountCents);
+        $this->checkIfIsEditable();
+        $this->assertValidDiscountCents($discountCents);
         $this->discountCents = $discountCents;
+        $this->recalculateTotalCents();
     }
 
-    public function changeTaxCents(int $taxCents): void
+    public function changeTaxCents(AmountCents $taxCents): void
     {
-        self::assertValidTaxCents($taxCents);
+        $this->checkIfIsEditable();
+        $this->assertValidTaxCents($taxCents);
         $this->taxCents = $taxCents;
+        $this->recalculateTotalCents();
     }
 
-    public function changeTotalCents(): void
+    public function changeItemQuantity(OrderItemId $id, int $qty): void
     {
-        $totalCents = $this->subtotalCents - $this->discountCents + $this->taxCents;
-        self::assertValidTotalCents($totalCents);
+
+    }
+
+    private function recalculateTotalCents(): void
+    {
+        $totalCents = $this->subtotalCents->sub($this->discountCents)->add($this->taxCents);
+        $this->assertValidTotalCents($totalCents);
 
         $this->totalCents = $totalCents;
     }
@@ -243,54 +325,42 @@ class Order
         $this->notes = $notes;
     }
 
-    public function changePaidAt(\DateTime $paidAt): void
+    private function isEditable(): bool
     {
-        $this->paidAt = $paidAt;
+        return in_array($this->status, [OrderStatus::NEW, OrderStatus::WAITING_PAYMENT], true);
     }
 
-    public function changeCancelledAt(\DateTime $cancelledAt): void
+    private function checkIfIsEditable(): void
     {
-        $this->cancelledAt = $cancelledAt;
-    }
-
-    public function changeDeletedAt(\DateTime $deletedAt): void
-    {
-        $this->deletedAt = $deletedAt;
-    }
-
-    private static function assertValidEmail(string $customerEmail): void
-    {
-        if (!filter_var($customerEmail, FILTER_VALIDATE_EMAIL)) {
-            throw new ValidationException(
-                ['customer_email' => ['Customer email is not a valid email address.']],
-            );
+        if (!$this->isEditable()) {
+            throw new \DomainException('Order is not editable.');
         }
     }
 
-    private static function assertValidSubtotalCents(int $subtotalCents): void
+    private function assertValidSubtotalCents(AmountCents $subtotalCents): void
     {
-        if ($subtotalCents < 0) {
+        if ($subtotalCents->isNegative()) {
             throw new ValidationException(['subtotal_cents' => ['Subtotal cannot be negative.']]);
         }
     }
 
-    private static function assertValidDiscountCents(int $discountCents): void
+    private function assertValidDiscountCents(AmountCents $discountCents): void
     {
-        if ($discountCents < 0) {
+        if ($discountCents->isNegative()) {
             throw new ValidationException(['discount_cents' => ['Discount cannot be negative.']]);
         }
     }
 
-    private static function assertValidTaxCents(int $taxCents): void
+    private function assertValidTaxCents(AmountCents $taxCents): void
     {
-        if ($taxCents < 0) {
+        if ($taxCents->isNegative()) {
             throw new ValidationException(['tax_cents' => ['Tax cannot be negative.']]);
         }
     }
 
-    private static function assertValidTotalCents(int $totalCents): void
+    private function assertValidTotalCents(AmountCents $totalCents): void
     {
-        if ($totalCents < 0) {
+        if ($totalCents->isNegative()) {
             throw new ValidationException(['total_cents' => ['Total amount cannot be negative.']]);
         }
     }

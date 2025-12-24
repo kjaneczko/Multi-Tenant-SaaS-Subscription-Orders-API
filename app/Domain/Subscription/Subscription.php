@@ -12,9 +12,9 @@ readonly class Subscription
         private SubscriptionPlan $plan,
         private SubscriptionInterval $interval,
         private SubscriptionStatus $status,
-        private \DateTime $currentPeriodStart,
-        private \DateTime $currentPeriodEnd,
-        private ?\DateTime $cancelledAt,
+        private \DateTimeImmutable $currentPeriodStart,
+        private \DateTimeImmutable $currentPeriodEnd,
+        private ?\DateTimeImmutable $cancelledAt,
         private ?\DateTimeImmutable $createdAt,
         private ?\DateTimeImmutable $updatedAt,
     ) {}
@@ -25,9 +25,9 @@ readonly class Subscription
         SubscriptionPlan $plan,
         SubscriptionInterval $interval,
         SubscriptionStatus $status,
-        \DateTime $currentPeriodStart,
-        \DateTime $currentPeriodEnd,
-        ?\DateTime $cancelledAt,
+        \DateTimeImmutable $currentPeriodStart,
+        \DateTimeImmutable $currentPeriodEnd,
+        ?\DateTimeImmutable $cancelledAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
     ): self {
@@ -51,9 +51,9 @@ readonly class Subscription
         SubscriptionPlan $plan,
         SubscriptionInterval $interval,
         SubscriptionStatus $status,
-        \DateTime $currentPeriodStart,
-        \DateTime $currentPeriodEnd,
-        ?\DateTime $cancelledAt,
+        \DateTimeImmutable $currentPeriodStart,
+        \DateTimeImmutable $currentPeriodEnd,
+        ?\DateTimeImmutable $cancelledAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
     ): self {
@@ -96,17 +96,17 @@ readonly class Subscription
         return $this->status;
     }
 
-    public function currentPeriodStart(): \DateTime
+    public function currentPeriodStart(): \DateTimeImmutable
     {
         return $this->currentPeriodStart;
     }
 
-    public function currentPeriodEnd(): \DateTime
+    public function currentPeriodEnd(): \DateTimeImmutable
     {
         return $this->currentPeriodEnd;
     }
 
-    public function cancelledAt(): ?\DateTime
+    public function cancelledAt(): ?\DateTimeImmutable
     {
         return $this->cancelledAt;
     }

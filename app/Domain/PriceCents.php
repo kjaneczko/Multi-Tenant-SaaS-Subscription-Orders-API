@@ -10,7 +10,7 @@ final readonly class PriceCents
 
     public function __construct(int $value)
     {
-        self::assertValidValue($value);
+        $this->assertValidValue($value);
         $this->value = $value;
     }
 
@@ -24,9 +24,9 @@ final readonly class PriceCents
         return new AmountCents($this->value);
     }
 
-    private static function assertValidValue(int $value): void
+    private function assertValidValue(int $value): void
     {
-        if ($value <= 0) {
+        if ($value < 0) {
             throw new ValidationException(['price' => ['Price cannot be negative.']]);
         }
     }

@@ -2,6 +2,7 @@
 
 namespace App\Domain\User;
 
+use App\Domain\Email;
 use App\Domain\Exception\ValidationException;
 use App\Domain\Tenant\TenantId;
 
@@ -11,24 +12,23 @@ readonly class User
         private UserId $id,
         private TenantId $tenantId,
         private string $name,
-        private string $email,
-        private ?\DateTime $emailVerifiedAt,
+        private Email $email,
+        private ?\DateTimeImmutable $emailVerifiedAt,
         private string $password,
         private UserRole $role,
         private bool $isActive,
         private ?\DateTimeImmutable $createdAt,
         private ?\DateTimeImmutable $updatedAt,
     ) {
-        self::assertValidName($name);
-        self::assertValidEmail($email);
+        $this->assertValidName($name);
     }
 
     public static function create(
         UserId $id,
         TenantId $tenantId,
         string $name,
-        string $email,
-        ?\DateTime $emailVerifiedAt,
+        Email $email,
+        ?\DateTimeImmutable $emailVerifiedAt,
         string $password,
         UserRole $role,
         bool $isActive,
@@ -39,7 +39,7 @@ readonly class User
             id: $id,
             tenantId: $tenantId,
             name: trim($name),
-            email: trim($email),
+            email: $email,
             emailVerifiedAt: $emailVerifiedAt,
             password: $password,
             role: $role,
@@ -53,17 +53,14 @@ readonly class User
         UserId $id,
         TenantId $tenantId,
         string $name,
-        string $email,
-        ?\DateTime $emailVerifiedAt,
+        Email $email,
+        ?\DateTimeImmutable $emailVerifiedAt,
         string $password,
         UserRole $role,
         bool $isActive,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
     ): self {
-        self::assertValidName($name);
-        self::assertValidEmail($email);
-
         return new self(
             id: $id,
             tenantId: $tenantId,
@@ -93,12 +90,12 @@ readonly class User
         return $this->name;
     }
 
-    public function email(): string
+    public function email(): Email
     {
         return $this->email;
     }
 
-    public function emailVerifiedAt(): ?\DateTime
+    public function emailVerifiedAt(): ?\DateTimeImmutable
     {
         return $this->emailVerifiedAt;
     }
@@ -128,7 +125,7 @@ readonly class User
         return $this->updatedAt;
     }
 
-    private static function assertValidName(string $name): void
+    private function assertValidName(string $name): void
     {
         if ('' === $name) {
             throw new ValidationException(['name' => ['Name is required.']]);
@@ -136,15 +133,6 @@ readonly class User
 
         if (mb_strlen($name) > 255) {
             throw new ValidationException(['name' => ['Name is too long. Must be less than 256 characters.']]);
-        }
-    }
-
-    private static function assertValidEmail(string $email): void
-    {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new ValidationException(
-                ['email' => ['Email is not a valid email address.']],
-            );
         }
     }
 }

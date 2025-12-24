@@ -12,7 +12,7 @@ final readonly class Sku
     {
         $value = trim(mb_strtoupper($value));
 
-        self::assertValidSku($value);
+        $this->assertValidSku($value);
 
         $this->value = $value;
     }
@@ -22,7 +22,7 @@ final readonly class Sku
         return $this->value;
     }
 
-    private static function assertValidSku(string $sku): void
+    private function assertValidSku(string $sku): void
     {
         if (mb_strlen($sku) < 3) {
             throw new ValidationException(['sku' => ['Sku is too short. Must be at least 3 characters.']]);

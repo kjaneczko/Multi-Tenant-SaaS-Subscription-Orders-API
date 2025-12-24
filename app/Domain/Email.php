@@ -12,7 +12,7 @@ final readonly class Email
     {
         $value = trim(mb_strtolower($value));
 
-        self::assertValidEmail($value);
+        $this->assertValidEmail($value);
 
         $this->value = $value;
     }
@@ -22,7 +22,7 @@ final readonly class Email
         return $this->value;
     }
 
-    private function assertValidEmail($value): void
+    private function assertValidEmail(string $value): void
     {
         if ($value === '') {
             throw new ValidationException([

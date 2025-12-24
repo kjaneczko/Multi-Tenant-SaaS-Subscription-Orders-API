@@ -2,6 +2,7 @@
 
 namespace App\Domain\Payment;
 
+use App\Domain\AmountCents;
 use App\Domain\Currency;
 use App\Domain\Exception\ValidationException;
 use App\Domain\Order\OrderId;
@@ -14,15 +15,15 @@ readonly class Payment
         private PaymentStatus       $status,
         private string              $provider,
         private ?string             $reference,
-        private int                 $amountCents,
+        private AmountCents                 $amountCents,
         private Currency            $currency,
-        private \DateTime           $paidAt,
+        private \DateTimeImmutable           $paidAt,
         private ?\DateTimeImmutable $createdAt,
         private ?\DateTimeImmutable $updatedAt,
     ) {
-        self::assertValidProvider($provider);
-        self::assertValidReference($reference);
-        self::assertValidAmountCents($amountCents);
+        $this->assertValidProvider($provider);
+        $this->assertValidReference($reference);
+        $this->assertValidAmountCents($amountCents);
     }
 
     public static function create(
@@ -31,9 +32,9 @@ readonly class Payment
         PaymentStatus       $status,
         string              $provider,
         ?string             $reference,
-        int                 $amountCents,
+        AmountCents                 $amountCents,
         Currency            $currency,
-        \DateTime           $paidAt,
+        \DateTimeImmutable           $paidAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt
     ): self {
@@ -57,16 +58,12 @@ readonly class Payment
         PaymentStatus       $status,
         string              $provider,
         ?string             $reference,
-        int                 $amountCents,
+        AmountCents                 $amountCents,
         Currency            $currency,
-        \DateTime           $paidAt,
+        \DateTimeImmutable           $paidAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt
     ): self {
-        self::assertValidProvider($provider);
-        self::assertValidReference($reference);
-        self::assertValidAmountCents($amountCents);
-
         return new self(
             id: $id,
             orderId: $orderId,
@@ -106,7 +103,7 @@ readonly class Payment
         return $this->reference;
     }
 
-    public function amountCents(): int
+    public function amountCents(): AmountCents
     {
         return $this->amountCents;
     }
@@ -116,7 +113,7 @@ readonly class Payment
         return $this->currency;
     }
 
-    public function paidAt(): \DateTime
+    public function paidAt(): \DateTimeImmutable
     {
         return $this->paidAt;
     }
@@ -131,23 +128,23 @@ readonly class Payment
         return $this->updatedAt;
     }
 
-    private static function assertValidProvider(string $provider): void
+    private function assertValidProvider(string $provider): void
     {
         if ('' === $provider) {
             throw new ValidationException(['provider' => ['Provider is required.']]);
         }
     }
 
-    private static function assertValidReference(?string $reference): void
+    private function assertValidReference(?string $reference): void
     {
         if ($reference !== null && mb_strlen($reference) > 255) {
             throw new ValidationException(['reference' => ['Reference is too long. Must be less than 256 characters.']]);
         }
     }
 
-    private static function assertValidAmountCents(int $amountCents): void
+    private function assertValidAmountCents(AmountCents $amountCents): void
     {
-        if ($amountCents <= 0) {
+        if (!$amountCents->isPositive()) {
             throw new ValidationException(['amount_cents' => ['Amount cannot be less than or equal zero.']]);
         }
     }

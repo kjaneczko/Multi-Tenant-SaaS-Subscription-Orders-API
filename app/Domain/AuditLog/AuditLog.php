@@ -3,6 +3,7 @@
 namespace App\Domain\AuditLog;
 
 use App\Domain\Exception\ValidationException;
+use App\Domain\JsonString;
 use App\Domain\Tenant\TenantId;
 use App\Domain\User\UserId;
 
@@ -15,13 +16,12 @@ class AuditLog
         private string $action,
         private string $entityType,
         private string $entityId,
-        private string $meta,
+        private JsonString $meta,
         private readonly ?\DateTimeImmutable $createdAt,
     ) {
-        self::assertValidAction($action);
-        self::assertValidEntityType($entityType);
-        self::assertValidEntityId($entityId);
-        self::assertValidMeta($meta);
+        $this->assertValidAction($action);
+        $this->assertValidEntityType($entityType);
+        $this->assertValidEntityId($entityId);
     }
 
     public static function create(
@@ -31,7 +31,7 @@ class AuditLog
         string $action,
         string $entityType,
         string $entityId,
-        string $meta,
+        JsonString $meta,
         ?\DateTimeImmutable $createdAt,
     ): self {
         return new self(
@@ -53,15 +53,10 @@ class AuditLog
         string $action,
         string $entityType,
         string $entityId,
-        string $meta,
+        JsonString $meta,
         ?\DateTimeImmutable $createdAt,
     ): self
     {
-        self::assertValidAction($action);
-        self::assertValidEntityType($entityType);
-        self::assertValidEntityId($entityId);
-        self::assertValidMeta($meta);
-
         return new self(
             id: $id,
             tenantId: $tenantId,
@@ -104,7 +99,7 @@ class AuditLog
         return $this->entityId;
     }
 
-    public function meta(): string
+    public function meta(): JsonString
     {
         return $this->meta;
     }
@@ -116,57 +111,45 @@ class AuditLog
 
     public function changeAction(string $action): void
     {
-        self::assertValidAction($action);
+        $this->assertValidAction($action);
         $this->action = $action;
     }
 
     public function changeEntityType(string $entityType): void
     {
-        self::assertValidEntityType($entityType);
+        $this->assertValidEntityType($entityType);
         $this->entityType = $entityType;
     }
 
     public function changeEntityId(string $entityId): void
     {
-        self::assertValidEntityId($entityId);
+        $this->assertValidEntityId($entityId);
         $this->entityId = $entityId;
     }
 
-    public function changeMeta(string $meta): void
+    public function changeMeta(JsonString $meta): void
     {
-        self::assertValidMeta($meta);
         $this->meta = $meta;
     }
 
-    private static function assertValidAction(string $action): void
+    private function assertValidAction(string $action): void
     {
         if ('' === $action) {
             throw new ValidationException(['action' => ['Action is required.']]);
         }
     }
 
-    private static function assertValidEntityType(string $entityType): void
+    private function assertValidEntityType(string $entityType): void
     {
         if ('' === $entityType) {
             throw new ValidationException(['entity_type' => ['Entity type is required.']]);
         }
     }
 
-    private static function assertValidEntityId(string $entityId): void
+    private function assertValidEntityId(string $entityId): void
     {
         if ('' === $entityId) {
             throw new ValidationException(['entity_id' => ['Entity ID is required.']]);
-        }
-    }
-
-    private static function assertValidMeta(string $meta): void
-    {
-        if ('' === $meta) {
-            throw new ValidationException(['meta' => ['Meta is required.']]);
-        }
-
-        if (!json_validate($meta)) {
-            throw new ValidationException(['meta' => ['Meta is not valid JSON.']]);
         }
     }
 }

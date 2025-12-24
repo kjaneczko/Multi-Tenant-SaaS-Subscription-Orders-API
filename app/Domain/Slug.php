@@ -12,7 +12,7 @@ final readonly class Slug
     {
         $value = trim(mb_strtolower($value));
 
-        self::assertValidSlug($value);
+        $this->assertValidSlug($value);
 
         $this->value = $value;
     }
@@ -22,7 +22,7 @@ final readonly class Slug
         return $this->value;
     }
 
-    private static function assertValidSlug(string $value): void
+    private function assertValidSlug(string $value): void
     {
         $length = mb_strlen($value);
 

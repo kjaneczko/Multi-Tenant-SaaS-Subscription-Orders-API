@@ -23,9 +23,9 @@ return new class extends Migration {
             $table->unsignedInteger('total_cents')->default(0);
             $table->text('notes')->nullable();
             $table->dateTime('paid_at')->nullable();
+            $table->dateTime('refunded_at')->nullable();
             $table->dateTime('cancelled_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
             $table->index(['tenant_id', 'created_at']);
             $table->index(['tenant_id', 'status']);
         });

@@ -2,9 +2,12 @@
 
 namespace App\Domain\OrderItem;
 
+use App\Domain\AmountCents;
 use App\Domain\Exception\ValidationException;
 use App\Domain\Order\OrderId;
+use App\Domain\PriceCents;
 use App\Domain\Product\ProductId;
+use App\Domain\Sku;
 
 class OrderItem
 {
@@ -13,16 +16,14 @@ class OrderItem
         private readonly OrderId $orderId,
         private readonly ProductId $productId,
         private readonly string $productNameSnapshot,
-        private readonly string $skuSnapshot,
+        private readonly Sku $skuSnapshot,
         private int $quantity,
-        private int $unitPriceCents,
-        private int $lineTotalCents,
+        private PriceCents $unitPriceCents,
+        private AmountCents $lineTotalCents,
         private readonly ?\DateTimeImmutable $createdAt,
         private readonly ?\DateTimeImmutable $updatedAt,
     ) {
-        self::assertValidQuantity($quantity);
-        self::assertValidUnitPriceCents($unitPriceCents);
-        self::assertValidLineTotalCents($lineTotalCents);
+        $this->assertValidQuantity($quantity);
     }
 
     public static function create(
@@ -30,13 +31,13 @@ class OrderItem
         OrderId $orderId,
         ProductId $productId,
         string $productNameSnapshot,
-        string $skuSnapshot,
+        Sku $skuSnapshot,
         int $quantity,
-        int $unitPriceCents,
-        int $lineTotalCents,
+        PriceCents $unitPriceCents,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt
     ): self {
+        $lineTotalCents = new AmountCents($unitPriceCents->toInt() * $quantity);
         return new self(
             id: $id,
             orderId: $orderId,
@@ -56,17 +57,14 @@ class OrderItem
         OrderId $orderId,
         ProductId $productId,
         string $productNameSnapshot,
-        string $skuSnapshot,
+        Sku $skuSnapshot,
         int $quantity,
-        int $unitPriceCents,
-        int $lineTotalCents,
+        PriceCents $unitPriceCents,
+        AmountCents $lineTotalCents,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt
     ): self {
-        self::assertValidQuantity($quantity);
-        self::assertValidUnitPriceCents($unitPriceCents);
-        self::assertValidLineTotalCents($lineTotalCents);
-
+        // lineTotalCents is a book value/snapshot and is not recalculated when read.
         return new self(
             id: $id,
             orderId: $orderId,
@@ -101,7 +99,7 @@ class OrderItem
         return $this->productNameSnapshot;
     }
 
-    public function skuSnapshot(): string
+    public function skuSnapshot(): Sku
     {
         return $this->skuSnapshot;
     }
@@ -111,12 +109,12 @@ class OrderItem
         return $this->quantity;
     }
 
-    public function unitPriceCents(): int
+    public function unitPriceCents(): PriceCents
     {
         return $this->unitPriceCents;
     }
 
-    public function lineTotalCents(): int
+    public function lineTotalCents(): AmountCents
     {
         return $this->lineTotalCents;
     }
@@ -133,47 +131,27 @@ class OrderItem
 
     public function changeQuantity(int $quantity): void
     {
-        self::assertValidQuantity($quantity);
+        $this->assertValidQuantity($quantity);
         $this->quantity = $quantity;
+        $this->recalculateLineTotalCents();
     }
 
-    public function changeUnitPriceCents(int $unitPriceCents): void
+    public function changeUnitPriceCents(PriceCents $unitPriceCents): void
     {
-        self::assertValidUnitPriceCents($unitPriceCents);
         $this->unitPriceCents = $unitPriceCents;
+        $this->recalculateLineTotalCents();
     }
 
-    public function changeLineTotalCents(): void
+    private function recalculateLineTotalCents(): void
     {
-        $lineTotalCents = $this->quantity * $this->unitPriceCents;
-        self::assertValidLineTotalCents($lineTotalCents);
-
-        $this->lineTotalCents = $lineTotalCents;
+        $this->lineTotalCents = new AmountCents($this->unitPriceCents->toInt() * $this->quantity);
     }
 
-    private static function assertValidQuantity(int $quantity): void
+    private function assertValidQuantity(int $quantity): void
     {
         if ($quantity <= 0) {
             throw new ValidationException(
                 ['quantity' => ['Quantity must be greater than 0.']],
-            );
-        }
-    }
-
-    private static function assertValidUnitPriceCents(int $unitPriceCents): void
-    {
-        if ($unitPriceCents < 0) {
-            throw new ValidationException(
-                ['unit_price_cents' => ['Unit price cannot be negative.']],
-            );
-        }
-    }
-
-    private static function assertValidLineTotalCents(int $lineTotalCents): void
-    {
-        if ($lineTotalCents < 0) {
-            throw new ValidationException(
-                ['line_total_cents' => ['Line total cannot be negative.']],
             );
         }
     }

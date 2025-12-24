@@ -2,12 +2,18 @@
 
 namespace App\Domain;
 
-final readonly class JsonString
+use App\Domain\Exception\ValidationException;
+
+class JsonString
 {
+    protected string $keyValue = 'json';
+    protected string $fieldValue = 'Json';
+
     private string $value;
 
     public function __construct(string $value)
     {
+        $this->assertValidJson($value);
         $this->value = $value;
     }
 
@@ -16,8 +22,10 @@ final readonly class JsonString
         return $this->value;
     }
 
-    private static function assertValidJson(string $value): void
+    private function assertValidJson(string $value): void
     {
-
+        if (!json_validate($value)) {
+            throw new ValidationException([$this->keyValue => [sprintf('%s is not valid JSON.', $this->fieldValue)]]);
+        }
     }
 }

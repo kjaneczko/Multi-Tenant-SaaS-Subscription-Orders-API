@@ -4,6 +4,9 @@ namespace App\Domain\Product;
 
 use App\Domain\Currency;
 use App\Domain\Exception\ValidationException;
+use App\Domain\PriceCents;
+use App\Domain\Sku;
+use App\Domain\Slug;
 use App\Domain\Tenant\TenantId;
 
 class Product
@@ -11,43 +14,40 @@ class Product
     private function __construct(
         private readonly ProductId $id,
         private readonly TenantId $tenantId,
-        private string $sku,
+        private Sku $sku,
         private string $name,
-        private string $slug,
+        private Slug $slug,
         private ?string $description,
-        private int $priceCents,
+        private PriceCents $priceCents,
         private Currency $currency,
         private ProductStatus $status,
-        private ?\DateTime $deletedAt,
+        private ?\DateTimeImmutable $deletedAt,
         private readonly ?\DateTimeImmutable $createdAt,
         private readonly ?\DateTimeImmutable $updatedAt,
     ) {
-        self::assertValidName($name);
-        self::assertValidSku($sku);
-        self::assertValidSlug($slug);
-        self::assertValidPriceCents($priceCents);
+        $this->assertValidName($name);
     }
 
     public static function create(
         ProductId $id,
         TenantId $tenantId,
-        string $sku,
+        Sku $sku,
         string $name,
-        string $slug,
+        Slug $slug,
         ?string $description,
-        int $priceCents,
+        PriceCents $priceCents,
         Currency $currency,
         ProductStatus $status,
-        ?\DateTime $deletedAt,
+        ?\DateTimeImmutable $deletedAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
     ): self {
         return new self(
             id: $id,
             tenantId: $tenantId,
-            sku: trim($sku),
+            sku: $sku,
             name: trim($name),
-            slug: trim($slug),
+            slug: $slug,
             description: $description,
             priceCents: $priceCents,
             currency: $currency,
@@ -61,14 +61,14 @@ class Product
     public static function reconstitute(
         ProductId $id,
         TenantId $tenantId,
-        string $sku,
+        Sku $sku,
         string $name,
-        string $slug,
+        Slug $slug,
         ?string $description,
-        int $priceCents,
+        PriceCents $priceCents,
         Currency $currency,
         ProductStatus $status,
-        ?\DateTime $deletedAt,
+        ?\DateTimeImmutable $deletedAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
     ): self {
@@ -98,7 +98,7 @@ class Product
         return $this->tenantId;
     }
 
-    public function sku(): string
+    public function sku(): Sku
     {
         return $this->sku;
     }
@@ -108,7 +108,7 @@ class Product
         return $this->name;
     }
 
-    public function slug(): string
+    public function slug(): Slug
     {
         return $this->slug;
     }
@@ -118,7 +118,7 @@ class Product
         return $this->description;
     }
 
-    public function priceCents(): int
+    public function priceCents(): PriceCents
     {
         return $this->priceCents;
     }
@@ -133,7 +133,7 @@ class Product
         return $this->status;
     }
 
-    public function deletedAt(): ?\DateTime
+    public function deletedAt(): ?\DateTimeImmutable
     {
         return $this->deletedAt;
     }
@@ -148,21 +148,19 @@ class Product
         return $this->updatedAt;
     }
 
-    public function changeSku(string $sku): void
+    public function changeSku(Sku $sku): void
     {
-        self::assertValidSku($sku);
         $this->sku = $sku;
     }
 
     public function changeName(string $name): void
     {
-        self::assertValidName($name);
+        $this->assertValidName($name);
         $this->name = $name;
     }
 
-    public function changeSlug(string $slug): void
+    public function changeSlug(Slug $slug): void
     {
-        self::assertValidSlug($slug);
         $this->slug = $slug;
     }
 
@@ -171,9 +169,8 @@ class Product
         $this->description = $description;
     }
 
-    public function changePriceCents(float $priceCents): void
+    public function changePriceCents(PriceCents $priceCents): void
     {
-        self::assertValidPriceCents($priceCents);
         $this->priceCents = $priceCents;
     }
 
@@ -187,23 +184,12 @@ class Product
         $this->status = $status;
     }
 
-    public function changeDeletedAt(?\DateTime $deletedAt): void
+    public function changeDeletedAt(?\DateTimeImmutable $deletedAt): void
     {
         $this->deletedAt = $deletedAt;
     }
 
-    private static function assertValidSku(string $sku): void
-    {
-        if (mb_strlen($sku) < 3) {
-            throw new ValidationException(['sku' => ['Sku is too short. Must be at least 3 characters.']]);
-        }
-
-        if (mb_strlen($sku) > 255) {
-            throw new ValidationException(['sku' => ['Sku is too long. Must be less than 256 characters.']]);
-        }
-    }
-
-    private static function assertValidName(string $name): void
+    private function assertValidName(string $name): void
     {
         if ('' === $name) {
             throw new ValidationException(['name' => ['Name is required.']]);
@@ -211,24 +197,6 @@ class Product
 
         if (mb_strlen($name) > 255) {
             throw new ValidationException(['name' => ['Name is too long. Must be less than 256 characters.']]);
-        }
-    }
-
-    private static function assertValidSlug(string $slug): void
-    {
-        if (mb_strlen($slug) < 3) {
-            throw new ValidationException(['slug' => ['Slug is too short. Must be at least 3 characters.']]);
-        }
-
-        if (mb_strlen($slug) > 255) {
-            throw new ValidationException(['slug' => ['Slug is too long. Must be less than 256 characters.']]);
-        }
-    }
-
-    private static function assertValidPriceCents(float $priceCents): void
-    {
-        if ($priceCents < 0) {
-            throw new ValidationException(['priceCents' => ['Price cannot be negative.']]);
         }
     }
 }

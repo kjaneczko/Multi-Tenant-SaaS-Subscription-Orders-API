@@ -3,25 +3,25 @@
 namespace App\Domain\Tenant;
 
 use App\Domain\Exception\ValidationException;
+use App\Domain\Slug;
 
 class Tenant
 {
     private function __construct(
         private readonly TenantId $id,
         private string $name,
-        private string $slug,
+        private Slug $slug,
         private TenantStatus $status,
         private readonly ?\DateTimeImmutable $createdAt,
         private readonly ?\DateTimeImmutable $updatedAt,
     ) {
-        self::assertValidName($name);
-        self::assertValidSlug($slug);
+        $this->assertValidName($name);
     }
 
     public static function create(
         TenantId $id,
         string $name,
-        string $slug,
+        Slug $slug,
         TenantStatus $status,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
@@ -30,7 +30,7 @@ class Tenant
         return new self(
             id: $id,
             name: trim($name),
-            slug: trim($slug),
+            slug: $slug,
             status: $status,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
@@ -40,14 +40,11 @@ class Tenant
     public static function reconstitute(
         TenantId $id,
         string $name,
-        string $slug,
+        Slug $slug,
         TenantStatus $status,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
     ): self {
-        self::assertValidName($name);
-        self::assertValidSlug($slug);
-
         return new self(
             id: $id,
             name: $name,
@@ -68,7 +65,7 @@ class Tenant
         return $this->name;
     }
 
-    public function slug(): string
+    public function slug(): Slug
     {
         return $this->slug;
     }
@@ -90,13 +87,12 @@ class Tenant
 
     public function changeName(string $name): void
     {
-        self::assertValidName($name);
+        $this->assertValidName($name);
         $this->name = $name;
     }
 
-    public function changeSlug(string $slug): void
+    public function changeSlug(Slug $slug): void
     {
-        self::assertValidSlug($slug);
         $this->slug = $slug;
     }
 
@@ -105,25 +101,14 @@ class Tenant
         $this->status = $status;
     }
 
-    private static function assertValidName(string $name): void
+    private function assertValidName(string $name): void
     {
-        if ('' === trim($name)) {
+        if ('' === $name) {
             throw new ValidationException(['name' => ['Name is required.']]);
         }
 
         if (mb_strlen($name) > 255) {
             throw new ValidationException(['name' => ['Name is too long. Must be less than 256 characters.']]);
-        }
-    }
-
-    private static function assertValidSlug(string $slug): void
-    {
-        if ('' === trim($slug)) {
-            throw new ValidationException(['slug' => ['Slug is required.']]);
-        }
-
-        if (mb_strlen($slug) > 255) {
-            throw new ValidationException(['slug' => ['Slug is too long. Must be less than 256 characters.']]);
         }
     }
 }
