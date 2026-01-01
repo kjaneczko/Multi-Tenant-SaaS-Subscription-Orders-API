@@ -11,4 +11,5 @@ class SubscriptionModel extends Model
     use HasFactory;
 
     protected $table = 'subscriptions';
+    public $incrementing = false;
 }

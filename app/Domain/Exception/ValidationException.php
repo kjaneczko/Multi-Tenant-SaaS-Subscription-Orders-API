@@ -9,7 +9,7 @@ class ValidationException extends \DomainException
     public function __construct(array $errors)
     {
         $this->errors = $errors;
-        parent::__construct('Validation failed');
+        parent::__construct('Validation failed.');
     }
 
     public function getErrors(): array

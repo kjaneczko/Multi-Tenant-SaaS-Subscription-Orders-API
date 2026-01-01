@@ -11,4 +11,5 @@ class PaymentModel extends Model
     use HasFactory;
 
     protected $table = 'payments';
+    public $incrementing = false;
 }

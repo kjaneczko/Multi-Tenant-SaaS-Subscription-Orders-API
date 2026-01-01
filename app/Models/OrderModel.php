@@ -11,4 +11,5 @@ class OrderModel extends Model
     use HasFactory;
 
     protected $table = 'orders';
+    public $incrementing = false;
 }

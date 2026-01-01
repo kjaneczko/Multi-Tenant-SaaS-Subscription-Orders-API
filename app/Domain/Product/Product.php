@@ -21,9 +21,9 @@ class Product
         private PriceCents $priceCents,
         private Currency $currency,
         private ProductStatus $status,
-        private ?\DateTimeImmutable $deletedAt,
         private readonly ?\DateTimeImmutable $createdAt,
-        private readonly ?\DateTimeImmutable $updatedAt,
+        private ?\DateTimeImmutable $updatedAt,
+        private ?\DateTimeImmutable $deletedAt,
     ) {
         $this->assertValidName($name);
     }
@@ -38,9 +38,9 @@ class Product
         PriceCents $priceCents,
         Currency $currency,
         ProductStatus $status,
-        ?\DateTimeImmutable $deletedAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
+        ?\DateTimeImmutable $deletedAt = null,
     ): self {
         return new self(
             id: $id,
@@ -52,9 +52,9 @@ class Product
             priceCents: $priceCents,
             currency: $currency,
             status: $status,
-            deletedAt: $deletedAt,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
+            deletedAt: $deletedAt,
         );
     }
 
@@ -68,9 +68,9 @@ class Product
         PriceCents $priceCents,
         Currency $currency,
         ProductStatus $status,
-        ?\DateTimeImmutable $deletedAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
+        ?\DateTimeImmutable $deletedAt,
     ): self {
         return new self(
             id: $id,
@@ -82,9 +82,9 @@ class Product
             priceCents: $priceCents,
             currency: $currency,
             status: $status,
-            deletedAt: $deletedAt,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
+            deletedAt: $deletedAt,
         );
     }
 
@@ -151,42 +151,61 @@ class Product
     public function changeSku(Sku $sku): void
     {
         $this->sku = $sku;
+        $this->touch();
     }
 
-    public function changeName(string $name): void
+    public function changeName(string $name, Slug $slug): void
     {
         $this->assertValidName($name);
         $this->name = $name;
+        $this->slug = $slug;
     }
 
     public function changeSlug(Slug $slug): void
     {
         $this->slug = $slug;
+        $this->touch();
     }
 
-    public function changeDescription(string $description): void
+    public function changeDescription(?string $description): void
     {
         $this->description = $description;
+        $this->touch();
     }
 
     public function changePriceCents(PriceCents $priceCents): void
     {
         $this->priceCents = $priceCents;
+        $this->touch();
     }
 
     public function changeCurrency(Currency $currency): void
     {
         $this->currency = $currency;
+        $this->touch();
     }
 
-    public function changeStatus(ProductStatus $status): void
+    public function deactivate(): void
     {
-        $this->status = $status;
+        $this->status = ProductStatus::INACTIVE;
+        $this->touch();
+    }
+
+    public function activate(): void
+    {
+        $this->status = ProductStatus::ACTIVE;
+        $this->touch();
     }
 
     public function changeDeletedAt(?\DateTimeImmutable $deletedAt): void
     {
         $this->deletedAt = $deletedAt;
+        $this->touch();
+    }
+
+    private function touch(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     private function assertValidName(string $name): void

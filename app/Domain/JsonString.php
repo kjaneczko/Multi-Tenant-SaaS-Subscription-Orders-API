@@ -4,17 +4,14 @@ namespace App\Domain;
 
 use App\Domain\Exception\ValidationException;
 
-class JsonString
+readonly class JsonString
 {
-    protected string $keyValue = 'json';
-    protected string $fieldValue = 'Json';
-
-    private string $value;
-
-    public function __construct(string $value)
-    {
-        $this->assertValidJson($value);
-        $this->value = $value;
+    public function __construct(
+        private string $value,
+        protected string $keyValue = 'json',
+        protected string $fieldValue = 'Json',
+    ) {
+        $this->assertValidJson($this->value);
     }
 
     public function toString(): string

@@ -2,14 +2,20 @@
 
 namespace App\Domain\Product;
 
-readonly class ProductId
+use App\Domain\Exception\ValidationException;
+
+final readonly class ProductId
 {
-    public function __construct(
-        private string $id,
-    ) {}
+    public function __construct(public string $value)
+    {
+        $value = trim($value);
+        if ($value === '') {
+            throw new ValidationException(['id' => ['ProductId cannot be empty.']]);
+        }
+    }
 
     public function toString(): string
     {
-        return $this->id;
+        return $this->value;
     }
 }

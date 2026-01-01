@@ -7,20 +7,29 @@ use App\Domain\JsonString;
 use App\Domain\Tenant\TenantId;
 use App\Domain\User\UserId;
 
-class AuditLog
+readonly class AuditLog
 {
+    /**
+     * @param AuditLogId $id
+     * @param TenantId $tenantId
+     * @param UserId $actorUserId
+     * @param string $action - "<entity>.<verb>" e.g. order.paid, order.status_changed, product.created
+     * @param EntityType $entityType
+     * @param string $entityId
+     * @param JsonString $meta
+     * @param \DateTimeImmutable $createdAt
+     */
     private function __construct(
-        private readonly AuditLogId $id,
-        private readonly TenantId $tenantId,
-        private readonly UserId $actorUserId,
+        private AuditLogId $id,
+        private TenantId $tenantId,
+        private UserId $actorUserId,
         private string $action,
-        private string $entityType,
+        private EntityType $entityType,
         private string $entityId,
         private JsonString $meta,
-        private readonly ?\DateTimeImmutable $createdAt,
+        private \DateTimeImmutable $createdAt,
     ) {
         $this->assertValidAction($action);
-        $this->assertValidEntityType($entityType);
         $this->assertValidEntityId($entityId);
     }
 
@@ -29,17 +38,17 @@ class AuditLog
         TenantId $tenantId,
         UserId $actorUserId,
         string $action,
-        string $entityType,
+        EntityType $entityType,
         string $entityId,
         JsonString $meta,
-        ?\DateTimeImmutable $createdAt,
+        \DateTimeImmutable $createdAt,
     ): self {
         return new self(
             id: $id,
             tenantId: $tenantId,
             actorUserId: $actorUserId,
             action: trim($action),
-            entityType: trim($entityType),
+            entityType: $entityType,
             entityId: trim($entityId),
             meta: $meta,
             createdAt: $createdAt,
@@ -51,10 +60,10 @@ class AuditLog
         TenantId $tenantId,
         UserId $actorUserId,
         string $action,
-        string $entityType,
+        EntityType $entityType,
         string $entityId,
         JsonString $meta,
-        ?\DateTimeImmutable $createdAt,
+        \DateTimeImmutable $createdAt,
     ): self
     {
         return new self(
@@ -89,7 +98,7 @@ class AuditLog
         return $this->action;
     }
 
-    public function entityType(): string
+    public function entityType(): EntityType
     {
         return $this->entityType;
     }
@@ -104,45 +113,15 @@ class AuditLog
         return $this->meta;
     }
 
-    public function createdAt(): ?\DateTimeImmutable
+    public function createdAt(): \DateTimeImmutable
     {
         return $this->createdAt;
-    }
-
-    public function changeAction(string $action): void
-    {
-        $this->assertValidAction($action);
-        $this->action = $action;
-    }
-
-    public function changeEntityType(string $entityType): void
-    {
-        $this->assertValidEntityType($entityType);
-        $this->entityType = $entityType;
-    }
-
-    public function changeEntityId(string $entityId): void
-    {
-        $this->assertValidEntityId($entityId);
-        $this->entityId = $entityId;
-    }
-
-    public function changeMeta(JsonString $meta): void
-    {
-        $this->meta = $meta;
     }
 
     private function assertValidAction(string $action): void
     {
         if ('' === $action) {
             throw new ValidationException(['action' => ['Action is required.']]);
-        }
-    }
-
-    private function assertValidEntityType(string $entityType): void
-    {
-        if ('' === $entityType) {
-            throw new ValidationException(['entity_type' => ['Entity type is required.']]);
         }
     }
 

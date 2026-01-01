@@ -6,19 +6,21 @@ use App\Domain\Email;
 use App\Domain\Exception\ValidationException;
 use App\Domain\Tenant\TenantId;
 
-readonly class User
+class User
 {
     private function __construct(
-        private UserId $id,
-        private TenantId $tenantId,
+        private readonly UserId $id,
+        private readonly TenantId $tenantId,
         private string $name,
         private Email $email,
         private ?\DateTimeImmutable $emailVerifiedAt,
         private string $password,
         private UserRole $role,
         private bool $isActive,
-        private ?\DateTimeImmutable $createdAt,
+        private readonly ?\DateTimeImmutable $createdAt,
         private ?\DateTimeImmutable $updatedAt,
+        private ?\DateTimeImmutable $deletedAt = null,
+        private ?string $rememberToken = null,
     ) {
         $this->assertValidName($name);
     }
@@ -34,6 +36,8 @@ readonly class User
         bool $isActive,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
+        ?\DateTimeImmutable $deletedAt = null,
+        ?string $rememberToken = null,
     ): self {
         return new self(
             id: $id,
@@ -46,6 +50,8 @@ readonly class User
             isActive: $isActive,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
+            deletedAt: $deletedAt,
+            rememberToken: $rememberToken,
         );
     }
 
@@ -60,6 +66,8 @@ readonly class User
         bool $isActive,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
+        ?\DateTimeImmutable $deletedAt,
+        ?string $rememberToken,
     ): self {
         return new self(
             id: $id,
@@ -72,6 +80,8 @@ readonly class User
             isActive: $isActive,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
+            deletedAt: $deletedAt,
+            rememberToken: $rememberToken,
         );
     }
 
@@ -123,6 +133,83 @@ readonly class User
     public function updatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
+    }
+
+    public function deletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function rememberToken(): ?string
+    {
+        return $this->rememberToken;
+    }
+
+    public function changeName(string $name): void
+    {
+        $this->assertValidName($name);
+        $this->name = $name;
+        $this->touch();
+    }
+
+    public function changeEmail(Email $email): void
+    {
+        $this->email = $email;
+        $this->emailVerifiedAt = null;
+        $this->touch();
+    }
+
+    public function changeRole(UserRole $role): void
+    {
+        $this->role = $role;
+        $this->touch();
+    }
+
+    public function deactivate(): void
+    {
+        $this->isActive = false;
+        $this->touch();
+    }
+
+    public function activate(): void
+    {
+        $this->isActive = true;
+        $this->touch();
+    }
+
+    public function markEmailVerified(\DateTimeImmutable $now): void
+    {
+        $this->emailVerifiedAt = $now;
+        $this->touch();
+    }
+
+    public function changePassword(string $password): void
+    {
+        $this->password = $password;
+        $this->touch();
+    }
+
+    public function remember(?string $token): void
+    {
+        $this->rememberToken = $token;
+        $this->touch();
+    }
+
+    public function softDelete(\DateTimeImmutable $now): void
+    {
+        $this->deletedAt = $now;
+        $this->touch();
+    }
+
+    public function restore(): void
+    {
+        $this->deletedAt = null;
+        $this->touch();
+    }
+
+    private function touch(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     private function assertValidName(string $name): void

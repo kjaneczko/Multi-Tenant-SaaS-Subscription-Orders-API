@@ -307,11 +307,6 @@ class Order
         $this->recalculateTotalCents();
     }
 
-    public function changeItemQuantity(OrderItemId $id, int $qty): void
-    {
-
-    }
-
     private function recalculateTotalCents(): void
     {
         $totalCents = $this->subtotalCents->sub($this->discountCents)->add($this->taxCents);

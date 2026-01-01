@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,6 +18,12 @@ class TenantModelFactory extends Factory
     public function definition(): array
     {
         return [
+            'id' => $this->faker->uuid(),
+            'name' => $this->faker->company(),
+            'slug' => $this->faker->slug(),
+            'status' => $this->faker->randomElement(['active', 'suspended']),
+            'created_at' => (new DateTime())->format('Y-m-d H:i:s'),
+            'updated_at' => (new DateTime())->format('Y-m-d H:i:s'),
         ];
     }
 }

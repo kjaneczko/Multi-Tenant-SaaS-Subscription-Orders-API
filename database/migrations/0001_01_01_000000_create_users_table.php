@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
             $table->unique(['tenant_id', 'email']);
-            $table->unique(['tenant_id', 'role']);
+            $table->index(['tenant_id', 'role']);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
