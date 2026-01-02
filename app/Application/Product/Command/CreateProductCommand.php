@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Product\Create;
+namespace App\Application\Product\Command;
 
 use App\Domain\Currency;
 use App\Domain\PriceCents;

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Application\User\Create;
+namespace App\Application\User\Handler;
 
 use App\Application\Shared\Interface\UuidGeneratorInterface;
+use App\Application\User\Command\CreateUserCommand;
 use App\Application\User\Interface\UserRepositoryInterface;
 use App\Domain\User\User;
 use App\Domain\User\UserId;

@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Application\Product\Create;
+namespace App\Application\Product\Handler;
 
+use App\Application\Product\Command\CreateProductCommand;
+use App\Application\Product\Interface\ProductRepositoryInterface;
 use App\Application\Shared\Interface\UuidGeneratorInterface;
 use App\Domain\Product\Product;
 use App\Domain\Product\ProductId;
-use App\Domain\Product\ProductRepositoryInterface;
 use App\Domain\Product\ProductStatus;
 
 final readonly class CreateProductHandler

@@ -34,7 +34,7 @@ final class ProductPersistenceMapper
                 : new \DateTimeImmutable((string) $model->updated_at),
             deletedAt: $model->deleted_at instanceof \DateTimeInterface
                 ? \DateTimeImmutable::createFromInterface($model->deleted_at)
-                : new \DateTimeImmutable((string) $model->deleted_at)
+                : ($model->deleted_at ? new \DateTimeImmutable((string)$model->deleted_at) : null),
         );
     }
 
@@ -42,7 +42,7 @@ final class ProductPersistenceMapper
     {
         return [
             'id' => $product->id()->toString(),
-            'tenant_id' => $product->tenantId(),
+            'tenant_id' => $product->tenantId()->toString(),
             'name' => $product->name(),
             'slug' => $product->slug()->toString(),
             'sku' => $product->sku()->toString(),

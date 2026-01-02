@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string $id
@@ -25,6 +26,7 @@ class ProductModel extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductModelFactory> */
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'products';
     public $incrementing = false;
@@ -32,9 +34,11 @@ class ProductModel extends Model
     protected $fillable = [
         'id', 'tenant_id', 'name', 'slug', 'sku', 'price_cents',
         'status', 'description', 'created_at', 'updated_at',
+        'currency', 'deleted_at',
     ];
 
     protected $casts = [
         'price_cents' => 'integer',
+        'deleted_at' => 'datetime',
     ];
 }

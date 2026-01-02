@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Database\User;
 
 use App\Domain\Email;
+use App\Domain\Tenant\TenantId;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
 use App\Domain\User\UserRole;
@@ -31,7 +32,7 @@ class UserPersistenceMapper
 
         return User::reconstitute(
             id: new UserId($model->id),
-            tenantId: $model->tenant_id,
+            tenantId: new TenantId($model->tenant_id),
             name: $model->name,
             email: new Email($model->email),
             emailVerifiedAt: $emailVerifiedAt,
@@ -49,7 +50,7 @@ class UserPersistenceMapper
     {
         return [
             'id' => $user->id()->toString(),
-            'tenant_id' => $user->tenantId(),
+            'tenant_id' => $user->tenantId()->toString(),
             'name' => $user->name(),
             'email' => $user->email()->toString(),
             'email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),

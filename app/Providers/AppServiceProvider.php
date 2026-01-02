@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Application\AuditLog\AuditLogService;
 use App\Application\AuditLog\Interface\AuditLogServiceInterface;
+use App\Application\Product\Interface\ProductRepositoryInterface;
 use App\Application\Shared\Interface\PasswordHashGeneratorInterface;
 use App\Application\Shared\Interface\SlugGeneratorInterface;
 use App\Application\Shared\Interface\UuidGeneratorInterface;
@@ -12,7 +13,6 @@ use App\Application\Tenant\TenantService;
 use App\Application\User\Interface\UserRepositoryInterface;
 use App\Domain\AuditLog\Interface\AuditLogQueryInterface;
 use App\Domain\AuditLog\Interface\AuditLogWriterInterface;
-use App\Domain\Product\ProductRepositoryInterface;
 use App\Domain\Tenant\Interface\TenantRepositoryInterface;
 use App\Infrastructure\Database\AuditLog\AuditLogQueryEloquent;
 use App\Infrastructure\Database\AuditLog\AuditLogWriterEloquent;

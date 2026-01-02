@@ -9,6 +9,14 @@ use App\Http\Controllers\Tenant\ListTenantController;
 use App\Http\Controllers\Tenant\ShowTenantController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Product\CreateProductController;
+use App\Http\Controllers\Product\ListProductController;
+use App\Http\Controllers\Product\ShowProductController;
+
+use App\Http\Controllers\User\CreateUserController;
+use App\Http\Controllers\User\ListUserController;
+use App\Http\Controllers\User\ShowUserController;
+
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');
@@ -23,4 +31,16 @@ Route::group(['prefix' => 'tenants'], function () {
     Route::get('/', ListTenantController::class);
     Route::get('/{id}', ShowTenantController::class);
     Route::post('/', CreateTenantController::class);
+});
+
+Route::group(['prefix' => 'products'], function () {
+    Route::get('/', ListProductController::class);
+    Route::get('/{id}', ShowProductController::class);
+    Route::post('/', CreateProductController::class);
+});
+
+Route::group(['prefix' => 'users'], function () {
+    Route::get('/', ListUserController::class);
+    Route::get('/{id}', ShowUserController::class);
+    Route::post('/', CreateUserController::class);
 });

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\User\Create;
+namespace App\Application\User\Command;
 
 use App\Domain\Email;
 use App\Domain\Tenant\TenantId;

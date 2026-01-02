@@ -1,5 +1,10 @@
 <?php
 
+namespace App\Application\Product\Exception;
+
+use RuntimeException;
+use Throwable;
+
 class ProductNotFoundException extends RuntimeException
 {
 

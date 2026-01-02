@@ -1,6 +1,8 @@
 <?php
 
 use App\Application\AuditLog\Exception\AuditLogNotFoundException;
+use App\Application\Product\Exception\ProductNotFoundException;
+use App\Application\User\Exception\UserNotFoundException;
 use App\Domain\Exception\ValidationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +25,20 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (AuditLogNotFoundException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => [],
+            ], 404);
+        });
+
+        $exceptions->render(function (UserNotFoundException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => [],
+            ], 404);
+        });
+
+        $exceptions->render(function (ProductNotFoundException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
                 'errors' => [],

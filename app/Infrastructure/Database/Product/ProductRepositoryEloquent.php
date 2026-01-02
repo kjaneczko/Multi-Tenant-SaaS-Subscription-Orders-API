@@ -2,13 +2,13 @@
 
 namespace App\Infrastructure\Database\Product;
 
+use App\Application\Product\Exception\ProductNotFoundException;
+use App\Application\Product\Interface\ProductRepositoryInterface;
 use App\Domain\Product\Product;
 use App\Domain\Product\ProductId;
-use App\Domain\Product\ProductRepositoryInterface;
 use App\Infrastructure\Database\Exception\DatabaseException;
 use App\Models\ProductModel;
 use Illuminate\Database\QueryException;
-use ProductNotFoundException;
 
 final readonly class ProductRepositoryEloquent implements ProductRepositoryInterface
 {

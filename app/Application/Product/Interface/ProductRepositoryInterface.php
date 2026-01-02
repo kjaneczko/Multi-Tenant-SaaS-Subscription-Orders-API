@@ -1,6 +1,9 @@
 <?php
 
-namespace App\Domain\Product;
+namespace App\Application\Product\Interface;
+
+use App\Domain\Product\Product;
+use App\Domain\Product\ProductId;
 
 interface ProductRepositoryInterface
 {
