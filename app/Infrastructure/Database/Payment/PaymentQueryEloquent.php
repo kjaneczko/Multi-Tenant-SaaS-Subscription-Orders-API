@@ -27,7 +27,7 @@ final readonly class PaymentQueryEloquent implements PaymentQueryInterface
             $query->where('tenant_id', $tenantId);
         }
 
-        if ($entityType !== null && $entityType !== '') {
+        if ($entityType !== null) {
             $query->where('entity_type', $entityType->value);
         }
 

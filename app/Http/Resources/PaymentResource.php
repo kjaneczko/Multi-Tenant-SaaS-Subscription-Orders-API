@@ -26,7 +26,7 @@ final class PaymentResource extends JsonResource
             'currency' => $payment->currency()->value,
             'provider' => $payment->provider(),
             'reference' => $payment->reference(),
-            'paid_at' => $payment->paidAt()->format('Y-m-d H:i:s'),
+            'paid_at' => $payment->paidAt()?->format('Y-m-d H:i:s'),
             'created_at' => $payment->createdAt()->format('Y-m-d H:i:s'),
             'updated_at' => $payment->updatedAt()->format('Y-m-d H:i:s'),
         ];

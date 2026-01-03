@@ -6,6 +6,8 @@ use App\Application\AuditLog\AuditLogService;
 use App\Application\AuditLog\Interface\AuditLogServiceInterface;
 use App\Application\Payment\Interface\PaymentQueryInterface;
 use App\Application\Payment\Interface\PaymentRepositoryInterface;
+use App\Application\Payment\Interface\PaymentServiceInterface;
+use App\Application\Payment\PaymentService;
 use App\Application\Product\Interface\ProductQueryInterface;
 use App\Application\Product\Interface\ProductRepositoryInterface;
 use App\Application\Shared\Interface\PasswordHashGeneratorInterface;
@@ -60,6 +62,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(PaymentRepositoryInterface::class, PaymentRepositoryEloquent::class);
         $this->app->bind(PaymentQueryInterface::class, PaymentQueryEloquent::class);
+        $this->app->bind(PaymentServiceInterface::class, PaymentService::class);
     }
 
     /**

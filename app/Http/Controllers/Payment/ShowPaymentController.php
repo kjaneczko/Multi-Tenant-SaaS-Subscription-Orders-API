@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Payment;
 
-use App\Application\Payment\Interface\PaymentRepositoryInterface;
+use App\Application\Payment\Interface\PaymentServiceInterface;
 use App\Domain\Payment\PaymentId;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PaymentResource;
@@ -11,11 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ShowPaymentController extends Controller
 {
-    public function __invoke(
-        string $id,
-        PaymentRepositoryInterface $payments,
-    ): JsonResponse {
-        $payment = $payments->getById(new PaymentId($id));
+    public function __invoke(string $id, PaymentServiceInterface $service): JsonResponse
+    {
+        $payment = $service->getById(new PaymentId($id));
 
         return (new PaymentResource($payment))
             ->response()

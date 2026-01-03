@@ -4,7 +4,6 @@ namespace App\Infrastructure\Database\Payment;
 
 use App\Domain\AmountCents;
 use App\Domain\Currency;
-use App\Domain\Order\OrderId;
 use App\Domain\Payment\Payment;
 use App\Domain\Payment\PaymentEntityType;
 use App\Domain\Payment\PaymentId;
@@ -27,7 +26,7 @@ final class PaymentPersistenceMapper
             amountCents: new AmountCents($model->amount_cents),
             currency: Currency::from($model->currency),
             externalId: $model->external_id,
-            paidAt: new \DateTimeImmutable($model->paid_at),
+            paidAt: $model->paid_at ? new \DateTimeImmutable($model->paid_at) : null,
             createdAt: new \DateTimeImmutable($model->created_at),
             updatedAt: new \DateTimeImmutable($model->updated_at),
         );
