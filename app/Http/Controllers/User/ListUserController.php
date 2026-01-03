@@ -3,52 +3,46 @@
 namespace App\Http\Controllers\User;
 
 use App\Application\Shared\Query\PageRequest;
+use App\Application\User\Interface\UserQueryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
-use App\Infrastructure\Database\User\UserPersistenceMapper;
-use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class ListUserController extends Controller
+final class ListUserController extends Controller
 {
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request, UserQueryInterface $query): JsonResponse
     {
         $request->validate([
-            'page' => 'integer|min:1',
-            'limit' => 'integer|min:1|max:100',
-            'tenant_id' => 'nullable|uuid',
-            'role' => 'nullable|string|in:admin,manager,user',
-            'is_active' => 'nullable|boolean',
+            'page' => 'sometimes|integer|min:1',
+            'limit' => 'sometimes|integer|min:1|max:100',
+            'tenant_id' => 'sometimes|uuid',
+            'role' => 'sometimes|string|in:admin,manager,user',
+            'is_active' => 'sometimes|boolean',
         ]);
 
-        $page = $request->integer('page') ?: 1;
-        $limit = $request->integer('limit') ?: 100;
+        $pageRequest = new PageRequest(
+            page: $request->integer('page', 1),
+            limit: $request->integer('limit', 25),
+        );
 
-        $query = UserModel::query()->orderByDesc('created_at');
+        $tenantId = $request->filled('tenant_id')
+            ? $request->string('tenant_id')->toString()
+            : null;
 
-        if ($request->filled('tenant_id')) {
-            $query->where('tenant_id', $request->string('tenant_id')->toString());
-        }
+        $role = $request->filled('role')
+            ? $request->string('role')->toString()
+            : null;
 
-        if ($request->filled('role')) {
-            $query->where('role', $request->string('role')->toString());
-        }
+        $isActive = $request->has('is_active')
+            ? $request->boolean('is_active')
+            : null;
 
-        if ($request->has('is_active')) {
-            $query->where('is_active', (bool) $request->boolean('is_active'));
-        }
+        $users = $query->paginate($pageRequest, $tenantId, $role, $isActive);
 
-        $models = $query
-            ->offset(($page - 1) * $limit)
-            ->limit($limit)
-            ->get();
-
-        $users = $models
-            ->map(fn (UserModel $m) => UserPersistenceMapper::toDomain($m))
-            ->all();
-
-        return (UserResource::collection($users))->response()->setStatusCode(Response::HTTP_OK);
+        return UserResource::collection($users)
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 }

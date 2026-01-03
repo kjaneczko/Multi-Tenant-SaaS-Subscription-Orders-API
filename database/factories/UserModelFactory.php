@@ -2,60 +2,64 @@
 
 namespace Database\Factories;
 
-use App\Domain\User\UserRole;
 use App\Models\TenantModel;
+use App\Models\UserModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserModel>
+ * @extends Factory<UserModel>
  */
 class UserModelFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = UserModel::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+        $name = $this->faker->name();
+
+        // Uwaga: jeśli w migracji masz unique(['tenant_id','role']),
+        // to tworzenie wielu userów w jednym tenant z losową rolą będzie powodowało flaky testy.
+        // Ten factory losuje rolę, ale w testach zalecam jawnie podawać tenant_id + role.
+        $role = $this->faker->randomElement(['admin', 'manager', 'user']);
+
         return [
-            'id' => $this->faker->uuid(),
+            'id' => (string) Str::uuid(),
+
+            // domyślnie tworzymy tenant
             'tenant_id' => TenantModel::factory(),
-            'name' => $this->faker->name(),
+
+            'name' => $name,
             'email' => $this->faker->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+
+            // null albo timestamp (zgodnie z kolumną nullable)
+            'email_verified_at' => $this->faker->boolean(30) ? now() : null,
+
+            // hasło jako HASH (nie plaintext) — w testach nie musisz znać hasła
+            'password' => bcrypt('secret12345'),
+
+            // rola jako string (zgodnie z tabelą)
+            'role' => $role,
+
+            // bool zgodnie z tabelą
+            'is_active' => $this->faker->boolean(90),
+
             'remember_token' => Str::random(10),
-            'is_active' => $this->faker->randomElement(['active', 'inactive']),
-            'role' => UserRole::USER,
         ];
     }
 
-    public function userRole(): static
+    public function active(): self
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::USER,
-        ]);
+        return $this->state(fn () => ['is_active' => true]);
     }
 
-    public function adminRole(): static
+    public function inactive(): self
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::ADMIN,
-        ]);
+        return $this->state(fn () => ['is_active' => false]);
     }
 
-    public function managerRole(): static
+    public function role(string $role): self
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::MANAGER,
-        ]);
+        return $this->state(fn () => ['role' => $role]);
     }
 }

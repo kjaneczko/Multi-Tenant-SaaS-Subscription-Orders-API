@@ -2,45 +2,37 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Application\Product\Interface\ProductQueryInterface;
 use App\Application\Shared\Query\PageRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
-use App\Infrastructure\Database\Product\ProductPersistenceMapper;
-use App\Models\ProductModel;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Http\Request;
 
-class ListProductController extends Controller
+final class ListProductController extends Controller
 {
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request, ProductQueryInterface $query): JsonResponse
     {
         $request->validate([
-            'page' => 'integer|min:1',
-            'limit' => 'integer|min:1|max:100',
-            'tenant_id' => 'nullable|uuid',
+            'page' => 'sometimes|integer|min:1',
+            'limit' => 'sometimes|integer|min:1|max:100',
+            'tenant_id' => 'sometimes|uuid',
         ]);
 
-        $page = $request->integer('page') ?: 1;
-        $limit = $request->integer('limit') ?: 100;
-        $tenantId = $request->get('tenant_id');
+        $pageRequest = new PageRequest(
+            page: $request->integer('page', 1),
+            limit: $request->integer('limit', 25),
+        );
 
-        $query = ProductModel::query()->orderByDesc('created_at');
+        $tenantId = $request->filled('tenant_id')
+            ? $request->string('tenant_id')->toString()
+            : null;
 
-        if ($tenantId) {
-            $query->where('tenant_id', $tenantId);
-        }
+        $products = $query->paginate($pageRequest, $tenantId);
 
-        $models = $query
-            ->offset(($page - 1) * $limit)
-            ->limit($limit)
-            ->get();
-
-        // Mapujemy do domeny przez mapper i zwracamy persistence array
-        $products = $models
-            ->map(fn (ProductModel $m) => ProductPersistenceMapper::toDomain($m))
-            ->all();
-
-        return (ProductResource::collection($products))->response()->setStatusCode(Response::HTTP_OK);
+        return ProductResource::collection($products)
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 }

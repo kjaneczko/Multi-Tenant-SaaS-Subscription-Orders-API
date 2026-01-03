@@ -12,6 +12,7 @@ use App\Domain\Sku;
 use App\Domain\Slug;
 use App\Domain\Tenant\TenantId;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 use App\Infrastructure\Database\Product\ProductPersistenceMapper;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,7 +25,7 @@ class CreateProductController extends Controller
         CreateProductHandler $handler,
         ProductRepositoryInterface $products,
     ): JsonResponse {
-        $request->validate([
+        $validated = $request->validate([
             'tenant_id' => 'required|uuid',
             'name' => 'required|string|min:1|max:255',
             'slug' => 'required|string|min:1|max:255',
@@ -35,22 +36,21 @@ class CreateProductController extends Controller
         ]);
 
         $command = new CreateProductCommand(
-            tenantId: new TenantId($request->string('tenant_id')->toString()),
-            name: $request->string('name')->toString(),
-            slug: new Slug($request->string('slug')->toString()),
-            sku: new Sku($request->string('sku')->toString()),
-            priceCents: new PriceCents($request->integer('price_cents')),
-            currency: Currency::from($request->string('currency')->toString()),
-            description: $request->get('description'),
+            tenantId: new TenantId($validated['tenant_id']),
+            name: $validated['name'],
+            slug: new Slug($validated['slug']),
+            sku: new Sku($validated['sku']),
+            priceCents: new PriceCents((int) $validated['price_cents']),
+            currency: Currency::from($validated['currency']),
+            description: $validated['description'] ?? null,
         );
 
         $id = $handler($command);
 
         $product = $products->getById(new ProductId($id->toString()));
 
-        return response()->json(
-            ProductPersistenceMapper::toPersistence($product),
-            Response::HTTP_CREATED
-        );
+        return (new ProductResource($product))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 }

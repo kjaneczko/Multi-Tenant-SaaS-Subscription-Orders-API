@@ -4,20 +4,24 @@ namespace App\Providers;
 
 use App\Application\AuditLog\AuditLogService;
 use App\Application\AuditLog\Interface\AuditLogServiceInterface;
+use App\Application\Product\Interface\ProductQueryInterface;
 use App\Application\Product\Interface\ProductRepositoryInterface;
 use App\Application\Shared\Interface\PasswordHashGeneratorInterface;
 use App\Application\Shared\Interface\SlugGeneratorInterface;
 use App\Application\Shared\Interface\UuidGeneratorInterface;
 use App\Application\Tenant\Interface\TenantServiceInterface;
 use App\Application\Tenant\TenantService;
+use App\Application\User\Interface\UserQueryInterface;
 use App\Application\User\Interface\UserRepositoryInterface;
 use App\Domain\AuditLog\Interface\AuditLogQueryInterface;
 use App\Domain\AuditLog\Interface\AuditLogWriterInterface;
 use App\Domain\Tenant\Interface\TenantRepositoryInterface;
 use App\Infrastructure\Database\AuditLog\AuditLogQueryEloquent;
 use App\Infrastructure\Database\AuditLog\AuditLogWriterEloquent;
+use App\Infrastructure\Database\Product\ProductQueryEloquent;
 use App\Infrastructure\Database\Product\ProductRepositoryEloquent;
 use App\Infrastructure\Database\Tenant\TenantRepositoryEloquent;
+use App\Infrastructure\Database\User\UserQueryEloquent;
 use App\Infrastructure\Database\User\UserRepositoryEloquent;
 use App\Infrastructure\PasswordHashGenerator;
 use App\Infrastructure\SlugGenerator;
@@ -42,7 +46,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TenantRepositoryInterface::class, TenantRepositoryEloquent::class);
 
         $this->app->bind(ProductRepositoryInterface::class, ProductRepositoryEloquent::class);
+        $this->app->bind(ProductQueryInterface::class, ProductQueryEloquent::class);
+
         $this->app->bind(UserRepositoryInterface::class, UserRepositoryEloquent::class);
+        $this->app->bind(UserQueryInterface::class, UserQueryEloquent::class);
     }
 
     /**
