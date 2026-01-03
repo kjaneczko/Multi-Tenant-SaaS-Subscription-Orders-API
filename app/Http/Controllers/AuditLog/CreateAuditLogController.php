@@ -26,7 +26,7 @@ class CreateAuditLogController extends Controller
             'action' => 'required',
             'entity_id' => 'required|string',
             'entity_type' => [
-                Rule::in(array_column(EntityType::cases(), 'value')),
+                Rule::in(EntityType::values()),
             ],
             'tenant_id' => 'required|string|exists:tenants,id',
             'meta' => 'required|json',

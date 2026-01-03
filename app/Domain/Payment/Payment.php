@@ -5,19 +5,22 @@ namespace App\Domain\Payment;
 use App\Domain\AmountCents;
 use App\Domain\Currency;
 use App\Domain\Exception\ValidationException;
-use App\Domain\Order\OrderId;
+use App\Domain\Tenant\TenantId;
 
 readonly class Payment
 {
     private function __construct(
         private PaymentId           $id,
-        private OrderId             $orderId,
+        private TenantId            $tenantId,
+        private PaymentEntityType   $entityType,
+        private string              $entityId,
         private PaymentStatus       $status,
         private string              $provider,
         private ?string             $reference,
-        private AmountCents                 $amountCents,
+        private AmountCents         $amountCents,
         private Currency            $currency,
-        private \DateTimeImmutable           $paidAt,
+        private string $externalId,
+        private ?\DateTimeImmutable $paidAt,
         private ?\DateTimeImmutable $createdAt,
         private ?\DateTimeImmutable $updatedAt,
     ) {
@@ -28,24 +31,30 @@ readonly class Payment
 
     public static function create(
         PaymentId           $id,
-        OrderId             $orderId,
+        TenantId             $tenantId,
+        PaymentEntityType             $entityType,
+        string             $entityId,
         PaymentStatus       $status,
         string              $provider,
         ?string             $reference,
         AmountCents                 $amountCents,
         Currency            $currency,
-        \DateTimeImmutable           $paidAt,
+        string $externalId,
+        ?\DateTimeImmutable $paidAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt
     ): self {
         return new self(
             id: $id,
-            orderId: $orderId,
+            tenantId: $tenantId,
+            entityType: $entityType,
+            entityId: $entityId,
             status: $status,
             provider: trim($provider),
             reference: $reference !== null ? trim($reference) : null,
             amountCents: $amountCents,
             currency: $currency,
+            externalId: $externalId,
             paidAt: $paidAt,
             createdAt: $createdAt,
             updatedAt: $updatedAt
@@ -54,24 +63,30 @@ readonly class Payment
 
     public static function reconstitute(
         PaymentId           $id,
-        OrderId             $orderId,
+        TenantId             $tenantId,
+        PaymentEntityType             $entityType,
+        string             $entityId,
         PaymentStatus       $status,
         string              $provider,
         ?string             $reference,
         AmountCents                 $amountCents,
         Currency            $currency,
-        \DateTimeImmutable           $paidAt,
+        string $externalId,
+        ?\DateTimeImmutable $paidAt,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt
     ): self {
         return new self(
             id: $id,
-            orderId: $orderId,
+            tenantId: $tenantId,
+            entityType: $entityType,
+            entityId: $entityId,
             status: $status,
             provider: $provider,
             reference: $reference,
             amountCents: $amountCents,
             currency: $currency,
+            externalId: $externalId,
             paidAt: $paidAt,
             createdAt: $createdAt,
             updatedAt: $updatedAt
@@ -83,9 +98,19 @@ readonly class Payment
         return $this->id;
     }
 
-    public function orderId(): OrderId
+    public function tenantId(): TenantId
     {
-        return $this->orderId;
+        return $this->tenantId;
+    }
+
+    public function entityType(): PaymentEntityType
+    {
+        return $this->entityType;
+    }
+
+    public function entityId(): string
+    {
+        return $this->entityId;
     }
 
     public function status(): PaymentStatus
@@ -113,7 +138,12 @@ readonly class Payment
         return $this->currency;
     }
 
-    public function paidAt(): \DateTimeImmutable
+    public function externalId(): string
+    {
+        return $this->externalId;
+    }
+
+    public function paidAt(): ?\DateTimeImmutable
     {
         return $this->paidAt;
     }

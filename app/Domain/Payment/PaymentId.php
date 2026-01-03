@@ -2,14 +2,19 @@
 
 namespace App\Domain\Payment;
 
-readonly class PaymentId
+use App\Domain\Exception\ValidationException;
+
+final readonly class PaymentId
 {
-    public function __construct(
-        private string $id,
-    ) {}
+    public function __construct(private string $value)
+    {
+        if ($value === '') {
+            throw new ValidationException(['id' => ['PaymentId cannot be empty.']]);
+        }
+    }
 
     public function toString(): string
     {
-        return $this->id;
+        return $this->value;
     }
 }

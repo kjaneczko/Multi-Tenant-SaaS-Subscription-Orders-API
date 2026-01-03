@@ -12,4 +12,20 @@ class PaymentModel extends Model
 
     protected $table = 'payments';
     public $incrementing = false;
+
+    protected $fillable = [
+        'id',
+        'tenant_id',
+        'entity_type',
+        'entity_id',
+        'status',
+        'reference',
+        'amount_cents',
+        'currency',
+        'provider',
+        'external_id',
+        'paid_at',
+        'created_at',
+        'updated_at',
+    ];
 }

@@ -4,6 +4,9 @@ use App\Http\Controllers\AuditLog\CreateAuditLogController;
 use App\Http\Controllers\AuditLog\ListAuditLogController;
 use App\Http\Controllers\AuditLog\ShowAuditLogController;
 //use Illuminate\Http\Request;
+use App\Http\Controllers\Payment\CreatePaymentController;
+use App\Http\Controllers\Payment\ListPaymentController;
+use App\Http\Controllers\Payment\ShowPaymentController;
 use App\Http\Controllers\Tenant\CreateTenantController;
 use App\Http\Controllers\Tenant\ListTenantController;
 use App\Http\Controllers\Tenant\ShowTenantController;
@@ -43,4 +46,10 @@ Route::group(['prefix' => 'users'], function () {
     Route::get('/', ListUserController::class);
     Route::get('/{id}', ShowUserController::class);
     Route::post('/', CreateUserController::class);
+});
+
+Route::prefix('payments')->group(function () {
+    Route::get('/', ListPaymentController::class);
+    Route::get('{id}', ShowPaymentController::class);
+    Route::post('/', CreatePaymentController::class);
 });

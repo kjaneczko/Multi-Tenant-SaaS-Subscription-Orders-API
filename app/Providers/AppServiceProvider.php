@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Application\AuditLog\AuditLogService;
 use App\Application\AuditLog\Interface\AuditLogServiceInterface;
+use App\Application\Payment\Interface\PaymentQueryInterface;
+use App\Application\Payment\Interface\PaymentRepositoryInterface;
 use App\Application\Product\Interface\ProductQueryInterface;
 use App\Application\Product\Interface\ProductRepositoryInterface;
 use App\Application\Shared\Interface\PasswordHashGeneratorInterface;
@@ -18,6 +20,8 @@ use App\Domain\AuditLog\Interface\AuditLogWriterInterface;
 use App\Domain\Tenant\Interface\TenantRepositoryInterface;
 use App\Infrastructure\Database\AuditLog\AuditLogQueryEloquent;
 use App\Infrastructure\Database\AuditLog\AuditLogWriterEloquent;
+use App\Infrastructure\Database\Payment\PaymentQueryEloquent;
+use App\Infrastructure\Database\Payment\PaymentRepositoryEloquent;
 use App\Infrastructure\Database\Product\ProductQueryEloquent;
 use App\Infrastructure\Database\Product\ProductRepositoryEloquent;
 use App\Infrastructure\Database\Tenant\TenantRepositoryEloquent;
@@ -50,6 +54,12 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(UserRepositoryInterface::class, UserRepositoryEloquent::class);
         $this->app->bind(UserQueryInterface::class, UserQueryEloquent::class);
+
+        $this->app->bind(PaymentRepositoryInterface::class, PaymentRepositoryEloquent::class);
+        $this->app->bind(PaymentQueryInterface::class, PaymentQueryEloquent::class);
+
+        $this->app->bind(PaymentRepositoryInterface::class, PaymentRepositoryEloquent::class);
+        $this->app->bind(PaymentQueryInterface::class, PaymentQueryEloquent::class);
     }
 
     /**
