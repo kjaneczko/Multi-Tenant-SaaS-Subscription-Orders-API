@@ -13,22 +13,22 @@ use Illuminate\Database\Eloquent\Model;
  * @method static create(array $toPersistence)
  * @method static skip(float|int $offset)
  *
- * @property string $id
- * @property string $tenant_id
- * @property string $actor_user_id
- * @property string $category
- * @property string $action
- * @property string $entity_type
- * @property string $entity_id
- * @property string $payload
- * @property int $duration_ms
- * @property boolean $success
+ * @property string  $id
+ * @property string  $tenant_id
+ * @property string  $actor_user_id
+ * @property string  $category
+ * @property string  $action
+ * @property string  $entity_type
+ * @property string  $entity_id
+ * @property string  $payload
+ * @property int     $duration_ms
+ * @property bool    $success
  * @property ?string $error_type
  * @property ?string $error_message
- * @property string $created_at
- * @property mixed $request_id
- * @property mixed $ip
- * @property mixed $user_agent
+ * @property string  $created_at
+ * @property mixed   $request_id
+ * @property mixed   $ip
+ * @property mixed   $user_agent
  */
 class AuditLogModel extends Model
 {

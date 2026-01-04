@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Infrastructure\Database\User;
 
 use App\Application\Common\Query\PageRequest;
+use App\Domain\Tenant\TenantId;
 use App\Domain\User\Interface\UserQueryInterface;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
 use App\Domain\User\UserRole;
 use App\Models\UserModel;
-use App\Domain\Tenant\TenantId;
 
 final readonly class UserQueryEloquent implements UserQueryInterface
 {

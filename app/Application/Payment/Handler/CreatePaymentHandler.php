@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Payment\Handler;
 
-use App\Application\Payment\Command\CreatePaymentCommand;
 use App\Application\Common\Interface\UuidGeneratorInterface;
+use App\Application\Payment\Command\CreatePaymentCommand;
 use App\Domain\Payment\Interface\PaymentRepositoryInterface;
 use App\Domain\Payment\Payment;
 use App\Domain\Payment\PaymentId;
@@ -14,7 +14,7 @@ final readonly class CreatePaymentHandler
 {
     public function __construct(
         private PaymentRepositoryInterface $repository,
-        private UuidGeneratorInterface     $uuid,
+        private UuidGeneratorInterface $uuid,
     ) {}
 
     public function __invoke(CreatePaymentCommand $command): Payment

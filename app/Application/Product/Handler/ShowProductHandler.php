@@ -21,6 +21,7 @@ readonly class ShowProductHandler
         if (!$product) {
             throw new ProductNotFoundException();
         }
+
         return $product;
     }
 }

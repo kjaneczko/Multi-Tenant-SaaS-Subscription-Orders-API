@@ -36,10 +36,12 @@ final readonly class TenantQueryEloquent implements TenantQueryInterface
         $models = $query
             ->offset(($page - 1) * $limit)
             ->limit($limit)
-            ->get();
+            ->get()
+        ;
 
         return $models
             ->map(fn (TenantModel $model) => TenantPersistenceMapper::toDomain($model))
-            ->all();
+            ->all()
+        ;
     }
 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Common;
 
 use App\Application\Common\Interface\AuditableOperation;
-use App\Application\Context\Interface\RequestContextProviderInterface;
 use App\Application\Common\Interface\UuidGeneratorInterface;
+use App\Application\Context\Interface\RequestContextProviderInterface;
 use App\Domain\AuditLog\AuditLog;
 use App\Domain\AuditLog\AuditLogId;
 use App\Domain\AuditLog\Interface\AuditLogWriterInterface;
@@ -14,7 +14,6 @@ use App\Domain\PayloadJsonString;
 use App\Domain\SensitiveKeys;
 use App\Domain\Tenant\TenantId;
 use App\Domain\User\UserId;
-use Throwable;
 
 final readonly class UseCaseExecutor
 {
@@ -26,14 +25,16 @@ final readonly class UseCaseExecutor
 
     /**
      * @template T
-     * @param AuditableOperation $operation
+     *
      * @param callable():T $fn
+     *
      * @return T
-     * @throws Throwable
+     *
+     * @throws \Throwable
      */
     public function run(
         AuditableOperation $operation,
-        callable           $fn,
+        callable $fn,
     ): mixed {
         $ctx = $this->contextProvider->current();
         $start = microtime(true);
@@ -61,7 +62,7 @@ final readonly class UseCaseExecutor
             ));
 
             return $result;
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->auditWriter->write(AuditLog::create(
                 id: new AuditLogId($this->uuid->generate()),
                 tenantId: new TenantId($ctx->tenantId),
@@ -74,7 +75,7 @@ final readonly class UseCaseExecutor
                 durationMs: (int) round((microtime(true) - $start) * 1000),
                 success: false,
                 errorType: (new \ReflectionClass($e))->getShortName(),
-                errorMessage: $e->getMessage() !== '' ? $e->getMessage() : 'error',
+                errorMessage: '' !== $e->getMessage() ? $e->getMessage() : 'error',
                 requestId: $ctx->requestId,
                 ip: $ctx->ip,
                 userAgent: $ctx->userAgent,
@@ -94,10 +95,12 @@ final readonly class UseCaseExecutor
         foreach ($payload as $k => $v) {
             if (\in_array($k, $sensitiveKeys, true)) {
                 $out[$k] = '***';
+
                 continue;
             }
             $out[$k] = $v;
         }
+
         return $out;
     }
 }

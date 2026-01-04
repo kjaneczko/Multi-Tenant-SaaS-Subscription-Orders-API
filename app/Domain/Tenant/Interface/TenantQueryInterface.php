@@ -13,7 +13,6 @@ use App\Domain\Tenant\TenantId;
  */
 interface TenantQueryInterface
 {
-
     public function getById(TenantId $id): ?Tenant;
 
     /**

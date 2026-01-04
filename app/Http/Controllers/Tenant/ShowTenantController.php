@@ -17,23 +17,22 @@ class ShowTenantController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
      */
     public function __invoke(
-        string            $id,
+        string $id,
         ShowTenantHandler $handler,
     ): JsonResponse {
         $command = new ShowTenantCommand(new TenantId($id));
 
-        $tenant = $this->executor->run($command, fn() => ($handler)($command));
+        $tenant = $this->executor->run($command, fn () => ($handler)($command));
 
         return (new TenantResource($tenant))
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode(Response::HTTP_OK)
+        ;
     }
 }

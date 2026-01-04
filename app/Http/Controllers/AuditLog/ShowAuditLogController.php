@@ -6,7 +6,6 @@ namespace App\Http\Controllers\AuditLog;
 
 use App\Application\AuditLog\Command\ShowAuditLogCommand;
 use App\Application\AuditLog\Handler\ShowAuditLogHandler;
-use App\Application\AuditLog\Interface\AuditLogServiceInterface;
 use App\Application\Common\UseCaseExecutor;
 use App\Domain\AuditLog\AuditLogId;
 use App\Http\Controllers\Controller;
@@ -17,9 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 class ShowAuditLogController extends Controller
 {
     public function __construct(
-        private readonly UseCaseExecutor $executor,)
-    {
-    }
+        private readonly UseCaseExecutor $executor,
+    ) {}
 
     /**
      * @throws \Throwable
@@ -29,7 +27,7 @@ class ShowAuditLogController extends Controller
         ShowAuditLogHandler $handler,
     ): JsonResponse {
         $command = new ShowAuditLogCommand(new AuditLogId($id));
-        $auditLog = $this->executor->run($command, fn() => ($handler)($command));
+        $auditLog = $this->executor->run($command, fn () => ($handler)($command));
 
         return (new AuditLogResource($auditLog))
             ->response()

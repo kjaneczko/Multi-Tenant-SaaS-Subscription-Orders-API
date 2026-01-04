@@ -22,6 +22,7 @@ final readonly class ProductQueryEloquent implements ProductQueryInterface
 
         return ProductPersistenceMapper::toDomain($model);
     }
+
     public function paginate(PageRequest $pageRequest, ?TenantId $tenantId = null): array
     {
         $page = $pageRequest->page;

@@ -25,6 +25,7 @@ final readonly class ProductRepositoryEloquent implements ProductRepositoryInter
         if (!$model) {
             throw DatabaseException::failedToSave();
         }
+
         return ProductPersistenceMapper::toDomain($model);
     }
 

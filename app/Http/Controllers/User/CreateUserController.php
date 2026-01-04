@@ -10,7 +10,6 @@ use App\Application\User\Command\CreateUserCommand;
 use App\Application\User\Handler\CreateUserHandler;
 use App\Domain\Email;
 use App\Domain\Tenant\TenantId;
-use App\Domain\User\UserId;
 use App\Domain\User\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
@@ -22,9 +21,7 @@ class CreateUserController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -50,7 +47,7 @@ class CreateUserController extends Controller
             role: UserRole::from($request->string('role')->toString()),
         );
 
-        $user = $this->executor->run($command, fn() => ($handler)($command));
+        $user = $this->executor->run($command, fn () => ($handler)($command));
 
         return (new UserResource($user))->response()->setStatusCode(Response::HTTP_CREATED);
     }

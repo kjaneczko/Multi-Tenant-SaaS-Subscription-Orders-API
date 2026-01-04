@@ -21,6 +21,7 @@ readonly class ShowPaymentHandler
         if (!$payment) {
             throw new PaymentNotFoundException();
         }
+
         return $payment;
     }
 }

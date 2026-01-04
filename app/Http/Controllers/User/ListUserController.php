@@ -21,9 +21,7 @@ final class ListUserController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -31,8 +29,7 @@ final class ListUserController extends Controller
     public function __invoke(
         Request $request,
         ListUserHandler $handler,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $request->validate([
             'page' => 'sometimes|integer|min:1',
             'limit' => 'sometimes|integer|min:1|max:100',
@@ -69,7 +66,7 @@ final class ListUserController extends Controller
             isActive: $isActive,
         );
 
-        $users = $this->executor->run($command, fn() => ($handler)($command));
+        $users = $this->executor->run($command, fn () => ($handler)($command));
 
         return UserResource::collection($users)
             ->response()

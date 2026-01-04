@@ -17,9 +17,7 @@ final class ShowProductController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -28,10 +26,9 @@ final class ShowProductController extends Controller
         string $id,
         ShowProductHandler $handler,
     ): JsonResponse {
-
         $command = new ShowProductCommand(new ProductId($id));
 
-        $product = $this->executor->run($command, fn() => ($handler)($command));
+        $product = $this->executor->run($command, fn () => ($handler)($command));
 
         return (new ProductResource($product))
             ->response()

@@ -21,6 +21,7 @@ readonly class ShowAuditLogHandler
         if (!$auditLog) {
             throw new AuditLogNotFoundException();
         }
+
         return $auditLog;
     }
 }

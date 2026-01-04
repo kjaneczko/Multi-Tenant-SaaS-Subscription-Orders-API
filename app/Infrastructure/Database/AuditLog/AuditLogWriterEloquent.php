@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Database\AuditLog;
 
 use App\Domain\AuditLog\AuditLog;
-use App\Domain\AuditLog\AuditLogId;
 use App\Domain\AuditLog\Interface\AuditLogWriterInterface;
 use App\Infrastructure\Database\Exception\DatabaseException;
 use App\Models\AuditLogModel;

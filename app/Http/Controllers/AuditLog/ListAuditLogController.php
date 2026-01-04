@@ -6,8 +6,8 @@ namespace App\Http\Controllers\AuditLog;
 
 use App\Application\AuditLog\Command\ListAuditLogCommand;
 use App\Application\AuditLog\Handler\ListAuditLogHandler;
-use App\Application\Common\UseCaseExecutor;
 use App\Application\Common\Query\PageRequest;
+use App\Application\Common\UseCaseExecutor;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AuditLogResource;
 use Illuminate\Http\Request;
@@ -18,9 +18,7 @@ class ListAuditLogController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -41,7 +39,7 @@ class ListAuditLogController extends Controller
             pageRequest: new PageRequest(page: $page, limit: $limit),
         );
 
-        $auditLogs = $this->executor->run($command, fn() => ($handler)($command));
+        $auditLogs = $this->executor->run($command, fn () => ($handler)($command));
 
         return AuditLogResource::collection($auditLogs)
             ->response()

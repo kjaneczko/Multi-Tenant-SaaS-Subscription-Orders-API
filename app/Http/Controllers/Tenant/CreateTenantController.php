@@ -17,9 +17,7 @@ class CreateTenantController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -36,7 +34,7 @@ class CreateTenantController extends Controller
             name: $request->get('name'),
         );
 
-        $tenant = $this->executor->run($command, fn() => ($handler)($command));
+        $tenant = $this->executor->run($command, fn () => ($handler)($command));
 
         return (new TenantResource($tenant))->response()->setStatusCode(Response::HTTP_CREATED);
     }

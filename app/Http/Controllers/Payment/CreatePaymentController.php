@@ -23,9 +23,7 @@ final class CreatePaymentController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -33,8 +31,7 @@ final class CreatePaymentController extends Controller
     public function __invoke(
         Request $request,
         CreatePaymentHandler $handler,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $request->validate([
             'tenant_id' => 'required|uuid',
             'entity_type' => ['required', 'string', Rule::in(PaymentEntityType::values())],
@@ -59,7 +56,7 @@ final class CreatePaymentController extends Controller
             externalId: $request->get('external_id') ?? null,
         );
 
-        $payment = $this->executor->run($command, fn() => ($handler)($command));
+        $payment = $this->executor->run($command, fn () => ($handler)($command));
 
         return (new PaymentResource($payment))
             ->response()

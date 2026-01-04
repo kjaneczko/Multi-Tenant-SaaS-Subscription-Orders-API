@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Application\Context\Interface\RequestContextProviderInterface;
 use App\Application\Common\Interface\PasswordHashGeneratorInterface;
 use App\Application\Common\Interface\SlugGeneratorInterface;
 use App\Application\Common\Interface\UuidGeneratorInterface;
+use App\Application\Context\Interface\RequestContextProviderInterface;
 use App\Domain\AuditLog\Interface\AuditLogQueryInterface;
 use App\Domain\AuditLog\Interface\AuditLogWriterInterface;
 use App\Domain\Payment\Interface\PaymentQueryInterface;

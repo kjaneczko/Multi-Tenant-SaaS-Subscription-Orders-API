@@ -18,9 +18,7 @@ class ListTenantController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -39,7 +37,7 @@ class ListTenantController extends Controller
 
         $command = new ListTenantCommand(new PageRequest($page, $limit));
 
-        $tenants = $this->executor->run($command, fn() => ($handler)($command));
+        $tenants = $this->executor->run($command, fn () => ($handler)($command));
 
         return TenantResource::collection($tenants)->response()->setStatusCode(Response::HTTP_OK);
     }

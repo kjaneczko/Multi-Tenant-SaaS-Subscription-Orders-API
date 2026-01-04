@@ -6,8 +6,8 @@ namespace App\Application\Payment\Command;
 
 use App\Application\Common\AuditCategory;
 use App\Application\Common\Interface\AuditableOperation;
-use App\Domain\Payment\PaymentId;
 use App\Domain\EntityType;
+use App\Domain\Payment\PaymentId;
 
 readonly class ShowPaymentCommand implements AuditableOperation
 {

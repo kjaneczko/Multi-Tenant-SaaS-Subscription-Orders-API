@@ -17,9 +17,7 @@ final class ShowPaymentController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -27,13 +25,13 @@ final class ShowPaymentController extends Controller
     public function __invoke(
         string $id,
         ShowPaymentHandler $handler,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $command = new ShowPaymentCommand(new PaymentId($id));
-        $payment = $this->executor->run($command, fn() => ($handler)($command));
+        $payment = $this->executor->run($command, fn () => ($handler)($command));
 
         return (new PaymentResource($payment))
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode(Response::HTTP_OK)
+        ;
     }
 }

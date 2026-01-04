@@ -30,10 +30,12 @@ class AuditLogQueryEloquent implements AuditLogQueryInterface
         $offset = ($page - 1) * $limit;
         $query = AuditLogModel::skip($offset)
             ->take($limit)
-            ->orderBy('entity_type');
+            ->orderBy('entity_type')
+        ;
 
         return $query->get()
             ->map(fn (AuditLogModel $model) => AuditLogPersistenceMapper::toDomain($model))
-            ->all();
+            ->all()
+        ;
     }
 }

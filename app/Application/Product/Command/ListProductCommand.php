@@ -8,7 +8,6 @@ use App\Application\Common\AuditCategory;
 use App\Application\Common\Interface\AuditableOperation;
 use App\Application\Common\Query\PageRequest;
 use App\Domain\EntityType;
-use App\Domain\Payment\PaymentEntityType;
 use App\Domain\Tenant\TenantId;
 
 readonly class ListProductCommand implements AuditableOperation

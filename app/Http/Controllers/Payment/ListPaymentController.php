@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Payment;
 
+use App\Application\Common\Query\PageRequest;
 use App\Application\Common\UseCaseExecutor;
 use App\Application\Payment\Command\ListPaymentCommand;
 use App\Application\Payment\Handler\ListPaymentHandler;
-use App\Application\Common\Query\PageRequest;
 use App\Domain\Payment\PaymentEntityType;
 use App\Domain\Tenant\TenantId;
 use App\Http\Controllers\Controller;
@@ -21,9 +21,7 @@ final class ListPaymentController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -31,8 +29,7 @@ final class ListPaymentController extends Controller
     public function __invoke(
         Request $request,
         ListPaymentHandler $handler,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $request->validate([
             'page' => 'sometimes|integer|min:1',
             'limit' => 'sometimes|integer|min:1|max:100',
@@ -59,10 +56,11 @@ final class ListPaymentController extends Controller
             entityType: $entityType,
         );
 
-        $payments = $this->executor->run($command, fn() => ($handler)($command));
+        $payments = $this->executor->run($command, fn () => ($handler)($command));
 
         return PaymentResource::collection($payments)
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode(Response::HTTP_OK)
+        ;
     }
 }

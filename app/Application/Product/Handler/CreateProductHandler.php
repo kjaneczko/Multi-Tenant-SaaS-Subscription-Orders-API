@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Product\Handler;
 
-use App\Application\Product\Command\CreateProductCommand;
 use App\Application\Common\Interface\UuidGeneratorInterface;
+use App\Application\Product\Command\CreateProductCommand;
 use App\Domain\Product\Interface\ProductRepositoryInterface;
 use App\Domain\Product\Product;
 use App\Domain\Product\ProductId;

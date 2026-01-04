@@ -22,9 +22,7 @@ class CreateProductController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -53,7 +51,7 @@ class CreateProductController extends Controller
             description: $request->get('description') ?? null,
         );
 
-        $product = $this->executor->run($command, fn() => ($handler)($command));
+        $product = $this->executor->run($command, fn () => ($handler)($command));
 
         return (new ProductResource($product))
             ->response()

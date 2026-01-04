@@ -34,7 +34,8 @@ final readonly class PaymentQueryEloquent implements PaymentQueryInterface
         $limit = $pageRequest->limit;
 
         $query = PaymentModel::query()
-            ->orderByDesc('created_at');
+            ->orderByDesc('created_at')
+        ;
 
         if (null !== $tenantId) {
             $query->where('tenant_id', $tenantId->toString());
@@ -47,10 +48,12 @@ final readonly class PaymentQueryEloquent implements PaymentQueryInterface
         $models = $query
             ->offset(($page - 1) * $limit)
             ->limit($limit)
-            ->get();
+            ->get()
+        ;
 
         return $models
             ->map(fn (PaymentModel $model) => PaymentPersistenceMapper::toDomain($model))
-            ->all();
+            ->all()
+        ;
     }
 }

@@ -16,8 +16,8 @@ readonly class CreateTenantHandler
 {
     public function __construct(
         private TenantRepositoryInterface $repository,
-        private UuidGeneratorInterface    $uuid,
-        private SlugGeneratorInterface    $slug,
+        private UuidGeneratorInterface $uuid,
+        private SlugGeneratorInterface $slug,
     ) {}
 
     public function __invoke(

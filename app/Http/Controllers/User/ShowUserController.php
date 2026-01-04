@@ -17,9 +17,7 @@ class ShowUserController extends Controller
 {
     public function __construct(
         private readonly UseCaseExecutor $executor,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @throws \Throwable
@@ -30,7 +28,7 @@ class ShowUserController extends Controller
     ): JsonResponse {
         $command = new ShowUserCommand(new UserId($id));
 
-        $user = $this->executor->run($command, fn() => ($handler)($command));
+        $user = $this->executor->run($command, fn () => ($handler)($command));
 
         return (new UserResource($user))->response()->setStatusCode(Response::HTTP_OK);
     }
