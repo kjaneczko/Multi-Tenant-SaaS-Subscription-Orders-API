@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Application\Tenant\Handler;
 
 use App\Application\Tenant\Command\ListTenantCommand;
-use App\Application\Tenant\TenantExecutor;
+use App\Domain\Tenant\Interface\TenantQueryInterface;
 
 readonly class ListTenantHandler
 {
     public function __construct(
-        private TenantExecutor $executor,
+        private TenantQueryInterface $repository,
     ) {}
 
     public function __invoke(ListTenantCommand $command): array
     {
-        return $this->executor->getAll($command->pageRequest);
+        return $this->repository->paginate($command->pageRequest);
     }
 }

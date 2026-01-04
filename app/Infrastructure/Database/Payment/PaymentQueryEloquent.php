@@ -6,28 +6,38 @@ namespace App\Infrastructure\Database\Payment;
 
 use App\Application\Common\Query\PageRequest;
 use App\Domain\Payment\Interface\PaymentQueryInterface;
+use App\Domain\Payment\Payment;
 use App\Domain\Payment\PaymentEntityType;
+use App\Domain\Payment\PaymentId;
+use App\Domain\Tenant\TenantId;
 use App\Models\PaymentModel;
 
 final readonly class PaymentQueryEloquent implements PaymentQueryInterface
 {
+    public function getById(PaymentId $id): ?Payment
+    {
+        $model = PaymentModel::query()->find($id->toString());
+
+        if (!$model) {
+            return null;
+        }
+
+        return PaymentPersistenceMapper::toDomain($model);
+    }
+
     public function paginate(
         PageRequest $pageRequest,
-        ?string $tenantId = null,
+        ?TenantId $tenantId = null,
         ?PaymentEntityType $entityType = null,
     ): array {
-        // Jeżeli PageRequest ma gettery, zamień na:
-        // $page = $pageRequest->page();
-        // $limit = $pageRequest->limit();
         $page = $pageRequest->page;
         $limit = $pageRequest->limit;
 
         $query = PaymentModel::query()
-            ->orderByDesc('created_at')
-        ;
+            ->orderByDesc('created_at');
 
-        if (null !== $tenantId && '' !== $tenantId) {
-            $query->where('tenant_id', $tenantId);
+        if (null !== $tenantId) {
+            $query->where('tenant_id', $tenantId->toString());
         }
 
         if (null !== $entityType) {
@@ -37,12 +47,10 @@ final readonly class PaymentQueryEloquent implements PaymentQueryInterface
         $models = $query
             ->offset(($page - 1) * $limit)
             ->limit($limit)
-            ->get()
-        ;
+            ->get();
 
         return $models
             ->map(fn (PaymentModel $model) => PaymentPersistenceMapper::toDomain($model))
-            ->all()
-        ;
+            ->all();
     }
 }

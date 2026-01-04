@@ -19,6 +19,6 @@ readonly class ListAuditLogHandler
      */
     public function __invoke(ListAuditLogCommand $command): array
     {
-        return $this->auditLogQuery->list(pageRequest: $command->pageRequest);
+        return $this->auditLogQuery->paginate(pageRequest: $command->pageRequest);
     }
 }

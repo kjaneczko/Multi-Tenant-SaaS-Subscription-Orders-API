@@ -13,18 +13,7 @@ use Illuminate\Database\QueryException;
 
 final readonly class UserRepositoryEloquent implements UserRepositoryInterface
 {
-    public function getById(UserId $id): ?User
-    {
-        $model = UserModel::query()->find($id->toString());
-
-        if (!$model) {
-            return null;
-        }
-
-        return UserPersistenceMapper::toDomain($model);
-    }
-
-    public function create(User $user): void
+    public function create(User $user): User
     {
         try {
             $attributes = UserPersistenceMapper::toPersistence($user);
@@ -36,6 +25,8 @@ final readonly class UserRepositoryEloquent implements UserRepositoryInterface
         if (!$model) {
             throw DatabaseException::failedToSave();
         }
+
+        return UserPersistenceMapper::toDomain($model);
     }
 
     public function update(User $user): bool

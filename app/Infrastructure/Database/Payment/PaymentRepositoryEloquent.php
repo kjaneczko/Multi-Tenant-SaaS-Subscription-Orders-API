@@ -6,24 +6,25 @@ namespace App\Infrastructure\Database\Payment;
 
 use App\Domain\Payment\Interface\PaymentRepositoryInterface;
 use App\Domain\Payment\Payment;
-use App\Domain\Payment\PaymentId;
+use App\Infrastructure\Database\Exception\DatabaseException;
 use App\Models\PaymentModel;
+use Illuminate\Database\QueryException;
 
 final readonly class PaymentRepositoryEloquent implements PaymentRepositoryInterface
 {
-    public function getById(PaymentId $id): ?Payment
+    public function create(Payment $payment): Payment
     {
-        $model = PaymentModel::query()->find($id->toString());
+        try {
+            $attributes = PaymentPersistenceMapper::toPersistence($payment);
+            $model = PaymentModel::create($attributes);
+        } catch (QueryException $e) {
+            throw DatabaseException::failedToSave($e);
+        }
 
         if (!$model) {
-            return null;
+            throw DatabaseException::failedToSave();
         }
 
         return PaymentPersistenceMapper::toDomain($model);
-    }
-
-    public function create(Payment $payment): void
-    {
-        PaymentModel::create(PaymentPersistenceMapper::toPersistence($payment));
     }
 }

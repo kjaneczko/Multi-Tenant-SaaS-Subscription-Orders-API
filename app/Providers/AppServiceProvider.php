@@ -4,22 +4,17 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Application\AuditLog\AuditLogService;
-use App\Application\AuditLog\Interface\AuditLogServiceInterface;
 use App\Application\Context\Interface\RequestContextProviderInterface;
-use App\Application\Payment\Interface\PaymentServiceInterface;
-use App\Application\Payment\PaymentService;
 use App\Application\Common\Interface\PasswordHashGeneratorInterface;
 use App\Application\Common\Interface\SlugGeneratorInterface;
 use App\Application\Common\Interface\UuidGeneratorInterface;
-use App\Application\Tenant\Interface\TenantServiceInterface;
-use App\Application\Tenant\TenantService;
 use App\Domain\AuditLog\Interface\AuditLogQueryInterface;
 use App\Domain\AuditLog\Interface\AuditLogWriterInterface;
 use App\Domain\Payment\Interface\PaymentQueryInterface;
 use App\Domain\Payment\Interface\PaymentRepositoryInterface;
 use App\Domain\Product\Interface\ProductQueryInterface;
 use App\Domain\Product\Interface\ProductRepositoryInterface;
+use App\Domain\Tenant\Interface\TenantQueryInterface;
 use App\Domain\Tenant\Interface\TenantRepositoryInterface;
 use App\Domain\User\Interface\UserQueryInterface;
 use App\Domain\User\Interface\UserRepositoryInterface;
@@ -30,6 +25,7 @@ use App\Infrastructure\Database\Payment\PaymentQueryEloquent;
 use App\Infrastructure\Database\Payment\PaymentRepositoryEloquent;
 use App\Infrastructure\Database\Product\ProductQueryEloquent;
 use App\Infrastructure\Database\Product\ProductRepositoryEloquent;
+use App\Infrastructure\Database\Tenant\TenantQueryEloquent;
 use App\Infrastructure\Database\Tenant\TenantRepositoryEloquent;
 use App\Infrastructure\Database\User\UserQueryEloquent;
 use App\Infrastructure\Database\User\UserRepositoryEloquent;
@@ -52,8 +48,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AuditLogQueryInterface::class, AuditLogQueryEloquent::class);
         $this->app->bind(AuditLogWriterInterface::class, AuditLogWriterEloquent::class);
 
-        $this->app->bind(TenantServiceInterface::class, TenantService::class);
         $this->app->bind(TenantRepositoryInterface::class, TenantRepositoryEloquent::class);
+        $this->app->bind(TenantQueryInterface::class, TenantQueryEloquent::class);
 
         $this->app->bind(ProductRepositoryInterface::class, ProductRepositoryEloquent::class);
         $this->app->bind(ProductQueryInterface::class, ProductQueryEloquent::class);
@@ -63,7 +59,6 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(PaymentRepositoryInterface::class, PaymentRepositoryEloquent::class);
         $this->app->bind(PaymentQueryInterface::class, PaymentQueryEloquent::class);
-        $this->app->bind(PaymentServiceInterface::class, PaymentService::class);
 
         $this->app->bind(RequestContextProviderInterface::class, LaravelRequestContextProvider::class);
     }

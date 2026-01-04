@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\User;
 
 use App\Application\Common\Interface\PasswordHashGeneratorInterface;
+use App\Application\Common\UseCaseExecutor;
 use App\Application\User\Command\CreateUserCommand;
 use App\Application\User\Handler\CreateUserHandler;
-use App\Application\User\UserExecutor;
 use App\Domain\Email;
 use App\Domain\Tenant\TenantId;
 use App\Domain\User\UserId;
@@ -20,10 +20,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CreateUserController extends Controller
 {
+    public function __construct(
+        private readonly UseCaseExecutor $executor,
+    )
+    {
+    }
+
+    /**
+     * @throws \Throwable
+     */
     public function __invoke(
         Request $request,
         CreateUserHandler $handler,
-        UserExecutor $executor,
         PasswordHashGeneratorInterface $passwordHash,
     ): JsonResponse {
         $request->validate([
@@ -42,9 +50,7 @@ class CreateUserController extends Controller
             role: UserRole::from($request->string('role')->toString()),
         );
 
-        $id = $handler($command);
-
-        $user = $executor->getByIdOrFail(new UserId($id->toString()));
+        $user = $this->executor->run($command, fn() => ($handler)($command));
 
         return (new UserResource($user))->response()->setStatusCode(Response::HTTP_CREATED);
     }

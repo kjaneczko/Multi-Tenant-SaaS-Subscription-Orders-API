@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Payment;
 
-use App\Application\Payment\Interface\PaymentServiceInterface;
+use App\Application\Common\UseCaseExecutor;
+use App\Application\Payment\Command\ListPaymentCommand;
+use App\Application\Payment\Handler\ListPaymentHandler;
 use App\Application\Common\Query\PageRequest;
 use App\Domain\Payment\PaymentEntityType;
+use App\Domain\Tenant\TenantId;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PaymentResource;
 use Illuminate\Http\Request;
@@ -16,9 +19,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ListPaymentController extends Controller
 {
+    public function __construct(
+        private readonly UseCaseExecutor $executor,
+    )
+    {
+    }
+
+    /**
+     * @throws \Throwable
+     */
     public function __invoke(
         Request $request,
-        PaymentServiceInterface $service,
+        ListPaymentHandler $handler,
     ): JsonResponse
     {
         $request->validate([
@@ -33,19 +45,24 @@ final class ListPaymentController extends Controller
             limit: $request->integer('limit', 25),
         );
 
-        $tenantId = $request->filled('tenant_id')
-            ? $request->string('tenant_id')->toString()
+        $tenantId = $request->get('tenant_id')
+            ? new TenantId($request->string('tenant_id')->toString())
             : null;
 
-        $entityType = $request->filled('entity_type')
+        $entityType = $request->get('entity_type')
             ? PaymentEntityType::from($request->string('entity_type')->toString())
             : null;
 
-        $payments = $service->paginate($pageRequest, $tenantId, $entityType);
+        $command = new ListPaymentCommand(
+            pageRequest: $pageRequest,
+            tenantId: $tenantId,
+            entityType: $entityType,
+        );
+
+        $payments = $this->executor->run($command, fn() => ($handler)($command));
 
         return PaymentResource::collection($payments)
             ->response()
-            ->setStatusCode(Response::HTTP_OK)
-        ;
+            ->setStatusCode(Response::HTTP_OK);
     }
 }

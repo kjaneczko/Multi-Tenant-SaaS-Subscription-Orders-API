@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Product;
 
+use App\Application\Common\UseCaseExecutor;
 use App\Application\Product\Command\CreateProductCommand;
-use App\Application\Product\Interface\ProductServiceInterface;
+use App\Application\Product\Handler\CreateProductHandler;
 use App\Domain\Currency;
 use App\Domain\PriceCents;
 use App\Domain\Sku;
@@ -19,11 +20,20 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CreateProductController extends Controller
 {
+    public function __construct(
+        private readonly UseCaseExecutor $executor,
+    )
+    {
+    }
+
+    /**
+     * @throws \Throwable
+     */
     public function __invoke(
         Request $request,
-        ProductServiceInterface $service,
+        CreateProductHandler $handler,
     ): JsonResponse {
-        $validated = $request->validate([
+        $request->validate([
             'tenant_id' => 'required|uuid',
             'name' => 'required|string|min:1|max:255',
             'slug' => 'required|string|min:1|max:255',
@@ -34,16 +44,16 @@ class CreateProductController extends Controller
         ]);
 
         $command = new CreateProductCommand(
-            tenantId: new TenantId($validated['tenant_id']),
-            name: $validated['name'],
-            slug: new Slug($validated['slug']),
-            sku: new Sku($validated['sku']),
-            priceCents: new PriceCents((int) $validated['price_cents']),
-            currency: Currency::from($validated['currency']),
-            description: $validated['description'] ?? null,
+            tenantId: new TenantId($request->get('tenant_id')),
+            name: $request->get('name'),
+            slug: new Slug($request->get('slug')),
+            sku: new Sku($request->get('sku')),
+            priceCents: new PriceCents($request->integer('price_cents')),
+            currency: Currency::from($request->get('currency')),
+            description: $request->get('description') ?? null,
         );
 
-        $product = $service->create($command);
+        $product = $this->executor->run($command, fn() => ($handler)($command));
 
         return (new ProductResource($product))
             ->response()

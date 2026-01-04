@@ -6,18 +6,18 @@ namespace App\Application\User\Handler;
 
 use App\Application\Common\Interface\UuidGeneratorInterface;
 use App\Application\User\Command\CreateUserCommand;
-use App\Application\User\UserExecutor;
+use App\Domain\User\Interface\UserRepositoryInterface;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
 
 final readonly class CreateUserHandler
 {
     public function __construct(
-        private UserExecutor $executor,
+        private UserRepositoryInterface $repository,
         private UuidGeneratorInterface $uuid,
     ) {}
 
-    public function __invoke(CreateUserCommand $command): UserId
+    public function __invoke(CreateUserCommand $command): User
     {
         $id = new UserId($this->uuid->generate());
 
@@ -34,8 +34,6 @@ final readonly class CreateUserHandler
             updatedAt: new \DateTimeImmutable(),
         );
 
-        $this->executor->create($user);
-
-        return $id;
+        return $this->repository->create($user);
     }
 }

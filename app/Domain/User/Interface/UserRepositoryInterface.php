@@ -9,9 +9,7 @@ use App\Domain\User\UserId;
 
 interface UserRepositoryInterface
 {
-    public function getById(UserId $id): ?User;
-
-    public function create(User $user): void;
+    public function create(User $user): User;
 
     public function update(User $user): bool;
 

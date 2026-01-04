@@ -22,18 +22,18 @@ class AuditLogQueryEloquent implements AuditLogQueryInterface
         return AuditLogPersistenceMapper::toDomain($model);
     }
 
-    public function list(PageRequest $pageRequest): array
+    public function paginate(PageRequest $pageRequest): array
     {
-        $offset = ($pageRequest->page - 1) * $pageRequest->limit;
+        $page = $pageRequest->page;
+        $limit = $pageRequest->limit;
 
+        $offset = ($page - 1) * $limit;
         $query = AuditLogModel::skip($offset)
-            ->take($pageRequest->limit)
-            ->orderBy('entity_type')
-        ;
+            ->take($limit)
+            ->orderBy('entity_type');
 
         return $query->get()
             ->map(fn (AuditLogModel $model) => AuditLogPersistenceMapper::toDomain($model))
-            ->all()
-        ;
+            ->all();
     }
 }

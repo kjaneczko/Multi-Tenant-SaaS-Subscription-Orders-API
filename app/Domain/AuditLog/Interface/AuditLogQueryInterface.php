@@ -15,5 +15,5 @@ interface AuditLogQueryInterface
     /**
      * @return AuditLog[]
      */
-    public function list(PageRequest $pageRequest): array;
+    public function paginate(PageRequest $pageRequest): array;
 }

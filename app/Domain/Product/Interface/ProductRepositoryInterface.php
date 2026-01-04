@@ -9,9 +9,7 @@ use App\Domain\Product\ProductId;
 
 interface ProductRepositoryInterface
 {
-    public function getById(ProductId $id): ?Product;
-
-    public function create(Product $product): void;
+    public function create(Product $product): Product;
 
     public function update(Product $product): bool;
 

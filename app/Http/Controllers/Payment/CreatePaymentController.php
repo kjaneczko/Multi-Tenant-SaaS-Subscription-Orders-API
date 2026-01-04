@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Payment;
 
+use App\Application\Common\UseCaseExecutor;
 use App\Application\Payment\Command\CreatePaymentCommand;
-use App\Application\Payment\Interface\PaymentServiceInterface;
+use App\Application\Payment\Handler\CreatePaymentHandler;
 use App\Domain\AmountCents;
 use App\Domain\Currency;
 use App\Domain\Payment\PaymentEntityType;
@@ -20,12 +21,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class CreatePaymentController extends Controller
 {
+    public function __construct(
+        private readonly UseCaseExecutor $executor,
+    )
+    {
+    }
+
+    /**
+     * @throws \Throwable
+     */
     public function __invoke(
         Request $request,
-        PaymentServiceInterface $service,
+        CreatePaymentHandler $handler,
     ): JsonResponse
     {
-        $validated = $request->validate([
+        $request->validate([
             'tenant_id' => 'required|uuid',
             'entity_type' => ['required', 'string', Rule::in(PaymentEntityType::values())],
             'entity_id' => 'required|uuid',
@@ -37,19 +47,19 @@ final class CreatePaymentController extends Controller
             'external_id' => 'required|string|max:255',
         ]);
 
-        $payment = $service->create(
-            new CreatePaymentCommand(
-                tenantId: new TenantId($validated['tenant_id']),
-                entityType: PaymentEntityType::from($validated['entity_type']),
-                entityId: $validated['entity_id'],
-                status: PaymentStatus::from($validated['status']),
-                amountCents: new AmountCents((int) $validated['amount_cents']),
-                currency: Currency::from($validated['currency']),
-                provider: $validated['provider'],
-                reference: $validated['reference'] ?? null,
-                externalId: $validated['external_id'] ?? null,
-            )
+        $command = new CreatePaymentCommand(
+            tenantId: new TenantId($request->get('tenant_id')),
+            entityType: PaymentEntityType::from($request->get('entity_type')),
+            entityId: $request->get('entity_id'),
+            status: PaymentStatus::from($request->get('status')),
+            amountCents: new AmountCents($request->integer('amount_cents')),
+            currency: Currency::from($request->get('currency')),
+            provider: $request->get('provider'),
+            reference: $request->get('reference') ?? null,
+            externalId: $request->get('external_id') ?? null,
         );
+
+        $payment = $this->executor->run($command, fn() => ($handler)($command));
 
         return (new PaymentResource($payment))
             ->response()

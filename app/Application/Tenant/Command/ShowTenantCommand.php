@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Tenant\Command;
 
+use App\Application\Common\AuditCategory;
 use App\Application\Common\Interface\AuditableOperation;
+use App\Domain\EntityType;
 use App\Domain\Tenant\TenantId;
 
 readonly class ShowTenantCommand implements AuditableOperation
@@ -12,6 +14,26 @@ readonly class ShowTenantCommand implements AuditableOperation
     public function __construct(
         public TenantId $id,
     ) {}
+
+    public function auditCategory(): AuditCategory
+    {
+        return AuditCategory::AUDIT;
+    }
+
+    public function auditAction(): string
+    {
+        return EntityType::TENANT->value.'.show';
+    }
+
+    public function auditEntityType(): ?EntityType
+    {
+        return EntityType::TENANT;
+    }
+
+    public function auditEntityId(): ?string
+    {
+        return $this->id->toString();
+    }
 
     public function auditPayload(): array
     {

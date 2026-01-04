@@ -9,7 +9,5 @@ use App\Domain\Payment\PaymentId;
 
 interface PaymentRepositoryInterface
 {
-    public function getById(PaymentId $id): ?Payment;
-
-    public function create(Payment $payment): void;
+    public function create(Payment $payment): Payment;
 }

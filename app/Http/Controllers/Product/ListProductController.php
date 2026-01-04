@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Product;
 
-use App\Application\Product\Interface\ProductServiceInterface;
+use App\Application\Common\UseCaseExecutor;
+use App\Application\Product\Command\ListProductCommand;
+use App\Application\Product\Handler\ListProductHandler;
 use App\Application\Common\Query\PageRequest;
+use App\Domain\Tenant\TenantId;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
@@ -14,9 +17,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ListProductController extends Controller
 {
+    public function __construct(
+        private readonly UseCaseExecutor $executor,
+    )
+    {
+    }
+
+    /**
+     * @throws \Throwable
+     */
     public function __invoke(
-        Request $request,
-        ProductServiceInterface $service,
+        Request            $request,
+        ListProductHandler $handler,
     ): JsonResponse
     {
         $request->validate([
@@ -31,10 +43,15 @@ final class ListProductController extends Controller
         );
 
         $tenantId = $request->filled('tenant_id')
-            ? $request->string('tenant_id')->toString()
+            ? new TenantId($request->string('tenant_id')->toString())
             : null;
 
-        $products = $service->paginate($pageRequest, $tenantId);
+        $command = new ListProductCommand(
+            pageRequest: $pageRequest,
+            tenantId: $tenantId,
+        );
+
+        $products = $this->executor->run($command, fn() => ($handler)($command));
 
         return ProductResource::collection($products)
             ->response()

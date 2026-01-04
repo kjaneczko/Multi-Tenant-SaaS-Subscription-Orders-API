@@ -6,30 +6,42 @@ namespace App\Infrastructure\Database\User;
 
 use App\Application\Common\Query\PageRequest;
 use App\Domain\User\Interface\UserQueryInterface;
+use App\Domain\User\User;
+use App\Domain\User\UserId;
+use App\Domain\User\UserRole;
 use App\Models\UserModel;
+use App\Domain\Tenant\TenantId;
 
 final readonly class UserQueryEloquent implements UserQueryInterface
 {
+    public function getById(UserId $id): ?User
+    {
+        $model = UserModel::query()->find($id->toString());
+
+        if (!$model) {
+            return null;
+        }
+
+        return UserPersistenceMapper::toDomain($model);
+    }
+
     public function paginate(
         PageRequest $pageRequest,
-        ?string $tenantId = null,
-        ?string $role = null,
+        ?TenantId $tenantId = null,
+        ?UserRole $role = null,
         ?bool $isActive = null,
     ): array {
-        // Jeśli u Ciebie PageRequest ma gettery – zamień na:
-        // $page = $pageRequest->page();
-        // $limit = $pageRequest->limit();
         $page = $pageRequest->page;
         $limit = $pageRequest->limit;
 
         $query = UserModel::query()->orderByDesc('created_at');
 
-        if (null !== $tenantId && '' !== $tenantId) {
-            $query->where('tenant_id', $tenantId);
+        if (null !== $tenantId) {
+            $query->where('tenant_id', $tenantId->toString());
         }
 
-        if (null !== $role && '' !== $role) {
-            $query->where('role', $role);
+        if (null !== $role) {
+            $query->where('role', $role->value);
         }
 
         if (null !== $isActive) {

@@ -7,7 +7,7 @@ namespace App\Application\Tenant\Handler;
 use App\Application\Common\Interface\SlugGeneratorInterface;
 use App\Application\Common\Interface\UuidGeneratorInterface;
 use App\Application\Tenant\Command\CreateTenantCommand;
-use App\Application\Tenant\TenantExecutor;
+use App\Domain\Tenant\Interface\TenantRepositoryInterface;
 use App\Domain\Tenant\Tenant;
 use App\Domain\Tenant\TenantId;
 use App\Domain\Tenant\TenantStatus;
@@ -15,9 +15,9 @@ use App\Domain\Tenant\TenantStatus;
 readonly class CreateTenantHandler
 {
     public function __construct(
-        private TenantExecutor $executor,
-        private UuidGeneratorInterface $uuid,
-        private SlugGeneratorInterface $slug,
+        private TenantRepositoryInterface $repository,
+        private UuidGeneratorInterface    $uuid,
+        private SlugGeneratorInterface    $slug,
     ) {}
 
     public function __invoke(
@@ -32,6 +32,6 @@ readonly class CreateTenantHandler
             updatedAt: new \DateTimeImmutable(),
         );
 
-        return $this->executor->create($tenant);
+        return $this->repository->create($tenant);
     }
 }

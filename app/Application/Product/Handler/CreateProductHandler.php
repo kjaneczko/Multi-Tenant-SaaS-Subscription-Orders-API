@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Product\Handler;
 
 use App\Application\Product\Command\CreateProductCommand;
-use App\Application\Product\ProductExecutor;
 use App\Application\Common\Interface\UuidGeneratorInterface;
+use App\Domain\Product\Interface\ProductRepositoryInterface;
 use App\Domain\Product\Product;
 use App\Domain\Product\ProductId;
 use App\Domain\Product\ProductStatus;
@@ -14,11 +14,11 @@ use App\Domain\Product\ProductStatus;
 final readonly class CreateProductHandler
 {
     public function __construct(
-        private ProductExecutor $executor,
+        private ProductRepositoryInterface $repository,
         private UuidGeneratorInterface $uuid,
     ) {}
 
-    public function __invoke(CreateProductCommand $command): ProductId
+    public function __invoke(CreateProductCommand $command): Product
     {
         $now = new \DateTimeImmutable();
 
@@ -37,8 +37,6 @@ final readonly class CreateProductHandler
             updatedAt: $now,
         );
 
-        $this->executor->create($product);
-
-        return $id;
+        return $this->repository->create($product);
     }
 }

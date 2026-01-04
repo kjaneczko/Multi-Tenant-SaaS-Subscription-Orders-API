@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace App\Application\Payment\Handler;
 
 use App\Application\Payment\Command\CreatePaymentCommand;
-use App\Application\Payment\PaymentExecutor;
 use App\Application\Common\Interface\UuidGeneratorInterface;
+use App\Domain\Payment\Interface\PaymentRepositoryInterface;
 use App\Domain\Payment\Payment;
 use App\Domain\Payment\PaymentId;
 
 final readonly class CreatePaymentHandler
 {
     public function __construct(
-        private PaymentExecutor $executor,
-        private UuidGeneratorInterface $uuid,
+        private PaymentRepositoryInterface $repository,
+        private UuidGeneratorInterface     $uuid,
     ) {}
 
-    public function __invoke(CreatePaymentCommand $command): PaymentId
+    public function __invoke(CreatePaymentCommand $command): Payment
     {
         $now = new \DateTimeImmutable('now');
 
@@ -37,8 +37,6 @@ final readonly class CreatePaymentHandler
             updatedAt: $now,
         );
 
-        $this->executor->create($payment);
-
-        return $payment->id();
+        return $this->repository->create($payment);
     }
 }

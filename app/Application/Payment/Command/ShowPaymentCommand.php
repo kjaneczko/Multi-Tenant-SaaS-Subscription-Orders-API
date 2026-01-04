@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Tenant\Command;
+namespace App\Application\Payment\Command;
 
 use App\Application\Common\AuditCategory;
 use App\Application\Common\Interface\AuditableOperation;
-use App\Application\Common\Query\PageRequest;
+use App\Domain\Payment\PaymentId;
 use App\Domain\EntityType;
 
-readonly class ListTenantCommand implements AuditableOperation
+readonly class ShowPaymentCommand implements AuditableOperation
 {
     public function __construct(
-        public PageRequest $pageRequest,
+        public PaymentId $paymentId,
     ) {}
 
     public function auditCategory(): AuditCategory
@@ -22,17 +22,17 @@ readonly class ListTenantCommand implements AuditableOperation
 
     public function auditAction(): string
     {
-        return EntityType::TENANT->value.'.list';
+        return EntityType::PAYMENT->value.'.show';
     }
 
     public function auditEntityType(): ?EntityType
     {
-        return EntityType::TENANT;
+        return EntityType::PAYMENT;
     }
 
     public function auditEntityId(): ?string
     {
-        return null;
+        return $this->paymentId->toString();
     }
 
     public function auditPayload(): array

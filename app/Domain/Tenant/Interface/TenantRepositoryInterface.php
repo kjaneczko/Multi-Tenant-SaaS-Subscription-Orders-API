@@ -10,16 +10,9 @@ use App\Domain\Tenant\TenantId;
 
 interface TenantRepositoryInterface
 {
-    public function create(Tenant $tenant): void;
+    public function create(Tenant $tenant): Tenant;
 
     public function update(Tenant $tenant): bool;
 
     public function delete(Tenant $tenant): bool;
-
-    public function getById(TenantId $id): ?Tenant;
-
-    /**
-     * @return Tenant[]
-     */
-    public function getAll(PageRequest $pageRequest): array;
 }

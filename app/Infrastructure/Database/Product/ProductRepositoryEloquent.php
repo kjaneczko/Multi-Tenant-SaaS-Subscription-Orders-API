@@ -13,17 +13,7 @@ use Illuminate\Database\QueryException;
 
 final readonly class ProductRepositoryEloquent implements ProductRepositoryInterface
 {
-    public function getById(ProductId $id): ?Product
-    {
-        $model = ProductModel::query()->find($id->toString());
-        if (!$model) {
-            return null;
-        }
-
-        return ProductPersistenceMapper::toDomain($model);
-    }
-
-    public function create(Product $product): void
+    public function create(Product $product): Product
     {
         try {
             $attributes = ProductPersistenceMapper::toPersistence($product);
@@ -35,6 +25,7 @@ final readonly class ProductRepositoryEloquent implements ProductRepositoryInter
         if (!$model) {
             throw DatabaseException::failedToSave();
         }
+        return ProductPersistenceMapper::toDomain($model);
     }
 
     public function update(Product $product): bool
