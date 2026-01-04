@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use App\Domain\User\User;
@@ -13,6 +15,7 @@ class UserResource extends JsonResource
      * Transform the resource into an array.
      *
      * @property User $resource
+     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

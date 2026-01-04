@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Payment;
 
 use App\Application\Payment\Interface\PaymentServiceInterface;
-use App\Application\Shared\Query\PageRequest;
+use App\Application\Common\Query\PageRequest;
 use App\Domain\Payment\PaymentEntityType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PaymentResource;
@@ -14,7 +16,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ListPaymentController extends Controller
 {
-    public function __invoke(Request $request, PaymentServiceInterface $service): JsonResponse
+    public function __invoke(
+        Request $request,
+        PaymentServiceInterface $service,
+    ): JsonResponse
     {
         $request->validate([
             'page' => 'sometimes|integer|min:1',
@@ -40,6 +45,7 @@ final class ListPaymentController extends Controller
 
         return PaymentResource::collection($payments)
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode(Response::HTTP_OK)
+        ;
     }
 }

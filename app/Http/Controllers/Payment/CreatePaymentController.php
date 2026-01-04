@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Payment;
 
 use App\Application\Payment\Command\CreatePaymentCommand;
@@ -18,7 +20,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class CreatePaymentController extends Controller
 {
-    public function __invoke(Request $request, PaymentServiceInterface $service): JsonResponse
+    public function __invoke(
+        Request $request,
+        PaymentServiceInterface $service,
+    ): JsonResponse
     {
         $validated = $request->validate([
             'tenant_id' => 'required|uuid',
@@ -48,6 +53,7 @@ final class CreatePaymentController extends Controller
 
         return (new PaymentResource($payment))
             ->response()
-            ->setStatusCode(Response::HTTP_CREATED);
+            ->setStatusCode(Response::HTTP_CREATED)
+        ;
     }
 }

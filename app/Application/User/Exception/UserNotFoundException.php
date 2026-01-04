@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Application\User\Exception;
+declare(strict_types=1);
 
-use Throwable;
+namespace App\Application\User\Exception;
 
 class UserNotFoundException extends \RuntimeException
 {
-    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null)
+    public function __construct(string $message = '', int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($message ?: 'User not found.', $code, $previous);
     }

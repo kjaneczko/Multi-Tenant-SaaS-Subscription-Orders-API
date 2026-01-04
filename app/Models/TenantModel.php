@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $status
  * @property string $created_at
  * @property string $updated_at
+ *
  * @method static create(array $toPersistence)
  * @method static whereKey(string $toString)
  * @method static find(string $toString)
@@ -23,9 +26,9 @@ class TenantModel extends Model
     /** @use HasFactory<\Database\Factories\TenantModelFactory> */
     use HasFactory;
 
-    protected $table = 'tenants';
-
     public $incrementing = false;
+
+    protected $table = 'tenants';
 
     protected $fillable = [
         'id',
@@ -34,5 +37,10 @@ class TenantModel extends Model
         'status',
         'created_at',
         'updated_at',
+    ];
+
+    protected $casts = [
+        'created_at' => 'string',
+        'updated_at' => 'string',
     ];
 }

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Product;
 
-use App\Application\Product\Interface\ProductQueryInterface;
-use App\Application\Shared\Query\PageRequest;
+use App\Application\Product\Interface\ProductServiceInterface;
+use App\Application\Common\Query\PageRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
@@ -12,7 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ListProductController extends Controller
 {
-    public function __invoke(Request $request, ProductQueryInterface $query): JsonResponse
+    public function __invoke(
+        Request $request,
+        ProductServiceInterface $service,
+    ): JsonResponse
     {
         $request->validate([
             'page' => 'sometimes|integer|min:1',
@@ -29,10 +34,11 @@ final class ListProductController extends Controller
             ? $request->string('tenant_id')->toString()
             : null;
 
-        $products = $query->paginate($pageRequest, $tenantId);
+        $products = $service->paginate($pageRequest, $tenantId);
 
         return ProductResource::collection($products)
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode(Response::HTTP_OK)
+        ;
     }
 }

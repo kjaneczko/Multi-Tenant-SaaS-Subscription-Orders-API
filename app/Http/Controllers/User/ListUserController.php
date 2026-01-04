@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\User;
 
-use App\Application\Shared\Query\PageRequest;
-use App\Application\User\Interface\UserQueryInterface;
+use App\Application\Common\Query\PageRequest;
+use App\Domain\User\Interface\UserQueryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -43,6 +45,7 @@ final class ListUserController extends Controller
 
         return UserResource::collection($users)
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode(Response::HTTP_OK)
+        ;
     }
 }

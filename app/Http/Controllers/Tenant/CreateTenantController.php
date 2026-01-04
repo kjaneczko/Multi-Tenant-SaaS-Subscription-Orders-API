@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Tenant;
 
 use App\Application\Tenant\Command\CreateTenantCommand;
@@ -15,8 +17,7 @@ class CreateTenantController extends Controller
     public function __invoke(
         Request $request,
         TenantServiceInterface $service,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $request->validate([
             'name' => 'required|string|min:1|max:255',
         ]);

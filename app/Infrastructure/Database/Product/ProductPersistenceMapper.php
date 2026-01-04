@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Database\Product;
 
 use App\Domain\Currency;
+use App\Domain\PriceCents;
 use App\Domain\Product\Product;
 use App\Domain\Product\ProductId;
 use App\Domain\Product\ProductStatus;
-use App\Domain\PriceCents;
 use App\Domain\Sku;
 use App\Domain\Slug;
 use App\Domain\Tenant\TenantId;
@@ -34,7 +36,7 @@ final class ProductPersistenceMapper
                 : new \DateTimeImmutable((string) $model->updated_at),
             deletedAt: $model->deleted_at instanceof \DateTimeInterface
                 ? \DateTimeImmutable::createFromInterface($model->deleted_at)
-                : ($model->deleted_at ? new \DateTimeImmutable((string)$model->deleted_at) : null),
+                : ($model->deleted_at ? new \DateTimeImmutable((string) $model->deleted_at) : null),
         );
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use App\Domain\AuditLog\AuditLog;
@@ -13,6 +15,7 @@ class AuditLogResource extends JsonResource
      * Transform the resource into an array.
      *
      * @property AuditLog $resource
+     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

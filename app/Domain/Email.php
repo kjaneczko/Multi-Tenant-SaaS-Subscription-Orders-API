@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain;
 
 use App\Domain\Exception\ValidationException;
@@ -24,7 +26,7 @@ final readonly class Email
 
     private function assertValidEmail(string $value): void
     {
-        if ($value === '') {
+        if ('' === $value) {
             throw new ValidationException([
                 'email' => ['Email cannot be empty.'],
             ]);

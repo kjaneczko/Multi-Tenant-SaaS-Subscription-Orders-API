@@ -1,21 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Tenant\Handler;
 
 use App\Application\Tenant\Command\ShowTenantCommand;
-use App\Domain\Tenant\Interface\TenantRepositoryInterface;
+use App\Application\Tenant\TenantExecutor;
 use App\Domain\Tenant\Tenant;
 
 readonly class ShowTenantHandler
 {
     public function __construct(
-        private TenantRepositoryInterface $repository,
-    )
-    {
-    }
+        private TenantExecutor $executor,
+    ) {}
 
     public function __invoke(ShowTenantCommand $command): Tenant
     {
-        return $this->repository->findByIdOrFail($command->id);
+        return $this->executor->getByIdOrFail($command->id);
     }
 }

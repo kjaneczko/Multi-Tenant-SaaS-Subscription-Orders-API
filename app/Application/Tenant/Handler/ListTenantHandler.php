@@ -1,20 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Tenant\Handler;
 
 use App\Application\Tenant\Command\ListTenantCommand;
-use App\Domain\Tenant\Interface\TenantRepositoryInterface;
+use App\Application\Tenant\TenantExecutor;
 
 readonly class ListTenantHandler
 {
     public function __construct(
-        private TenantRepositoryInterface $repository,
-    )
-    {
-    }
+        private TenantExecutor $executor,
+    ) {}
 
     public function __invoke(ListTenantCommand $command): array
     {
-        return $this->repository->findAll($command->pageRequest);
+        return $this->executor->getAll($command->pageRequest);
     }
 }

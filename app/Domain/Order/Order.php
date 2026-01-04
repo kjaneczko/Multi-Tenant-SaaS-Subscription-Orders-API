@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Order;
 
 use App\Domain\AmountCents;
 use App\Domain\Currency;
 use App\Domain\Email;
 use App\Domain\Exception\ValidationException;
-use App\Domain\OrderItem\OrderItemId;
 use App\Domain\Tenant\TenantId;
 use App\Domain\User\UserId;
-use DomainException;
 
 class Order
 {
@@ -18,17 +18,17 @@ class Order
         private readonly TenantId $tenantId,
         private readonly UserId $createdByUserId,
         private Email $customerEmail,
-        private OrderStatus                  $status,
-        private Currency                     $currency,
-        private AmountCents                  $subtotalCents,
-        private AmountCents                  $discountCents,
-        private AmountCents                  $taxCents,
-        private AmountCents                  $totalCents,
-        private ?string                      $notes,
-        private ?\DateTimeImmutable          $paidAt,
-        private ?\DateTimeImmutable          $refundedAt,
-        private ?\DateTimeImmutable          $cancelledAt,
-        private ?\DateTimeImmutable          $deliveredAt,
+        private OrderStatus $status,
+        private Currency $currency,
+        private AmountCents $subtotalCents,
+        private AmountCents $discountCents,
+        private AmountCents $taxCents,
+        private AmountCents $totalCents,
+        private ?string $notes,
+        private ?\DateTimeImmutable $paidAt,
+        private ?\DateTimeImmutable $refundedAt,
+        private ?\DateTimeImmutable $cancelledAt,
+        private ?\DateTimeImmutable $deliveredAt,
         private readonly ?\DateTimeImmutable $createdAt,
         private readonly ?\DateTimeImmutable $updatedAt,
     ) {
@@ -242,7 +242,7 @@ class Order
         };
 
         if (!in_array($status, $allowedTransitions, true)) {
-            throw new DomainException(
+            throw new \DomainException(
                 sprintf(
                     'Cannot change status from %s to %s.',
                     $this->status->value,
@@ -252,19 +252,19 @@ class Order
         }
 
         // Ustaw daty tylko przy wejściu w dany status
-        if ($status === OrderStatus::PAID && $this->paidAt === null) {
+        if (OrderStatus::PAID === $status && null === $this->paidAt) {
             $this->paidAt = $now;
         }
 
-        if ($status === OrderStatus::CANCELLED && $this->cancelledAt === null) {
+        if (OrderStatus::CANCELLED === $status && null === $this->cancelledAt) {
             $this->cancelledAt = $now;
         }
 
-        if ($status === OrderStatus::REFUNDED && $this->refundedAt === null) {
+        if (OrderStatus::REFUNDED === $status && null === $this->refundedAt) {
             $this->refundedAt = $now;
         }
 
-        if ($status === OrderStatus::DELIVERED && $this->deliveredAt === null) {
+        if (OrderStatus::DELIVERED === $status && null === $this->deliveredAt) {
             $this->deliveredAt = $now;
         }
 
@@ -307,17 +307,17 @@ class Order
         $this->recalculateTotalCents();
     }
 
+    public function changeNotes(string $notes): void
+    {
+        $this->notes = $notes;
+    }
+
     private function recalculateTotalCents(): void
     {
         $totalCents = $this->subtotalCents->sub($this->discountCents)->add($this->taxCents);
         $this->assertValidTotalCents($totalCents);
 
         $this->totalCents = $totalCents;
-    }
-
-    public function changeNotes(string $notes): void
-    {
-        $this->notes = $notes;
     }
 
     private function isEditable(): bool

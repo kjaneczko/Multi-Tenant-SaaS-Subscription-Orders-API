@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\User\Handler;
 
-use App\Application\Shared\Interface\UuidGeneratorInterface;
+use App\Application\Common\Interface\UuidGeneratorInterface;
 use App\Application\User\Command\CreateUserCommand;
-use App\Application\User\Interface\UserRepositoryInterface;
+use App\Application\User\UserExecutor;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
 
 final readonly class CreateUserHandler
 {
     public function __construct(
-        private UserRepositoryInterface $users,
-        private UuidGeneratorInterface  $uuid,
+        private UserExecutor $executor,
+        private UuidGeneratorInterface $uuid,
     ) {}
 
     public function __invoke(CreateUserCommand $command): UserId
@@ -32,7 +34,7 @@ final readonly class CreateUserHandler
             updatedAt: new \DateTimeImmutable(),
         );
 
-        $this->users->create($user);
+        $this->executor->create($user);
 
         return $id;
     }

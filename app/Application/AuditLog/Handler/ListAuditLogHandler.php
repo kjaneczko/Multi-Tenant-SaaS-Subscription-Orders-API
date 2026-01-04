@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\AuditLog\Handler;
 
 use App\Application\AuditLog\Command\ListAuditLogCommand;
@@ -10,17 +12,13 @@ readonly class ListAuditLogHandler
 {
     public function __construct(
         private AuditLogQueryInterface $auditLogQuery,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @return AuditLog[]
      */
     public function __invoke(ListAuditLogCommand $command): array
     {
-        return $this->auditLogQuery->findAll(
-            pageRequest: $command->pageRequest,
-        );
+        return $this->auditLogQuery->list(pageRequest: $command->pageRequest);
     }
 }

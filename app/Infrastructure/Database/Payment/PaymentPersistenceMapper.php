@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Database\Payment;
 
 use App\Domain\AmountCents;
@@ -37,7 +39,7 @@ final class PaymentPersistenceMapper
         return [
             'id' => $payment->id()->toString(),
             'tenant_id' => $payment->tenantId()->toString(),
-            'entity_type' => $payment->entityType(),
+            'entity_type' => $payment->entityType()->value,
             'entity_id' => $payment->entityId(),
             'status' => $payment->status()->value,
             'provider' => $payment->provider(),

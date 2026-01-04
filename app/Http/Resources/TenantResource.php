@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use App\Domain\Tenant\Tenant;
@@ -13,6 +15,7 @@ class TenantResource extends JsonResource
      * Transform the resource into an array.
      *
      * @property Tenant $resource
+     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

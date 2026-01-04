@@ -1,6 +1,7 @@
 <?php
 
 use App\Application\AuditLog\Exception\AuditLogNotFoundException;
+use App\Application\Payment\Exception\PaymentNotFoundException;
 use App\Application\Product\Exception\ProductNotFoundException;
 use App\Application\User\Exception\UserNotFoundException;
 use App\Domain\Exception\ValidationException;
@@ -39,6 +40,13 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (ProductNotFoundException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => [],
+            ], 404);
+        });
+
+        $exceptions->render(function (PaymentNotFoundException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
                 'errors' => [],

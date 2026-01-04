@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Database\User;
 
-use App\Application\Shared\Query\PageRequest;
-use App\Application\User\Interface\UserQueryInterface;
+use App\Application\Common\Query\PageRequest;
+use App\Domain\User\Interface\UserQueryInterface;
 use App\Models\UserModel;
 
 final readonly class UserQueryEloquent implements UserQueryInterface
@@ -22,25 +24,27 @@ final readonly class UserQueryEloquent implements UserQueryInterface
 
         $query = UserModel::query()->orderByDesc('created_at');
 
-        if ($tenantId !== null && $tenantId !== '') {
+        if (null !== $tenantId && '' !== $tenantId) {
             $query->where('tenant_id', $tenantId);
         }
 
-        if ($role !== null && $role !== '') {
+        if (null !== $role && '' !== $role) {
             $query->where('role', $role);
         }
 
-        if ($isActive !== null) {
+        if (null !== $isActive) {
             $query->where('is_active', $isActive);
         }
 
         $models = $query
             ->offset(($page - 1) * $limit)
             ->limit($limit)
-            ->get();
+            ->get()
+        ;
 
         return $models
             ->map(fn (UserModel $model) => UserPersistenceMapper::toDomain($model))
-            ->all();
+            ->all()
+        ;
     }
 }

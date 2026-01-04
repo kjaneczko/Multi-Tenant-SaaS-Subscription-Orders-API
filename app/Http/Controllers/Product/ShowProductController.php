@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Product;
 
-use App\Application\Product\Interface\ProductRepositoryInterface;
+use App\Application\Product\Interface\ProductServiceInterface;
+use App\Application\Product\ProductExecutor;
 use App\Domain\Product\ProductId;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
@@ -13,12 +16,14 @@ final class ShowProductController extends Controller
 {
     public function __invoke(
         string $id,
-        ProductRepositoryInterface $products,
+        ProductServiceInterface $service,
+        ProductExecutor $executor,
     ): JsonResponse {
-        $product = $products->getById(new ProductId($id));
+        $product = $service->getById(new ProductId($id));
 
         return (new ProductResource($product))
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode(Response::HTTP_OK)
+        ;
     }
 }

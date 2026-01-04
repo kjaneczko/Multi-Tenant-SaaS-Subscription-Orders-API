@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\OrderItem;
 
 use App\Domain\AmountCents;
@@ -38,6 +40,7 @@ class OrderItem
         ?\DateTimeImmutable $updatedAt
     ): self {
         $lineTotalCents = new AmountCents($unitPriceCents->toInt() * $quantity);
+
         return new self(
             id: $id,
             orderId: $orderId,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\User;
 
 use App\Domain\Exception\ValidationException;
@@ -10,7 +12,7 @@ readonly class UserId
         private string $id,
     ) {
         $value = trim($id);
-        if ($value === '') {
+        if ('' === $value) {
             throw new ValidationException(['id' => ['UserId cannot be empty.']]);
         }
     }

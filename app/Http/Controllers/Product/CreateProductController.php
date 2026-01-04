@@ -1,19 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Product;
 
 use App\Application\Product\Command\CreateProductCommand;
-use App\Application\Product\Handler\CreateProductHandler;
-use App\Application\Product\Interface\ProductRepositoryInterface;
+use App\Application\Product\Interface\ProductServiceInterface;
 use App\Domain\Currency;
 use App\Domain\PriceCents;
-use App\Domain\Product\ProductId;
 use App\Domain\Sku;
 use App\Domain\Slug;
 use App\Domain\Tenant\TenantId;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
-use App\Infrastructure\Database\Product\ProductPersistenceMapper;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,8 +21,7 @@ class CreateProductController extends Controller
 {
     public function __invoke(
         Request $request,
-        CreateProductHandler $handler,
-        ProductRepositoryInterface $products,
+        ProductServiceInterface $service,
     ): JsonResponse {
         $validated = $request->validate([
             'tenant_id' => 'required|uuid',
@@ -45,12 +43,11 @@ class CreateProductController extends Controller
             description: $validated['description'] ?? null,
         );
 
-        $id = $handler($command);
-
-        $product = $products->getById(new ProductId($id->toString()));
+        $product = $service->create($command);
 
         return (new ProductResource($product))
             ->response()
-            ->setStatusCode(Response::HTTP_CREATED);
+            ->setStatusCode(Response::HTTP_CREATED)
+        ;
     }
 }

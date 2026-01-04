@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AuditLog\CreateAuditLogController;
 use App\Http\Controllers\AuditLog\ListAuditLogController;
 use App\Http\Controllers\AuditLog\ShowAuditLogController;
 //use Illuminate\Http\Request;
@@ -27,7 +26,6 @@ use App\Http\Controllers\User\ShowUserController;
 Route::group(['prefix' => 'audit_logs'], function () {
     Route::get('/', ListAuditLogController::class);
     Route::get('/{id}', ShowAuditLogController::class);
-    Route::post('/', CreateAuditLogController::class);
 });
 
 Route::group(['prefix' => 'tenants'], function () {

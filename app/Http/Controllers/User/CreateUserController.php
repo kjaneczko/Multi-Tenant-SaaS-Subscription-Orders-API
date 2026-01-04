@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\User;
 
-use App\Application\Shared\Interface\PasswordHashGeneratorInterface;
+use App\Application\Common\Interface\PasswordHashGeneratorInterface;
 use App\Application\User\Command\CreateUserCommand;
 use App\Application\User\Handler\CreateUserHandler;
-use App\Application\User\Interface\UserRepositoryInterface;
+use App\Application\User\UserExecutor;
 use App\Domain\Email;
 use App\Domain\Tenant\TenantId;
 use App\Domain\User\UserId;
@@ -21,7 +23,7 @@ class CreateUserController extends Controller
     public function __invoke(
         Request $request,
         CreateUserHandler $handler,
-        UserRepositoryInterface $users,
+        UserExecutor $executor,
         PasswordHashGeneratorInterface $passwordHash,
     ): JsonResponse {
         $request->validate([
@@ -42,7 +44,7 @@ class CreateUserController extends Controller
 
         $id = $handler($command);
 
-        $user = $users->getById(new UserId($id->toString()));
+        $user = $executor->getByIdOrFail(new UserId($id->toString()));
 
         return (new UserResource($user))->response()->setStatusCode(Response::HTTP_CREATED);
     }

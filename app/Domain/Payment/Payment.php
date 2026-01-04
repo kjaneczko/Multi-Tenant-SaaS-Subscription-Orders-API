@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Payment;
 
 use App\Domain\AmountCents;
@@ -10,15 +12,15 @@ use App\Domain\Tenant\TenantId;
 readonly class Payment
 {
     private function __construct(
-        private PaymentId           $id,
-        private TenantId            $tenantId,
-        private PaymentEntityType   $entityType,
-        private string              $entityId,
-        private PaymentStatus       $status,
-        private string              $provider,
-        private ?string             $reference,
-        private AmountCents         $amountCents,
-        private Currency            $currency,
+        private PaymentId $id,
+        private TenantId $tenantId,
+        private PaymentEntityType $entityType,
+        private string $entityId,
+        private PaymentStatus $status,
+        private string $provider,
+        private ?string $reference,
+        private AmountCents $amountCents,
+        private Currency $currency,
         private string $externalId,
         private ?\DateTimeImmutable $paidAt,
         private ?\DateTimeImmutable $createdAt,
@@ -30,15 +32,15 @@ readonly class Payment
     }
 
     public static function create(
-        PaymentId           $id,
-        TenantId             $tenantId,
-        PaymentEntityType             $entityType,
-        string             $entityId,
-        PaymentStatus       $status,
-        string              $provider,
-        ?string             $reference,
-        AmountCents                 $amountCents,
-        Currency            $currency,
+        PaymentId $id,
+        TenantId $tenantId,
+        PaymentEntityType $entityType,
+        string $entityId,
+        PaymentStatus $status,
+        string $provider,
+        ?string $reference,
+        AmountCents $amountCents,
+        Currency $currency,
         string $externalId,
         ?\DateTimeImmutable $paidAt,
         ?\DateTimeImmutable $createdAt,
@@ -51,7 +53,7 @@ readonly class Payment
             entityId: $entityId,
             status: $status,
             provider: trim($provider),
-            reference: $reference !== null ? trim($reference) : null,
+            reference: null !== $reference ? trim($reference) : null,
             amountCents: $amountCents,
             currency: $currency,
             externalId: $externalId,
@@ -62,15 +64,15 @@ readonly class Payment
     }
 
     public static function reconstitute(
-        PaymentId           $id,
-        TenantId             $tenantId,
-        PaymentEntityType             $entityType,
-        string             $entityId,
-        PaymentStatus       $status,
-        string              $provider,
-        ?string             $reference,
-        AmountCents                 $amountCents,
-        Currency            $currency,
+        PaymentId $id,
+        TenantId $tenantId,
+        PaymentEntityType $entityType,
+        string $entityId,
+        PaymentStatus $status,
+        string $provider,
+        ?string $reference,
+        AmountCents $amountCents,
+        Currency $currency,
         string $externalId,
         ?\DateTimeImmutable $paidAt,
         ?\DateTimeImmutable $createdAt,
@@ -167,7 +169,7 @@ readonly class Payment
 
     private function assertValidReference(?string $reference): void
     {
-        if ($reference !== null && mb_strlen($reference) > 255) {
+        if (null !== $reference && mb_strlen($reference) > 255) {
             throw new ValidationException(['reference' => ['Reference is too long. Must be less than 256 characters.']]);
         }
     }

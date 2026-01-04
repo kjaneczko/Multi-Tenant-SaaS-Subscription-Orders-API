@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\AuditLog\Handler;
 
 use App\Application\AuditLog\Command\ShowAuditLogCommand;
@@ -8,15 +10,12 @@ use App\Domain\AuditLog\Interface\AuditLogQueryInterface;
 
 readonly class ShowAuditLogHandler
 {
-
     public function __construct(
-        private AuditLogQueryInterface $auditLogQuery,
-    )
-    {
-    }
+        private AuditLogQueryInterface $query,
+    ) {}
 
     public function __invoke(ShowAuditLogCommand $command): AuditLog
     {
-        return $this->auditLogQuery->findByIdOrFail($command->auditLogId);
+        return $this->query->getById($command->auditLogId);
     }
 }

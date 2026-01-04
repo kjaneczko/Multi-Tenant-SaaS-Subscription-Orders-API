@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Payment\Command;
 
+use App\Application\Common\Interface\AuditableOperation;
 use App\Domain\AmountCents;
 use App\Domain\Currency;
 use App\Domain\Payment\PaymentEntityType;
@@ -21,4 +24,9 @@ final readonly class CreatePaymentCommand
         public ?string $reference,
         public string $externalId,
     ) {}
+
+    public function auditPayload(): array
+    {
+        return get_object_vars($this);
+    }
 }

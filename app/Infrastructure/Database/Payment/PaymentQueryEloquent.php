@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Database\Payment;
 
-use App\Application\Payment\Interface\PaymentQueryInterface;
-use App\Application\Shared\Query\PageRequest;
+use App\Application\Common\Query\PageRequest;
+use App\Domain\Payment\Interface\PaymentQueryInterface;
 use App\Domain\Payment\PaymentEntityType;
 use App\Models\PaymentModel;
 
@@ -21,23 +23,26 @@ final readonly class PaymentQueryEloquent implements PaymentQueryInterface
         $limit = $pageRequest->limit;
 
         $query = PaymentModel::query()
-            ->orderByDesc('created_at');
+            ->orderByDesc('created_at')
+        ;
 
-        if ($tenantId !== null && $tenantId !== '') {
+        if (null !== $tenantId && '' !== $tenantId) {
             $query->where('tenant_id', $tenantId);
         }
 
-        if ($entityType !== null) {
+        if (null !== $entityType) {
             $query->where('entity_type', $entityType->value);
         }
 
         $models = $query
             ->offset(($page - 1) * $limit)
             ->limit($limit)
-            ->get();
+            ->get()
+        ;
 
         return $models
             ->map(fn (PaymentModel $model) => PaymentPersistenceMapper::toDomain($model))
-            ->all();
+            ->all()
+        ;
     }
 }

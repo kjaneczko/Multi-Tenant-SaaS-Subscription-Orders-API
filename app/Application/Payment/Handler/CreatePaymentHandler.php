@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Payment\Handler;
 
 use App\Application\Payment\Command\CreatePaymentCommand;
-use App\Application\Payment\Interface\PaymentRepositoryInterface;
-use App\Application\Shared\Interface\UuidGeneratorInterface;
+use App\Application\Payment\PaymentExecutor;
+use App\Application\Common\Interface\UuidGeneratorInterface;
 use App\Domain\Payment\Payment;
 use App\Domain\Payment\PaymentId;
 
 final readonly class CreatePaymentHandler
 {
     public function __construct(
-        private PaymentRepositoryInterface $payments,
+        private PaymentExecutor $executor,
         private UuidGeneratorInterface $uuid,
     ) {}
 
@@ -35,7 +37,7 @@ final readonly class CreatePaymentHandler
             updatedAt: $now,
         );
 
-        $this->payments->save($payment);
+        $this->executor->create($payment);
 
         return $payment->id();
     }

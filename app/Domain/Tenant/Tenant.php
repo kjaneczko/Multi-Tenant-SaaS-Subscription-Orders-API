@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Tenant;
 
 use App\Domain\Exception\ValidationException;
@@ -25,8 +27,7 @@ class Tenant
         TenantStatus $status,
         ?\DateTimeImmutable $createdAt,
         ?\DateTimeImmutable $updatedAt,
-    ): self
-    {
+    ): self {
         return new self(
             id: $id,
             name: trim($name),

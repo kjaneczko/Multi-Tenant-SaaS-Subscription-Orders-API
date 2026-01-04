@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Payment;
 
 use App\Application\Payment\Command\CreatePaymentCommand;
 use App\Application\Payment\Handler\CreatePaymentHandler;
-use App\Application\Payment\Interface\PaymentQueryInterface;
-use App\Application\Payment\Interface\PaymentRepositoryInterface;
 use App\Application\Payment\Interface\PaymentServiceInterface;
-use App\Application\Shared\Query\PageRequest;
+use App\Application\Common\Query\PageRequest;
+use App\Domain\Payment\Interface\PaymentQueryInterface;
 use App\Domain\Payment\Payment;
 use App\Domain\Payment\PaymentEntityType;
 use App\Domain\Payment\PaymentId;
@@ -16,7 +17,7 @@ final readonly class PaymentService implements PaymentServiceInterface
 {
     public function __construct(
         private CreatePaymentHandler $createPaymentHandler,
-        private PaymentRepositoryInterface $payments,
+        private PaymentExecutor $executor,
         private PaymentQueryInterface $paymentQuery,
     ) {}
 
@@ -24,12 +25,12 @@ final readonly class PaymentService implements PaymentServiceInterface
     {
         $id = ($this->createPaymentHandler)($command);
 
-        return $this->payments->getById(new PaymentId($id->toString()));
+        return $this->executor->getByIdOrFail(new PaymentId($id->toString()));
     }
 
     public function getById(PaymentId $id): Payment
     {
-        return $this->payments->getById($id);
+        return $this->executor->getByIdOrFail($id);
     }
 
     public function paginate(

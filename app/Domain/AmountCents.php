@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain;
 
 final readonly class AmountCents
@@ -23,7 +25,7 @@ final readonly class AmountCents
 
     public function isZero(): bool
     {
-        return $this->value === 0;
+        return 0 === $this->value;
     }
 
     public function isPositive(): bool

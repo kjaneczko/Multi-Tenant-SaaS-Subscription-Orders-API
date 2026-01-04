@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Product\Handler;
 
 use App\Application\Product\Command\CreateProductCommand;
-use App\Application\Product\Interface\ProductRepositoryInterface;
-use App\Application\Shared\Interface\UuidGeneratorInterface;
+use App\Application\Product\ProductExecutor;
+use App\Application\Common\Interface\UuidGeneratorInterface;
 use App\Domain\Product\Product;
 use App\Domain\Product\ProductId;
 use App\Domain\Product\ProductStatus;
@@ -12,8 +14,8 @@ use App\Domain\Product\ProductStatus;
 final readonly class CreateProductHandler
 {
     public function __construct(
-        private ProductRepositoryInterface $products,
-        private UuidGeneratorInterface     $uuid,
+        private ProductExecutor $executor,
+        private UuidGeneratorInterface $uuid,
     ) {}
 
     public function __invoke(CreateProductCommand $command): ProductId
@@ -35,7 +37,7 @@ final readonly class CreateProductHandler
             updatedAt: $now,
         );
 
-        $this->products->create($product);
+        $this->executor->create($product);
 
         return $id;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Tenant;
 
 use App\Application\Tenant\Command\CreateTenantCommand;
@@ -17,9 +19,7 @@ final readonly class TenantService implements TenantServiceInterface
         private ListTenantHandler $list,
         private ShowTenantHandler $show,
         private CreateTenantHandler $create,
-    )
-    {
-    }
+    ) {}
 
     public function list(ListTenantCommand $command): array
     {

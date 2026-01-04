@@ -1,79 +1,114 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\AuditLog;
 
+use App\Application\Common\AuditCategory;
+use App\Domain\EntityType;
 use App\Domain\Exception\ValidationException;
-use App\Domain\JsonString;
+use App\Domain\PayloadJsonString;
 use App\Domain\Tenant\TenantId;
 use App\Domain\User\UserId;
 
 readonly class AuditLog
 {
     /**
-     * @param AuditLogId $id
-     * @param TenantId $tenantId
-     * @param UserId $actorUserId
      * @param string $action - "<entity>.<verb>" e.g. order.paid, order.status_changed, product.created
-     * @param EntityType $entityType
-     * @param string $entityId
-     * @param JsonString $meta
-     * @param \DateTimeImmutable $createdAt
      */
     private function __construct(
-        private AuditLogId $id,
-        private TenantId $tenantId,
-        private UserId $actorUserId,
-        private string $action,
-        private EntityType $entityType,
-        private string $entityId,
-        private JsonString $meta,
+        private AuditLogId         $id,
+        private TenantId           $tenantId,
+        private UserId             $actorUserId,
+        private AuditCategory      $category,
+        private string             $action,
+        private EntityType         $entityType,
+        private ?string            $entityId,
+        private PayloadJsonString  $payload,
+        private int                $durationMs,
+        private bool               $success,
+        private ?string            $errorType,
+        private ?string            $errorMessage,
+        private string $requestId,
+        private string $ip,
+        private string $userAgent,
         private \DateTimeImmutable $createdAt,
     ) {
         $this->assertValidAction($action);
-        $this->assertValidEntityId($entityId);
     }
 
     public static function create(
-        AuditLogId $id,
-        TenantId $tenantId,
-        UserId $actorUserId,
-        string $action,
-        EntityType $entityType,
-        string $entityId,
-        JsonString $meta,
+        AuditLogId         $id,
+        TenantId           $tenantId,
+        UserId             $actorUserId,
+        AuditCategory      $category,
+        string             $action,
+        EntityType         $entityType,
+        ?string            $entityId,
+        PayloadJsonString  $payload,
+        int                $durationMs,
+        bool               $success,
+        ?string            $errorType,
+        ?string            $errorMessage,
+        string             $requestId,
+        string              $ip,
+        string              $userAgent,
         \DateTimeImmutable $createdAt,
     ): self {
         return new self(
             id: $id,
             tenantId: $tenantId,
             actorUserId: $actorUserId,
+            category: $category,
             action: trim($action),
             entityType: $entityType,
-            entityId: trim($entityId),
-            meta: $meta,
+            entityId: $entityId ? trim($entityId) : null,
+            payload: $payload,
+            durationMs: $durationMs,
+            success: $success,
+            errorType: $errorType,
+            errorMessage: $errorMessage,
+            requestId: $requestId,
+            ip: $ip,
+            userAgent: $userAgent,
             createdAt: $createdAt,
         );
     }
 
     public static function reconstitute(
-        AuditLogId $id,
-        TenantId $tenantId,
-        UserId $actorUserId,
-        string $action,
-        EntityType $entityType,
-        string $entityId,
-        JsonString $meta,
+        AuditLogId         $id,
+        TenantId           $tenantId,
+        UserId             $actorUserId,
+        AuditCategory      $category,
+        string             $action,
+        EntityType         $entityType,
+        ?string            $entityId,
+        PayloadJsonString  $payload,
+        int                $durationMs,
+        bool               $success,
+        ?string            $errorType,
+        ?string            $errorMessage,
+        string             $requestId,
+        string              $ip,
+        string              $userAgent,
         \DateTimeImmutable $createdAt,
-    ): self
-    {
+    ): self {
         return new self(
             id: $id,
             tenantId: $tenantId,
             actorUserId: $actorUserId,
+            category: $category,
             action: $action,
             entityType: $entityType,
             entityId: $entityId,
-            meta: $meta,
+            payload: $payload,
+            durationMs: $durationMs,
+            success: $success,
+            errorType: $errorType,
+            errorMessage: $errorMessage,
+            requestId: $requestId,
+            ip: $ip,
+            userAgent: $userAgent,
             createdAt: $createdAt,
         );
     }
@@ -93,6 +128,11 @@ readonly class AuditLog
         return $this->actorUserId;
     }
 
+    public function category(): AuditCategory
+    {
+        return $this->category;
+    }
+
     public function action(): string
     {
         return $this->action;
@@ -103,14 +143,49 @@ readonly class AuditLog
         return $this->entityType;
     }
 
-    public function entityId(): string
+    public function entityId(): ?string
     {
         return $this->entityId;
     }
 
-    public function meta(): JsonString
+    public function payload(): PayloadJsonString
     {
-        return $this->meta;
+        return $this->payload;
+    }
+
+    public function durationMs(): int
+    {
+        return $this->durationMs;
+    }
+
+    public function success(): bool
+    {
+        return $this->success;
+    }
+
+    public function errorType(): ?string
+    {
+        return $this->errorType;
+    }
+
+    public function errorMessage(): ?string
+    {
+        return $this->errorMessage;
+    }
+
+    public function requestId(): string
+    {
+        return $this->requestId;
+    }
+
+    public function ip(): string
+    {
+        return $this->ip;
+    }
+
+    public function userAgent(): string
+    {
+        return $this->userAgent;
     }
 
     public function createdAt(): \DateTimeImmutable
@@ -122,13 +197,6 @@ readonly class AuditLog
     {
         if ('' === $action) {
             throw new ValidationException(['action' => ['Action is required.']]);
-        }
-    }
-
-    private function assertValidEntityId(string $entityId): void
-    {
-        if ('' === $entityId) {
-            throw new ValidationException(['entity_id' => ['Entity ID is required.']]);
         }
     }
 }
