@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Domain\EntityType;
 use App\Models\PaymentModel;
 use App\Models\TenantModel;
 
@@ -31,9 +32,9 @@ it('lists payments filtered by tenant_id', function () {
 });
 
 it('lists payments filtered by entity_type', function () {
-    PaymentModel::factory()->create(['entity_type' => 'order']);
-    PaymentModel::factory()->create(['entity_type' => 'order']);
-    PaymentModel::factory()->create(['entity_type' => 'subscription']);
+    PaymentModel::factory()->create(['entity_type' => EntityType::ORDER->value]);
+    PaymentModel::factory()->create(['entity_type' => EntityType::ORDER->value]);
+    PaymentModel::factory()->create(['entity_type' => EntityType::SUBSCRIPTION->value]);
 
     $response = $this->getJson('/api/payments/?entity_type=order');
 

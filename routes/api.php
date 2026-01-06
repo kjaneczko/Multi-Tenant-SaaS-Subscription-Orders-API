@@ -3,9 +3,18 @@
 use App\Http\Controllers\AuditLog\ListAuditLogController;
 use App\Http\Controllers\AuditLog\ShowAuditLogController;
 //use Illuminate\Http\Request;
+use App\Http\Controllers\Order\CreateOrderController;
+use App\Http\Controllers\Order\ListOrderController;
+use App\Http\Controllers\Order\ShowOrderController;
+use App\Http\Controllers\OrderItem\CreateOrderItemController;
+use App\Http\Controllers\OrderItem\ListOrderItemController;
+use App\Http\Controllers\OrderItem\ShowOrderItemController;
 use App\Http\Controllers\Payment\CreatePaymentController;
 use App\Http\Controllers\Payment\ListPaymentController;
 use App\Http\Controllers\Payment\ShowPaymentController;
+use App\Http\Controllers\Subscription\CreateSubscriptionController;
+use App\Http\Controllers\Subscription\ListSubscriptionController;
+use App\Http\Controllers\Subscription\ShowSubscriptionController;
 use App\Http\Controllers\Tenant\CreateTenantController;
 use App\Http\Controllers\Tenant\ListTenantController;
 use App\Http\Controllers\Tenant\ShowTenantController;
@@ -50,4 +59,22 @@ Route::prefix('payments')->group(function () {
     Route::get('/', ListPaymentController::class);
     Route::get('{id}', ShowPaymentController::class);
     Route::post('/', CreatePaymentController::class);
+});
+
+Route::prefix('orders')->group(function () {
+    Route::get('/', ListOrderController::class);
+    Route::get('{id}', ShowOrderController::class);
+    Route::post('/', CreateOrderController::class);
+});
+
+Route::prefix('order-items')->group(function () {
+    Route::get('/', ListOrderItemController::class);
+    Route::get('{id}', ShowOrderItemController::class);
+    Route::post('/', CreateOrderItemController::class);
+});
+
+Route::prefix('subscriptions')->group(function () {
+    Route::get('/', ListSubscriptionController::class);
+    Route::get('{id}', ShowSubscriptionController::class);
+    Route::post('/', CreateSubscriptionController::class);
 });

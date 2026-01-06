@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+use App\Domain\Currency;
+use App\Domain\Payment\PaymentEntityType;
+use App\Domain\Payment\PaymentStatus;
 use App\Models\TenantModel;
 
 it('creates payment', function () {
@@ -9,11 +12,11 @@ it('creates payment', function () {
     $externalId = fake()->uuid();
     $payload = [
         'tenant_id' => $tenant->id,
-        'entity_type' => 'order',
+        'entity_type' => PaymentEntityType::ORDER->value,
         'entity_id' => fake()->uuid(),
-        'status' => 'paid',
         'amount_cents' => 1999,
-        'currency' => 'USD',
+        'status' => PaymentStatus::PAID->value,
+        'currency' => Currency::USD->value,
         'provider' => 'manual',
         'reference' => 'ref-123',
         'external_id' => $externalId,
@@ -26,10 +29,10 @@ it('creates payment', function () {
 
     $this->assertDatabaseHas('payments', [
         'tenant_id' => $tenant->id,
-        'entity_type' => 'order',
-        'status' => 'paid',
+        'entity_type' => PaymentEntityType::ORDER->value,
         'amount_cents' => 1999,
-        'currency' => 'USD',
+        'status' => PaymentStatus::PAID->value,
+        'currency' => Currency::USD->value,
         'provider' => 'manual',
         'reference' => 'ref-123',
         'external_id' => $externalId,

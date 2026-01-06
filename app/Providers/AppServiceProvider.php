@@ -10,10 +10,16 @@ use App\Application\Common\Interface\UuidGeneratorInterface;
 use App\Application\Context\Interface\RequestContextProviderInterface;
 use App\Domain\AuditLog\Interface\AuditLogQueryInterface;
 use App\Domain\AuditLog\Interface\AuditLogWriterInterface;
+use App\Domain\Order\Interface\OrderQueryInterface;
+use App\Domain\Order\Interface\OrderRepositoryInterface;
+use App\Domain\OrderItem\Interface\OrderItemQueryInterface;
+use App\Domain\OrderItem\Interface\OrderItemRepositoryInterface;
 use App\Domain\Payment\Interface\PaymentQueryInterface;
 use App\Domain\Payment\Interface\PaymentRepositoryInterface;
 use App\Domain\Product\Interface\ProductQueryInterface;
 use App\Domain\Product\Interface\ProductRepositoryInterface;
+use App\Domain\Subscription\Interface\SubscriptionQueryInterface;
+use App\Domain\Subscription\Interface\SubscriptionRepositoryInterface;
 use App\Domain\Tenant\Interface\TenantQueryInterface;
 use App\Domain\Tenant\Interface\TenantRepositoryInterface;
 use App\Domain\User\Interface\UserQueryInterface;
@@ -21,10 +27,16 @@ use App\Domain\User\Interface\UserRepositoryInterface;
 use App\Infrastructure\Context\LaravelRequestContextProvider;
 use App\Infrastructure\Database\AuditLog\AuditLogQueryEloquent;
 use App\Infrastructure\Database\AuditLog\AuditLogWriterEloquent;
+use App\Infrastructure\Database\Order\OrderQueryEloquent;
+use App\Infrastructure\Database\Order\OrderRepositoryEloquent;
+use App\Infrastructure\Database\OrderItem\OrderItemQueryEloquent;
+use App\Infrastructure\Database\OrderItem\OrderItemRepositoryEloquent;
 use App\Infrastructure\Database\Payment\PaymentQueryEloquent;
 use App\Infrastructure\Database\Payment\PaymentRepositoryEloquent;
 use App\Infrastructure\Database\Product\ProductQueryEloquent;
 use App\Infrastructure\Database\Product\ProductRepositoryEloquent;
+use App\Infrastructure\Database\Subscription\SubscriptionQueryEloquent;
+use App\Infrastructure\Database\Subscription\SubscriptionRepositoryEloquent;
 use App\Infrastructure\Database\Tenant\TenantQueryEloquent;
 use App\Infrastructure\Database\Tenant\TenantRepositoryEloquent;
 use App\Infrastructure\Database\User\UserQueryEloquent;
@@ -53,6 +65,15 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(ProductRepositoryInterface::class, ProductRepositoryEloquent::class);
         $this->app->bind(ProductQueryInterface::class, ProductQueryEloquent::class);
+
+        $this->app->bind(OrderRepositoryInterface::class, OrderRepositoryEloquent::class);
+        $this->app->bind(OrderQueryInterface::class, OrderQueryEloquent::class);
+
+        $this->app->bind(OrderItemRepositoryInterface::class, OrderItemRepositoryEloquent::class);
+        $this->app->bind(OrderItemQueryInterface::class, OrderItemQueryEloquent::class);
+
+        $this->app->bind(SubscriptionRepositoryInterface::class, SubscriptionRepositoryEloquent::class);
+        $this->app->bind(SubscriptionQueryInterface::class, SubscriptionQueryEloquent::class);
 
         $this->app->bind(UserRepositoryInterface::class, UserRepositoryEloquent::class);
         $this->app->bind(UserQueryInterface::class, UserQueryEloquent::class);

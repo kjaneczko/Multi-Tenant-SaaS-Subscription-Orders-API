@@ -1,8 +1,11 @@
 <?php
 
 use App\Application\AuditLog\Exception\AuditLogNotFoundException;
+use App\Application\Order\Exception\OrderNotFoundException;
+use App\Application\OrderItem\Exception\OrderItemNotFoundException;
 use App\Application\Payment\Exception\PaymentNotFoundException;
 use App\Application\Product\Exception\ProductNotFoundException;
+use App\Application\Subscription\Exception\SubscriptionNotFoundException;
 use App\Application\User\Exception\UserNotFoundException;
 use App\Domain\Exception\ValidationException;
 use Illuminate\Foundation\Application;
@@ -47,6 +50,27 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (PaymentNotFoundException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => [],
+            ], 404);
+        });
+
+        $exceptions->render(function (OrderNotFoundException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => [],
+            ], 404);
+        });
+
+        $exceptions->render(function (OrderItemNotFoundException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => [],
+            ], 404);
+        });
+
+        $exceptions->render(function (SubscriptionNotFoundException $e) {
             return response()->json([
                 'message' => $e->getMessage(),
                 'errors' => [],

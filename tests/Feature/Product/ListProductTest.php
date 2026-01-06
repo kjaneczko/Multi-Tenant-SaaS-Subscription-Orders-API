@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use App\Domain\Currency;
+use App\Domain\Product\ProductStatus;
 use App\Models\TenantModel;
 use Illuminate\Support\Facades\DB;
 
@@ -18,8 +20,8 @@ it('lists products', function () {
             'slug' => 'list-product-1',
             'description' => null,
             'price_cents' => 1000,
-            'currency' => 'USD',
-            'status' => 'active',
+            'currency' => Currency::USD->value,
+            'status' => ProductStatus::ACTIVE->value,
             'created_at' => $now,
             'updated_at' => $now,
             'deleted_at' => null,
@@ -32,8 +34,8 @@ it('lists products', function () {
             'slug' => 'list-product-2',
             'description' => null,
             'price_cents' => 2000,
-            'currency' => 'USD',
-            'status' => 'active',
+            'currency' => Currency::USD->value,
+            'status' => ProductStatus::ACTIVE->value,
             'created_at' => $now,
             'updated_at' => $now,
             'deleted_at' => null,
@@ -62,8 +64,8 @@ it('lists products filtered by tenant_id', function () {
             'slug' => 'tenant-a-product-1',
             'description' => null,
             'price_cents' => 1000,
-            'currency' => 'USD',
-            'status' => 'active',
+            'currency' => Currency::USD->value,
+            'status' => ProductStatus::ACTIVE->value,
             'created_at' => $now,
             'updated_at' => $now,
             'deleted_at' => null,
@@ -76,8 +78,8 @@ it('lists products filtered by tenant_id', function () {
             'slug' => 'tenant-a-product-2',
             'description' => null,
             'price_cents' => 2000,
-            'currency' => 'USD',
-            'status' => 'active',
+            'currency' => Currency::USD->value,
+            'status' => ProductStatus::ACTIVE->value,
             'created_at' => $now,
             'updated_at' => $now,
             'deleted_at' => null,
@@ -90,8 +92,8 @@ it('lists products filtered by tenant_id', function () {
             'slug' => 'tenant-b-product-1',
             'description' => null,
             'price_cents' => 3000,
-            'currency' => 'USD',
-            'status' => 'active',
+            'currency' => Currency::USD->value,
+            'status' => ProductStatus::ACTIVE->value,
             'created_at' => $now,
             'updated_at' => $now,
             'deleted_at' => null,
@@ -102,10 +104,8 @@ it('lists products filtered by tenant_id', function () {
 
     $response->assertStatus(200);
 
-    // Zakładam Resource::collection() format {"data":[...]}
     $response->assertJsonCount(2, 'data');
 
-    // Dodatkowo upewniamy się, że zwrócone elementy należą do tenantA
     $response->assertJsonFragment(['tenant_id' => $tenantA->id]);
     $response->assertJsonMissing(['tenant_id' => $tenantB->id]);
 });

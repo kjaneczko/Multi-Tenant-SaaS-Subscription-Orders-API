@@ -10,11 +10,13 @@ use App\Domain\Order\OrderId;
 use App\Domain\PriceCents;
 use App\Domain\Product\ProductId;
 use App\Domain\Sku;
+use App\Domain\Tenant\TenantId;
 
 class OrderItem
 {
     private function __construct(
         private readonly OrderItemId $id,
+        private readonly TenantId $tenantId,
         private readonly OrderId $orderId,
         private readonly ProductId $productId,
         private readonly string $productNameSnapshot,
@@ -30,6 +32,7 @@ class OrderItem
 
     public static function create(
         OrderItemId $id,
+        TenantId $tenantId,
         OrderId $orderId,
         ProductId $productId,
         string $productNameSnapshot,
@@ -43,6 +46,7 @@ class OrderItem
 
         return new self(
             id: $id,
+            tenantId: $tenantId,
             orderId: $orderId,
             productId: $productId,
             productNameSnapshot: $productNameSnapshot,
@@ -57,6 +61,7 @@ class OrderItem
 
     public static function reconstitute(
         OrderItemId $id,
+        TenantId $tenantId,
         OrderId $orderId,
         ProductId $productId,
         string $productNameSnapshot,
@@ -70,6 +75,7 @@ class OrderItem
         // lineTotalCents is a book value/snapshot and is not recalculated when read.
         return new self(
             id: $id,
+            tenantId: $tenantId,
             orderId: $orderId,
             productId: $productId,
             productNameSnapshot: $productNameSnapshot,
@@ -85,6 +91,11 @@ class OrderItem
     public function id(): OrderItemId
     {
         return $this->id;
+    }
+
+    public function tenantId(): TenantId
+    {
+        return $this->tenantId;
     }
 
     public function orderId(): OrderId
