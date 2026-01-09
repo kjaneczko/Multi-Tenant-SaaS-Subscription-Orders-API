@@ -10,7 +10,6 @@ it('shows user', function () {
 
     $response->assertStatus(200);
 
-    // Smoke-check DB
     $this->assertDatabaseHas('users', [
         'id' => $model->id,
         'tenant_id' => $model->tenant_id,

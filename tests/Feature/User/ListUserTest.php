@@ -5,9 +5,6 @@ use App\Models\TenantModel;
 use App\Models\UserModel;
 
 it('lists users', function () {
-    // Uwaga: jeśli masz ograniczenie unique(tenant_id, role),
-    // factory może próbować tworzyć kilku userów z tą samą rolą w jednym tenant.
-    // Dlatego tworzymy po jednym userze na tenant (factory zwykle losuje role).
     UserModel::factory()->create();
     UserModel::factory()->create();
 
@@ -15,7 +12,6 @@ it('lists users', function () {
 
     $response->assertStatus(200);
 
-    // Zakładam Resource::collection() => {"data":[...]}
     $response->assertJsonCount(2, 'data');
 });
 
