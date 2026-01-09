@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignUuid('tenant_id')->constrained('tenants')->restrictOnDelete();
 
             $table->string('entity_type', 50);   // np. 'order', 'subscription'
-            $table->uuid('entity_id');           // id encji
+            $table->uuid('entity_id');
 
             $table->string('external_id')->unique();
             $table->string('status'); // ['new', 'pending', 'paid', 'cancelled']

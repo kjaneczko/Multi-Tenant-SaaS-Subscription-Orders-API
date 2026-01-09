@@ -21,7 +21,6 @@ class ProductModelFactory extends Factory
         return [
             'id' => (string) Str::uuid(),
 
-            // jeśli test poda tenant_id ręcznie, to go nie nadpisujemy
             'tenant_id' => TenantModel::factory(),
 
             'name' => $name,
@@ -33,7 +32,6 @@ class ProductModelFactory extends Factory
             'price_cents' => $this->faker->numberBetween(0, 250000),
             'currency' => $this->faker->randomElement(['USD', 'EUR']),
 
-            // dopasuj, jeśli w domenie masz inne wartości statusu
             'status' => $this->faker->randomElement(['active', 'inactive']),
         ];
     }

@@ -251,7 +251,6 @@ class Order
             );
         }
 
-        // Ustaw daty tylko przy wejściu w dany status
         if (OrderStatus::PAID === $status && null === $this->paidAt) {
             $this->paidAt = $now;
         }
